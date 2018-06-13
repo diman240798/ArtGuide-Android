@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ArtGuide</string>
+    <string name="learn_more">Learn More</string>
+    <string name="google_maps_key">AIzaSyCMGIForDoh7u_D02lypgtp6b6PGMAmULY</string>
+    <string name="musey_iskusst">\t\t Художественная галерея появилась в городе в 1928 году. На сегодняшний день ее фонды насчитывают несколько тысяч экземпляров: живопись, графику, предметы декоративно-прикладного искусства, скульптуру и другие экспонаты. Отдельные части коллекции посвящены русскому искусству XVIII – начала XX столетий, западноевропейской и восточной культурам. Во время ВОВ большая часть музея была разграблена, но постепенно некоторые экспонаты удалось вернуть.</string>
+    <string name="Learn_More_btn">Learn More</string>
+</resources>
