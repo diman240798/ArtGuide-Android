@@ -82,7 +82,6 @@ public class MapActivity extends Activity implements LocationListener {
             NetworkInfo otherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
 
             if(currentNetworkInfo.isConnected()){
-                //TODO: Каким то образом вовзращать активити (ВООБЩЕ ХЗ КАК)
                 //Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
                 //setContentView(R.layout.activity_map);
             }else{
@@ -275,7 +274,7 @@ public class MapActivity extends Activity implements LocationListener {
         public List<GeoPoint> makeRoad(Location location, OverlayItem item) {
             List<GeoPoint> waypoints = new ArrayList<>();
             if (location == null) {
-                // Еще один способ получить текущие координаты
+                
                 GeoPoint current_location = null;
 
                 if (locationGPS != null) {

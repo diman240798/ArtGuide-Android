@@ -30,10 +30,7 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
             if (extras.getString("TAG") != null)
             switch (extras.getString("TAG")) {
                 case "Музей Искусств":
-                    // TODO: использовать setInfo()
-                    // TODO: Сортиуем
-                    // TODO: Пушим нужное
-                    //descrTW.setText("Clickable");
+                    
                     break;
             }
         }
