@@ -28,6 +28,7 @@ import android.os.AsyncTask;
 
 import com.swg_games_lab.nanicki.artguide.attraction_info.WikiActivity;
 import com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
@@ -50,12 +51,13 @@ import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MapActivity extends Activity implements LocationListener {
-    MapView map = null;
+    public MapView map ;
     MyLocationNewOverlay myLocationOverlay;
     LocationManager locationManager;
     Criteria criteria;
@@ -64,37 +66,14 @@ public class MapActivity extends Activity implements LocationListener {
     Location locationGPS;
     OverlayItem lastMarker;
     boolean routeWasDrown = false;
-    Context context;
     boolean postExecuteComplited = false;
     View markerView;
-    ImageView map_markdesc_imageView;
-    TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
-    Button map_markdesc_show_moreBT, map_markdesc_build_routeBT, map_wikiBT;
+    Button map_wikiBT;
     private AlertDialog alertDialog;
-
-    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-            String reason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
-            boolean isFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
-
-            NetworkInfo currentNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            NetworkInfo otherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-
-            if(currentNetworkInfo.isConnected()){
-                //Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
-                //setContentView(R.layout.activity_map);
-            }else{
-                //Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_LONG).show();
-                setContentView(R.layout.out_of_connection);
-            }
-        }
-    };
-
 
     private void init() {
         //load/initialize the osmdroid configuration, this can be done
-        context = getApplicationContext();
+        Context context = this;
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
         //inflate and create the map
         map = (MapView) findViewById(R.id.map);
@@ -105,18 +84,19 @@ public class MapActivity extends Activity implements LocationListener {
 
         // Получение текущих координат
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        assert locationManager != null;
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         criteria = new Criteria();
         locationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        this.registerReceiver(mConnReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-
+//        this.registerReceiver(mConnReceiver,
+//                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
     }
 
-    private void setUpMap(Context context) {
+    private void setUpMap() {
+        Context context = this;
         IMapController mapController = map.getController();
         mapController.setZoom(12);
         GeoPoint startPoint = null;// = new GeoPoint(locationGPS.getLatitude(), locationGPS.getAltitude());
@@ -169,11 +149,11 @@ public class MapActivity extends Activity implements LocationListener {
 
                 // marker Info
                 markerView = getLayoutInflater().inflate(R.layout.custom_alert_dialog, null);
-                map_markdesc_imageView = (ImageView) markerView.findViewById(R.id.map_markdesc_image);
-                map_markdesc_titleTextView = (TextView) markerView.findViewById(R.id.map_markdesc_titleTextView);
-                map_markdesc_brief_descriptionTextView = (TextView) markerView.findViewById(R.id.map_markdesc_brief_descriptionTextView);
-                map_markdesc_show_moreBT = (Button) markerView.findViewById(R.id.map_markdesc_show_moreBT);
-                map_markdesc_build_routeBT = (Button) markerView.findViewById(R.id.map_markdesc_build_routeBT);
+                ImageView map_markdesc_imageView = (ImageView) markerView.findViewById(R.id.map_markdesc_image);
+                TextView map_markdesc_titleTextView = (TextView) markerView.findViewById(R.id.map_markdesc_titleTextView);
+                TextView map_markdesc_brief_descriptionTextView = (TextView) markerView.findViewById(R.id.map_markdesc_brief_descriptionTextView);
+                Button map_markdesc_show_moreBT = (Button) markerView.findViewById(R.id.map_markdesc_show_moreBT);
+                Button map_markdesc_build_routeBT = (Button) markerView.findViewById(R.id.map_markdesc_build_routeBT);
 
 
                 map_markdesc_titleTextView.setText(item.getTitle());
@@ -228,72 +208,11 @@ public class MapActivity extends Activity implements LocationListener {
         // Инициализация layoutов
         init();
         // Настройка карты
-        setUpMap(context);
+        setUpMap();
         // Добавление маркеров
         addingMarkers();
     }
 
-
-    private class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
-
-        protected Road[] doInBackground(Object... params) {
-            ArrayList<GeoPoint> waypoints = (ArrayList<GeoPoint>) params[0];
-            RoadManager roadManager = new OSRMRoadManager(MapActivity.this);
-            return roadManager.getRoads(waypoints);
-        }
-
-        @Override
-        protected void onPostExecute(Road[] roads) {
-            //Toast.makeText(map.getContext(), "Route was received successfully", Toast.LENGTH_SHORT).show();
-            if (roads == null)
-                return;
-            if (roads[0].mStatus == Road.STATUS_TECHNICAL_ISSUE)
-                Toast.makeText(map.getContext(), "Technical issue when getting the route",
-                        Toast.LENGTH_SHORT).show();
-            else if (roads[0].mStatus > Road.STATUS_TECHNICAL_ISSUE) //functional issues
-                Toast.makeText(map.getContext(), "No possible route here",
-                        Toast.LENGTH_SHORT).show();
-
-
-            List<Overlay> mapOverlays = map.getOverlays();
-            Polyline roadPolyline = RoadManager.buildRoadOverlay(roads[0]);
-
-            String routeDesc = roads[0].getLengthDurationText(MapActivity.this, -1);
-            roadPolyline.setTitle(getString(R.string.app_name) + " - " + routeDesc);
-            roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map));
-            roadPolyline.setRelatedObject(0);
-            roadPolyline.setWidth(5);
-            //roadPolyline.setOnClickListener(new RoadOnClickListener());
-
-            if (postExecuteComplited) {
-                mapOverlays.set(mapOverlays.size() - 1, roadPolyline);
-            } else mapOverlays.add(roadPolyline);
-            postExecuteComplited = true;
-        }
-
-        public List<GeoPoint> makeRoad(Location location, OverlayItem item) {
-            List<GeoPoint> waypoints = new ArrayList<>();
-            if (location == null) {
-                
-                GeoPoint current_location = null;
-
-                if (locationGPS != null) {
-                    current_location = new GeoPoint(locationGPS.getLatitude(), locationGPS.getLongitude());
-                } else if (locationNet != null) {
-                    current_location = new GeoPoint(locationNet.getLatitude(), locationNet.getLongitude());
-                } else {
-                    Toast.makeText(MapActivity.this, "Failed to load Current Location", Toast.LENGTH_SHORT).show();
-                }
-                waypoints.add(current_location);
-            } else
-                waypoints.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
-            IGeoPoint markerpoint = item.getPoint();
-            GeoPoint marker_location = new GeoPoint(markerpoint.getLatitude(), markerpoint.getLongitude());
-            waypoints.add(marker_location);
-            return waypoints;
-        }
-
-    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -310,8 +229,7 @@ public class MapActivity extends Activity implements LocationListener {
             return;
         // Перерисовываем маршрут
         updateRoadTask = new UpdateRoadTask();// передаем текщие координаты (location)
-        List<GeoPoint> waypoints = updateRoadTask.makeRoad(location, lastMarker);
-        updateRoadTask.execute(waypoints);
+        updateRoadTask.execute();
     }
 
     @Override
