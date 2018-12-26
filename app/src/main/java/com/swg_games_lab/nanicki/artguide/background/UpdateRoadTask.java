@@ -29,27 +29,19 @@ public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
     private final WeakReference<MapActivity> activity;
     private final ArrayList<GeoPoint> waypoints;
 
-    public UpdateRoadTask(Location location, OverlayItem item, Location locationGPS, Location locationNet, MapActivity mapActivity) {
+    public UpdateRoadTask(Location userLocation, OverlayItem item, MapActivity mapActivity) {
         this.activity = new WeakReference<MapActivity>(mapActivity);
         Context context = mapActivity;
+
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
-        if (location == null) {
+        waypoints.add(new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
 
-            GeoPoint current_location = null;
-
-            if (locationGPS != null) {
-                current_location = new GeoPoint(locationGPS.getLatitude(), locationGPS.getLongitude());
-            } else if (locationNet != null) {
-                current_location = new GeoPoint(locationNet.getLatitude(), locationNet.getLongitude());
-            } else {
-                Toast.makeText(context, "Failed to load Current Location", Toast.LENGTH_SHORT).show();
-            }
-            waypoints.add(current_location);
-        } else
-            waypoints.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
+        // crutch
         IGeoPoint markerpoint = item.getPoint();
         GeoPoint marker_location = new GeoPoint(markerpoint.getLatitude(), markerpoint.getLongitude());
         waypoints.add(marker_location);
+
+
         this.waypoints = waypoints;
     }
 

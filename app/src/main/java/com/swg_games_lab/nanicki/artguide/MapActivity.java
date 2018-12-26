@@ -29,6 +29,7 @@ import android.os.AsyncTask;
 import com.swg_games_lab.nanicki.artguide.attraction_info.WikiActivity;
 import com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
+import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
@@ -57,19 +58,35 @@ import java.util.List;
 
 
 public class MapActivity extends Activity implements LocationListener {
-    public MapView map ;
-    MyLocationNewOverlay myLocationOverlay;
-    LocationManager locationManager;
-    Criteria criteria;
-    UpdateRoadTask updateRoadTask;
-    Location locationNet;
-    Location locationGPS;
-    OverlayItem lastMarker;
-    boolean routeWasDrown = false;
-    boolean postExecuteComplited = false;
-    View markerView;
-    Button map_wikiBT;
+    public MapView map;
+    private MyLocationNewOverlay myLocationOverlay;
+    private LocationManager locationManager;
+    private Criteria criteria;
+    private UpdateRoadTask updateRoadTask;
+    private OverlayItem lastMarker;
+    private boolean routeWasDrown = false;
+    private boolean postExecuteComplited = false;
+    private View markerView;
+    private Button map_wikiBT;
+    // AlertDialog things
     private AlertDialog alertDialog;
+    private ImageView map_markdesc_imageView;
+    private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
+    private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        // Инициализация layoutов
+        init();
+        // Настройка карты
+        setUpMap();
+        // Setting up dialog (appears on tap up)
+        initMarkerView();
+        // Добавление маркеров
+        addingMarkers();
+    }
 
     private void init() {
         //load/initialize the osmdroid configuration, this can be done
@@ -87,9 +104,6 @@ public class MapActivity extends Activity implements LocationListener {
         assert locationManager != null;
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         criteria = new Criteria();
-        locationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
 //        this.registerReceiver(mConnReceiver,
 //                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -99,14 +113,12 @@ public class MapActivity extends Activity implements LocationListener {
         Context context = this;
         IMapController mapController = map.getController();
         mapController.setZoom(12);
-        GeoPoint startPoint = null;// = new GeoPoint(locationGPS.getLatitude(), locationGPS.getAltitude());
-        if (locationGPS != null) {
-            startPoint = new GeoPoint(locationGPS.getLatitude(), locationGPS.getLongitude());
-        } else if (locationNet != null) {
-            startPoint = new GeoPoint(locationNet.getLatitude(), locationNet.getLongitude());
-        } else {
-            Toast.makeText(MapActivity.this, "Failed to load Current Location", Toast.LENGTH_SHORT).show();
-        }
+
+        Location userLocation = getUserLocation();
+        GeoPoint startPoint = LocationUtil
+                .getGeoPointByLocationOrDefault
+                        (userLocation, new GeoPoint(47.219196, 39.702261));
+
         mapController.setCenter(startPoint);
 
         map.setBuiltInZoomControls(false);
@@ -124,8 +136,6 @@ public class MapActivity extends Activity implements LocationListener {
     }
 
     private void addingMarkers() {
-
-
         // Создаем лист маркеров
         List<OverlayItem> overlayItems = new ArrayList<>();
         // Добавляем маркеры
@@ -141,54 +151,11 @@ public class MapActivity extends Activity implements LocationListener {
         overlayItem.setMarker(this.getDrawable(R.drawable.museum_small));
         overlayItems.add(overlayItem);
         // OnClickListener на маркер
-        ItemizedIconOverlay<OverlayItem> anotherItemizedIconOverlay
-                = new ItemizedIconOverlay<>(
+        ItemizedIconOverlay<OverlayItem> anotherItemizedIconOverlay = new ItemizedIconOverlay<>(
                 this, overlayItems, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, OverlayItem item) {
-
-                // marker Info
-                markerView = getLayoutInflater().inflate(R.layout.custom_alert_dialog, null);
-                ImageView map_markdesc_imageView = (ImageView) markerView.findViewById(R.id.map_markdesc_image);
-                TextView map_markdesc_titleTextView = (TextView) markerView.findViewById(R.id.map_markdesc_titleTextView);
-                TextView map_markdesc_brief_descriptionTextView = (TextView) markerView.findViewById(R.id.map_markdesc_brief_descriptionTextView);
-                Button map_markdesc_show_moreBT = (Button) markerView.findViewById(R.id.map_markdesc_show_moreBT);
-                Button map_markdesc_build_routeBT = (Button) markerView.findViewById(R.id.map_markdesc_build_routeBT);
-
-
-                map_markdesc_titleTextView.setText(item.getTitle());
-                map_markdesc_brief_descriptionTextView.setText(item.getSnippet());
-                map_markdesc_imageView.setImageDrawable(item.getDrawable());
-
-                map_markdesc_show_moreBT.setOnClickListener((View v) -> {
-                    Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
-                    intent.putExtra("TAG", map_markdesc_titleTextView.getText());
-                    v.getContext().startActivity(intent);
-                });
-
-                map_markdesc_build_routeBT.setOnClickListener(v -> {
-                        if (routeWasDrown) {
-                            map.getOverlays().remove(map.getOverlays().size() - 1);
-                            postExecuteComplited = false;
-                            map.invalidate();
-                            Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
-                        }
-                        routeWasDrown = true;
-                        if (myLocationOverlay == null) {
-                            Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
-                        lastMarker = item;
-                        updateRoadTask = new UpdateRoadTask();
-                        List<GeoPoint> waypoints = updateRoadTask.makeRoad(null, item);
-                        updateRoadTask.execute(waypoints);
-                        alertDialog.cancel();
-                    });
-                alertDialog = new AlertDialog.Builder(MapActivity.this)
-                        .setView(markerView)
-                        .create();
-                alertDialog.show();
+                onOverlayTapUp(item);
                 return false;
             }
 
@@ -201,16 +168,60 @@ public class MapActivity extends Activity implements LocationListener {
         map.getOverlays().add(anotherItemizedIconOverlay);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
-        // Инициализация layoutов
-        init();
-        // Настройка карты
-        setUpMap();
-        // Добавление маркеров
-        addingMarkers();
+    private void onOverlayTapUp(OverlayItem item) {
+
+        map_markdesc_titleTextView.setText(item.getTitle());
+        map_markdesc_brief_descriptionTextView.setText(item.getSnippet());
+        map_markdesc_imageView.setImageDrawable(item.getDrawable());
+
+        map_markdesc_show_moreBT.setOnClickListener((View v) -> {
+            Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
+            intent.putExtra("TAG", map_markdesc_titleTextView.getText());
+            v.getContext().startActivity(intent);
+        });
+         // FIXME CRUTCH ПИЗДЕЦ
+        map_markdesc_build_routeBT.setOnClickListener(v -> {
+            if (routeWasDrown) {
+                map.getOverlays().remove(map.getOverlays().size() - 1);
+                postExecuteComplited = false;
+                map.invalidate();
+                Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
+            }
+            routeWasDrown = true;
+            if (myLocationOverlay == null) {
+                Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
+            lastMarker = item;
+            if (updateRoadTask != null)
+                updateRoadTask.cancel(true);
+            updateRoadTask = new UpdateRoadTask(getUserLocation(), item, MapActivity.this);
+            updateRoadTask.execute();
+            alertDialog.cancel();
+        });
+        alertDialog = new AlertDialog.Builder(MapActivity.this)
+                .setView(markerView)
+                .create();
+        alertDialog.show();
+    }
+
+    private Location getUserLocation() {
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null) {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+        return location;
+    }
+
+    private void initMarkerView() {
+        // marker Info
+        markerView = getLayoutInflater().inflate(R.layout.custom_alert_dialog, null);
+        map_markdesc_imageView = (ImageView) markerView.findViewById(R.id.map_markdesc_image);
+        map_markdesc_titleTextView = (TextView) markerView.findViewById(R.id.map_markdesc_titleTextView);
+        map_markdesc_brief_descriptionTextView = (TextView) markerView.findViewById(R.id.map_markdesc_brief_descriptionTextView);
+        map_markdesc_show_moreBT = (Button) markerView.findViewById(R.id.map_markdesc_show_moreBT);
+        map_markdesc_build_routeBT = (Button) markerView.findViewById(R.id.map_markdesc_build_routeBT);
     }
 
 
@@ -228,8 +239,8 @@ public class MapActivity extends Activity implements LocationListener {
         if (!postExecuteComplited)
             return;
         // Перерисовываем маршрут
-        updateRoadTask = new UpdateRoadTask();// передаем текщие координаты (location)
-        updateRoadTask.execute();
+//        updateRoadTask = new UpdateRoadTask(location, lastMarker, locationNet, locationGPS, MapActivity.this);;// передаем текщие координаты (location)
+//        updateRoadTask.execute();
     }
 
     @Override
@@ -257,6 +268,7 @@ public class MapActivity extends Activity implements LocationListener {
         super.onPause();
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
