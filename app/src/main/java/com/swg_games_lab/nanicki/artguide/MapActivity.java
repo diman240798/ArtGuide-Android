@@ -56,18 +56,21 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
+
 
 public class MapActivity extends Activity implements LocationListener {
+    // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
     private Criteria criteria;
+    // Fields
     private UpdateRoadTask updateRoadTask;
     private OverlayItem lastMarker;
     private boolean routeWasDrown = false;
-    private boolean postExecuteComplited = false;
+    // Marker
     private View markerView;
-    private Button map_wikiBT;
     // AlertDialog things
     private AlertDialog alertDialog;
     private ImageView map_markdesc_imageView;
@@ -96,7 +99,7 @@ public class MapActivity extends Activity implements LocationListener {
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        map_wikiBT = (Button) findViewById(R.id.map_wikiBT);
+        Button map_wikiBT = (Button) findViewById(R.id.map_wikiBT);
         map_wikiBT.setOnClickListener(v -> startActivity(new Intent(this, WikiActivity.class)));
 
         // Получение текущих координат
@@ -114,7 +117,7 @@ public class MapActivity extends Activity implements LocationListener {
         IMapController mapController = map.getController();
         mapController.setZoom(12);
 
-        Location userLocation = getUserLocation();
+        Location userLocation = getUserLocation(locationManager);
         GeoPoint startPoint = LocationUtil
                 .getGeoPointByLocationOrDefault
                         (userLocation, new GeoPoint(47.219196, 39.702261));
@@ -183,7 +186,6 @@ public class MapActivity extends Activity implements LocationListener {
         map_markdesc_build_routeBT.setOnClickListener(v -> {
             if (routeWasDrown) {
                 map.getOverlays().remove(map.getOverlays().size() - 1);
-                postExecuteComplited = false;
                 map.invalidate();
                 Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
             }
@@ -192,11 +194,12 @@ public class MapActivity extends Activity implements LocationListener {
                 Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
             }
+
             Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
             lastMarker = item;
             if (updateRoadTask != null)
                 updateRoadTask.cancel(true);
-            updateRoadTask = new UpdateRoadTask(getUserLocation(), item, MapActivity.this);
+            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
             updateRoadTask.execute();
             alertDialog.cancel();
         });
@@ -206,13 +209,6 @@ public class MapActivity extends Activity implements LocationListener {
         alertDialog.show();
     }
 
-    private Location getUserLocation() {
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location == null) {
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        }
-        return location;
-    }
 
     private void initMarkerView() {
         // marker Info
@@ -236,7 +232,7 @@ public class MapActivity extends Activity implements LocationListener {
         if (lastMarker == null)
             return;
         // если запрос не завершен, то выходим
-        if (!postExecuteComplited)
+        if (routeWasDrown)
             return;
         // Перерисовываем маршрут
 //        updateRoadTask = new UpdateRoadTask(location, lastMarker, locationNet, locationGPS, MapActivity.this);;// передаем текщие координаты (location)
