@@ -1,20 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
     <org.osmdroid.views.MapView android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <include
+        layout="@layout/custom_alert_dialog"
+        android:layout_marginStart="-20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
 
-    <Button
+    <View
+        app:layout_constraintEnd_toEndOf="@+id/bottom_linear_with_buttons"
+        app:layout_constraintStart_toStartOf="@+id/bottom_linear_with_buttons"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_linear_with_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#002D3A"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="6dp" />
+    <LinearLayout
+        android:id="@+id/bottom_linear_with_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+
+        <Button
+            android:id="@+id/wiki_bt_museum"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_museam" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:background="#002D3A"/>
+
+        <Button
+            android:id="@+id/wiki_bt_theatre"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_theatre" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:background="#002D3A"/>
+
+
+        <Button
+            android:id="@+id/wiki_bt_memorial"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_memorial" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:background="#002D3A"/>
+
+        <Button
+            android:id="@+id/wiki_bt_stadium"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/item_stadium" />
+    </LinearLayout>
+
+   <!-- <Button
         android:id="@+id/map_wikiBT"
         android:layout_width="120dp"
         android:layout_height="30dp"
         android:text="WIKI"
         android:textColor="@color/colorWhite"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/wiki_button_background_blue"/>
     <Button
         android:id="@+id/map_nearest_placesBT"
@@ -22,8 +105,11 @@
         android:layout_height="38dp"
         android:text="Ближайшие места"
         android:textSize="13sp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@color/colorWhite"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/map_nearest_places_button_background_violet"/>
-</RelativeLayout>
+        android:background="@drawable/map_nearest_places_button_background_violet"/>-->
+
+</android.support.constraint.ConstraintLayout>
