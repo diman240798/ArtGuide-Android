@@ -1,77 +1,87 @@
-<RelativeLayout android:background="@color/card_background"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/map_markdesc_rel_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_centerInParent="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginStart="-20dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="16dp"
+    android:background="@drawable/rectangle_with_bounds">
 
     <ImageView
         android:id="@+id/map_markdesc_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginStart="8dp"
         android:scaleType="fitXY"
-        android:src="@drawable/muzey_kraevedeniya_small" />
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_marginStart="16dp"
+        android:id="@+id/map_markdesc_titleTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_toEndOf="@id/map_markdesc_image"
-        android:layout_toRightOf="@id/map_markdesc_image"
-        android:orientation="vertical"
-        android:layout_margin="5dp">
+        android:maxLines="1"
+        android:text="Музей Исскуств"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/title"
+        app:layout_constraintStart_toEndOf="@id/map_markdesc_image"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/map_markdesc_titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="Музей Исскуств"
-            android:textColor="@color/title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    <TextView
+        android:id="@+id/map_markdesc_brief_descriptionTextView"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:maxLines="2"
+        android:text="Ростовский областной музей изобразительных."
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/description"
+        app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
+        app:layout_constraintTop_toBottomOf="@id/map_markdesc_titleTextView" />
 
-        <TextView
-            android:id="@+id/map_markdesc_brief_descriptionTextView"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="250dp"
-            android:maxLines="2"
-            android:layout_height="wrap_content"
-            android:textColor="@color/description"
-            android:text="Ростовский областной музей изобразительных."
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+    <Button
+        android:id="@+id/map_markdesc_show_moreBT"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_background_green"
+        android:text="Подробнее"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
+        app:layout_constraintTop_toBottomOf="@id/map_markdesc_brief_descriptionTextView" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/map_markdesc_show_moreBT"
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:textAllCaps="false"
-                android:text="@string/learn_more"
-                android:background="@drawable/button_background_red"
-                android:textSize="12sp"
-                android:textColor="@color/colorWhite"/>
-            <Button
-                android:id="@+id/map_markdesc_build_routeBT"
-                android:layout_marginLeft="20dp"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:textAllCaps="false"
-                android:text="go"
-                android:background="@drawable/button_background_red"
-                android:textSize="12sp"
-                android:textColor="@color/colorWhite"/>
+    <TextView
+        android:id="@+id/map_markdesc_image_text_on_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="На карте"
+        android:textColor="@color/colorGreen"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/map_markdesc_build_routeBT"
+        app:layout_constraintEnd_toStartOf="@+id/map_markdesc_build_routeBT"
+        app:layout_constraintTop_toTopOf="@+id/map_markdesc_build_routeBT" />
 
-        </LinearLayout>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/map_markdesc_build_routeBT"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/build_road_red"
+        android:gravity="end"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_markdesc_brief_descriptionTextView" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
