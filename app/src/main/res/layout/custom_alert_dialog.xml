@@ -1,8 +1,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map_markdesc_rel_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_marginStart="-20dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="16dp"
@@ -11,36 +12,38 @@
     <ImageView
         android:id="@+id/map_markdesc_image"
         android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_background"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
-        android:layout_marginStart="16dp"
         android:id="@+id/map_markdesc_titleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:maxLines="1"
         android:text="Музей Исскуств"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        app:layout_constraintEnd_toStartOf="@+id/imageView3"
         app:layout_constraintStart_toEndOf="@id/map_markdesc_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/map_markdesc_brief_descriptionTextView"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="8dp"
         android:maxLines="2"
         android:text="Ростовский областной музей изобразительных."
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="@color/description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
         app:layout_constraintTop_toBottomOf="@id/map_markdesc_titleTextView" />
 
@@ -48,14 +51,16 @@
         android:id="@+id/map_markdesc_show_moreBT"
         android:layout_width="100dp"
         android:layout_height="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/button_background_green"
         android:text="Подробнее"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
-        app:layout_constraintTop_toBottomOf="@id/map_markdesc_brief_descriptionTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/map_markdesc_brief_descriptionTextView" />
 
     <TextView
         android:id="@+id/map_markdesc_image_text_on_map"
@@ -73,15 +78,25 @@
         android:id="@+id/map_markdesc_build_routeBT"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/build_road_red"
         android:gravity="end"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/map_markdesc_show_moreBT"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_markdesc_brief_descriptionTextView" />
+        app:layout_constraintTop_toTopOf="@id/map_markdesc_show_moreBT" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/close_sign" />
 
 
 </android.support.constraint.ConstraintLayout>
