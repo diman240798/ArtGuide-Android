@@ -1,8 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 

@@ -23,13 +23,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-
-        <!--<meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />-->
-
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,12 +33,12 @@
         </activity>
 
         <activity
-            android:name=".attraction_info.WikiActivity"
+            android:name=".activity.attraction_info.WikiActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".attraction_info.Wiki_Attraction_Activity"
+            android:name=".activity.attraction_info.Wiki_Attraction_Activity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MapActivity"
+        <activity android:name=".activity.MapActivity"
             android:screenOrientation="portrait">
         </activity>
     </application>

@@ -4,7 +4,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-import com.swg_games_lab.nanicki.artguide.MapActivity;
+import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 
 public class MyLocationListener implements LocationListener {
 

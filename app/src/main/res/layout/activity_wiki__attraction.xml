@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity">
+    tools:context=".activity.attraction_info.Wiki_Attraction_Activity">
 
     <ImageView
         android:id="@+id/wiki_attr_Image"

@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.attraction_info;
+package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
