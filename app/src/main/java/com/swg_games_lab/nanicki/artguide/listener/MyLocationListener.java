@@ -4,7 +4,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.swg_games_lab.nanicki.artguide.MapActivity;
+
 public class MyLocationListener implements LocationListener {
+
+    private final LocationManager locationManager;
+
+    public MyLocationListener(MapActivity mapActivity, LocationManager locationManager) {
+        this.locationManager = locationManager;
+    }
 
     @Override
     public void onLocationChanged(Location location) {

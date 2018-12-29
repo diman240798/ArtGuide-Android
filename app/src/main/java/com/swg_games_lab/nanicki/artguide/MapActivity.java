@@ -3,29 +3,39 @@ package com.swg_games_lab.nanicki.artguide;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.swg_games_lab.nanicki.artguide.attraction_info.WikiActivity;
 import com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
+import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -35,7 +45,7 @@ import java.util.List;
 import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
 
 
-public class MapActivity extends Activity {
+public class MapActivity extends AppCompatActivity implements RouteReceiver {
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
@@ -71,13 +81,11 @@ public class MapActivity extends Activity {
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        Button map_wikiBT = (Button) findViewById(R.id.map_wikiBT);
-        map_wikiBT.setOnClickListener(v -> startActivity(new Intent(this, WikiActivity.class)));
 
         // Получение текущих координат
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
-        myLocationListener = new MyLocationListener();
+        myLocationListener = new MyLocationListener(this, locationManager);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         // TODO: Add Later
 //        this.registerReceiver(mConnReceiver,
@@ -87,6 +95,7 @@ public class MapActivity extends Activity {
 
     private void setUpMap() {
         Context context = this;
+
         IMapController mapController = map.getController();
         mapController.setZoom(12);
 
@@ -102,8 +111,9 @@ public class MapActivity extends Activity {
         map.setMinZoomLevel(6.);
 
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), map);
-        // TODO: Set Custom Icon
-        //myLocationOverlay.setPersonIcon();
+        // Fixme: Set Custom item
+        //Bitmap myCustomLocationOverlay = BitmapFactory.decodeResource(getResources(), R.drawable.my_location_overlay_small);
+        //myLocationOverlay.setPersonIcon(myCustomLocationOverlay);
         myLocationOverlay.enableMyLocation();
         map.getOverlays().add(myLocationOverlay);
 
@@ -166,26 +176,24 @@ public class MapActivity extends Activity {
             intent.putExtra("TAG", map_markdesc_titleTextView.getText());
             v.getContext().startActivity(intent);
         });
-        // FIXME CRUTCH ПИЗДЕЦ
-//        map_markdesc_build_routeBT.setOnClickListener(v -> {
+        map_markdesc_build_routeBT.setOnClickListener(v -> {
 //            if (routeWasDrown) {
 //                map.getOverlays().remove(map.getOverlays().size() - 1);
 //                map.invalidate();
 //                Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
 //            }
 //            routeWasDrown = true;
-//            if (myLocationOverlay == null) {
-//                Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//
-//            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
-//            if (updateRoadTask != null)
-//                updateRoadTask.cancel(true);
-//            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
-//            updateRoadTask.execute();
-//            alertDialog.cancel();
-//        });
+            if (myLocationOverlay == null) {
+                Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
+            if (updateRoadTask != null)
+                updateRoadTask.cancel(true);
+            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
+            updateRoadTask.execute(MapActivity.this);
+        });
     }
 
 
@@ -204,5 +212,32 @@ public class MapActivity extends Activity {
         super.onDestroy();
         map.destroyDrawingCache();
         locationManager.removeUpdates(myLocationListener);
+    }
+
+    @Override
+    public void onRouteReceived(@NonNull Road[] roads) {
+        Context context = this;
+        Road firstRoad = roads[0];
+        if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
+            Toast.makeText(context, "Technical issue when getting the route", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (firstRoad.mStatus > Road.STATUS_TECHNICAL_ISSUE) {
+            Toast.makeText(context, "No possible route here", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        List<Overlay> mapOverlays = map.getOverlays();
+        Polyline roadPolyline = RoadManager.buildRoadOverlay(firstRoad);
+
+        String routeDesc = firstRoad.getLengthDurationText(context, -1);
+        roadPolyline.setTitle(context.getString(R.string.app_name) + " - " + routeDesc);
+        roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map));
+        roadPolyline.setColor(getResources().getColor(R.color.colorGreen));
+        roadPolyline.setRelatedObject(0);
+        roadPolyline.setWidth(5);
+        // TODO: ADD Later
+        //roadPolyline.setOnClickListener(new RoadOnClickListener());
+        mapOverlays.add(roadPolyline);
     }
 }
