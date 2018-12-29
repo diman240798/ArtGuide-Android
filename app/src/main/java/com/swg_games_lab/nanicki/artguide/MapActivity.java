@@ -1,78 +1,50 @@
 package com.swg_games_lab.nanicki.artguide;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.os.AsyncTask;
 
 import com.swg_games_lab.nanicki.artguide.attraction_info.WikiActivity;
 import com.swg_games_lab.nanicki.artguide.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
+import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
-import org.osmdroid.bonuspack.routing.OSRMRoadManager;
-import org.osmdroid.bonuspack.routing.Road;
-import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
 
 
-public class MapActivity extends Activity implements LocationListener {
+public class MapActivity extends Activity {
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
-    private Criteria criteria;
     // Fields
     private UpdateRoadTask updateRoadTask;
-    private OverlayItem lastMarker;
+    private MyLocationListener myLocationListener;
     private boolean routeWasDrown = false;
-    // Marker
-    private View markerView;
-    // AlertDialog things
-    private AlertDialog alertDialog;
+    // Marker things
     private ImageView map_markdesc_imageView;
     private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
     private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
@@ -105,8 +77,9 @@ public class MapActivity extends Activity implements LocationListener {
         // Получение текущих координат
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        criteria = new Criteria();
+        myLocationListener = new MyLocationListener();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+        // TODO: Add Later
 //        this.registerReceiver(mConnReceiver,
 //                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -129,6 +102,8 @@ public class MapActivity extends Activity implements LocationListener {
         map.setMinZoomLevel(6.);
 
         myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), map);
+        // TODO: Set Custom Icon
+        //myLocationOverlay.setPersonIcon();
         myLocationOverlay.enableMyLocation();
         map.getOverlays().add(myLocationOverlay);
 
@@ -136,6 +111,15 @@ public class MapActivity extends Activity implements LocationListener {
         mRotationGestureOverlay.setEnabled(true);
         map.setMultiTouchControls(true);
         map.getOverlays().add(mRotationGestureOverlay);
+    }
+
+    private void initMarkerView() {
+        // marker Info
+        map_markdesc_imageView = (ImageView) findViewById(R.id.map_markdesc_image);
+        map_markdesc_titleTextView = (TextView) findViewById(R.id.map_markdesc_titleTextView);
+        map_markdesc_brief_descriptionTextView = (TextView) findViewById(R.id.map_markdesc_brief_descriptionTextView);
+        map_markdesc_show_moreBT = (Button) findViewById(R.id.map_markdesc_show_moreBT);
+        map_markdesc_build_routeBT = (Button) findViewById(R.id.map_markdesc_build_routeBT);
     }
 
     private void addingMarkers() {
@@ -182,76 +166,26 @@ public class MapActivity extends Activity implements LocationListener {
             intent.putExtra("TAG", map_markdesc_titleTextView.getText());
             v.getContext().startActivity(intent);
         });
-         // FIXME CRUTCH ПИЗДЕЦ
-        map_markdesc_build_routeBT.setOnClickListener(v -> {
-            if (routeWasDrown) {
-                map.getOverlays().remove(map.getOverlays().size() - 1);
-                map.invalidate();
-                Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
-            }
-            routeWasDrown = true;
-            if (myLocationOverlay == null) {
-                Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
-            lastMarker = item;
-            if (updateRoadTask != null)
-                updateRoadTask.cancel(true);
-            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
-            updateRoadTask.execute();
-            alertDialog.cancel();
-        });
-        alertDialog = new AlertDialog.Builder(MapActivity.this)
-                .setView(markerView)
-                .create();
-        alertDialog.show();
-    }
-
-
-    private void initMarkerView() {
-        // marker Info
-        markerView = getLayoutInflater().inflate(R.layout.custom_alert_dialog, null);
-        map_markdesc_imageView = (ImageView) markerView.findViewById(R.id.map_markdesc_image);
-        map_markdesc_titleTextView = (TextView) markerView.findViewById(R.id.map_markdesc_titleTextView);
-        map_markdesc_brief_descriptionTextView = (TextView) markerView.findViewById(R.id.map_markdesc_brief_descriptionTextView);
-        map_markdesc_show_moreBT = (Button) markerView.findViewById(R.id.map_markdesc_show_moreBT);
-        map_markdesc_build_routeBT = (Button) markerView.findViewById(R.id.map_markdesc_build_routeBT);
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        // если местоположение не загружено, то выходим
-        if (myLocationOverlay == null) {
-            Toast.makeText(MapActivity.this, "Определяем местоположение", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // если маркер не выбран, то выходим
-        if (lastMarker == null)
-            return;
-        // если запрос не завершен, то выходим
-        if (routeWasDrown)
-            return;
-        // Перерисовываем маршрут
-//        updateRoadTask = new UpdateRoadTask(location, lastMarker, locationNet, locationGPS, MapActivity.this);;// передаем текщие координаты (location)
-//        updateRoadTask.execute();
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
+        // FIXME CRUTCH ПИЗДЕЦ
+//        map_markdesc_build_routeBT.setOnClickListener(v -> {
+//            if (routeWasDrown) {
+//                map.getOverlays().remove(map.getOverlays().size() - 1);
+//                map.invalidate();
+//                Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
+//            }
+//            routeWasDrown = true;
+//            if (myLocationOverlay == null) {
+//                Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
+//            if (updateRoadTask != null)
+//                updateRoadTask.cancel(true);
+//            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
+//            updateRoadTask.execute();
+//            alertDialog.cancel();
+//        });
     }
 
 
@@ -269,5 +203,6 @@ public class MapActivity extends Activity implements LocationListener {
     public void onDestroy() {
         super.onDestroy();
         map.destroyDrawingCache();
+        locationManager.removeUpdates(myLocationListener);
     }
 }
