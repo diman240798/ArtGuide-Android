@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -43,11 +44,13 @@ import java.util.List;
 import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
 
 
-public class MapActivity extends AppCompatActivity implements RouteReceiver {
+public class MapActivity extends AppCompatActivity implements RouteReceiver, View.OnClickListener {
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
+    private Button bt_museum, bt_theatre, bt_memorial, bt_stadium;
+    private ImageView markdesc_closeIV;
     // Fields
     private UpdateRoadTask updateRoadTask;
     private MyLocationListener myLocationListener;
@@ -56,6 +59,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver {
     private ImageView map_markdesc_imageView;
     private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
     private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
+    private ConstraintLayout map_marker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,19 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver {
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
+        bt_museum = (Button) findViewById(R.id.map_bt_museum);
+        bt_theatre = (Button) findViewById(R.id.map_bt_theatre);
+        bt_memorial = (Button) findViewById(R.id.map_bt_memorial);
+        bt_stadium = (Button) findViewById(R.id.map_bt_stadium);
+
+        bt_museum.setOnClickListener(this);
+        bt_theatre.setOnClickListener(this);
+        bt_memorial.setOnClickListener(this);
+        bt_stadium.setOnClickListener(this);
+
+        map_marker = (ConstraintLayout) findViewById(R.id.map_marker);
+        markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
+        markdesc_closeIV.setOnClickListener(v -> map_marker.setVisibility(View.GONE));
 
         // Получение текущих координат
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -151,6 +168,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver {
             @Override
             public boolean onItemSingleTapUp(int index, OverlayItem item) {
                 onOverlayTapUp(item);
+                map_marker.setVisibility(View.VISIBLE);
                 return false;
             }
 
@@ -237,5 +255,32 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver {
         // TODO: ADD Later
         //roadPolyline.setOnClickListener(new RoadOnClickListener());
         mapOverlays.add(roadPolyline);
+    }
+
+    private void setDefaultImages() {
+        bt_theatre.setBackgroundResource(R.drawable.item_theatre);
+        bt_museum.setBackgroundResource(R.drawable.item_museam);
+        bt_memorial.setBackgroundResource(R.drawable.item_memorial);
+        bt_stadium.setBackgroundResource(R.drawable.item_stadium);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        setDefaultImages();
+
+        if (id == R.id.map_bt_museum) {
+            bt_museum.setBackgroundResource(R.drawable.item_museam_chosen);
+//            adapter.sortList(places, "Музей");
+        } else if (id == R.id.map_bt_stadium) {
+            bt_stadium.setBackgroundResource(R.drawable.item_stadium_chosen);
+//            adapter.sortList(places, "Стадион");
+        } else if (id == R.id.map_bt_memorial) {
+            bt_memorial.setBackgroundResource(R.drawable.item_memorial_chosen);
+//            adapter.sortList(places, "Памятник");
+        } else if (id == R.id.map_bt_theatre) {
+            bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
+//            adapter.sortList(places, "Театр");
+        }
     }
 }

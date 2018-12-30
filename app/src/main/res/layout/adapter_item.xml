@@ -34,7 +34,7 @@
         android:maxLines="1"
         android:text="Музей Исскуств"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintEnd_toStartOf="@+id/map_markdesc_closeIV"
         app:layout_constraintStart_toEndOf="@id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
