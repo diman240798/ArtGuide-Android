@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.IconOverlay;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
@@ -54,12 +56,16 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     // Fields
     private UpdateRoadTask updateRoadTask;
     private MyLocationListener myLocationListener;
-    private boolean routeWasDrown = false;
+    public static volatile boolean routeIsBeingDrawn = false;
     // Marker things
     private ImageView map_markdesc_imageView;
     private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
     private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
-    private ConstraintLayout map_marker;
+    private ConstraintLayout mapMarker;
+    private ItemizedIconOverlay<OverlayItem> myMarkers;
+    private LinearLayout layoutBottomButtons;
+    private OverlayItem lastItem;
+    private Polyline lastPolyline;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +78,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         // Setting up dialog (appears on tap up)
         initMarkerView();
         // Добавление маркеров
-        addingMarkers();
+        myMarkers = getMyMarkers();
+        // Маркеры настроены можно добавить
+        map.getOverlays().add(myMarkers);
     }
 
     private void init() {
@@ -93,14 +101,16 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         bt_memorial.setOnClickListener(this);
         bt_stadium.setOnClickListener(this);
 
-        map_marker = (ConstraintLayout) findViewById(R.id.map_marker);
+        mapMarker = (ConstraintLayout) findViewById(R.id.map_marker);
         markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
-        markdesc_closeIV.setOnClickListener(v -> map_marker.setVisibility(View.GONE));
+        markdesc_closeIV.setOnClickListener(v -> mapMarker.setVisibility(View.GONE));
+
+        layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);
 
         // Получение текущих координат
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
-        myLocationListener = new MyLocationListener(this, locationManager);
+        myLocationListener = new MyLocationListener(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         // TODO: Add Later
 //        this.registerReceiver(mConnReceiver,
@@ -147,7 +157,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map_markdesc_build_routeBT = (Button) findViewById(R.id.map_markdesc_build_routeBT);
     }
 
-    private void addingMarkers() {
+    private ItemizedIconOverlay<OverlayItem> getMyMarkers() {
         // Создаем лист маркеров
         List<OverlayItem> overlayItems = new ArrayList<>();
         // Добавляем маркеры
@@ -168,7 +178,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             @Override
             public boolean onItemSingleTapUp(int index, OverlayItem item) {
                 onOverlayTapUp(item);
-                map_marker.setVisibility(View.VISIBLE);
+                mapMarker.setVisibility(View.VISIBLE);
                 return false;
             }
 
@@ -177,8 +187,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                 return false;
             }
         });
-        // Маркеры настроены можно добавить
-        map.getOverlays().add(anotherItemizedIconOverlay);
+        return anotherItemizedIconOverlay;
     }
 
     private void onOverlayTapUp(OverlayItem item) {
@@ -193,23 +202,41 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             v.getContext().startActivity(intent);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
-//            if (routeWasDrown) {
-//                map.getOverlays().remove(map.getOverlays().size() - 1);
-//                map.invalidate();
-//                Toast.makeText(MapActivity.this, "Старый маршрут был удален", Toast.LENGTH_SHORT).show();
-//            }
-//            routeWasDrown = true;
             if (myLocationOverlay == null) {
                 Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
+            } else if (routeIsBeingDrawn) {
+                Toast.makeText(MapActivity.this, "Уже строим", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
-            if (updateRoadTask != null)
-                updateRoadTask.cancel(true);
-            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
-            updateRoadTask.execute(MapActivity.this);
+            routeIsBeingDrawn = true;
+
+            layoutBottomButtons.setVisibility(View.GONE);
+            mapMarker.setVisibility(View.GONE);
+
+            List<Overlay> overlays = map.getOverlays();
+            overlays.remove(myMarkers);
+            overlays.add(myLocationOverlay);
+            overlays.add(new IconOverlay(item.getPoint(), item.getDrawable()));
+
+            lastItem = item;
+            requestDrawRoute(item);
         });
+    }
+
+    public void requestDrawRoute(OverlayItem item) {
+        if (myLocationListener == null || lastItem == null) {
+            return;
+        } else if (item == null) {
+            item = lastItem;
+        }
+
+        Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
+        if (updateRoadTask != null)
+            updateRoadTask.cancel(true);
+        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
+        updateRoadTask.execute(MapActivity.this);
     }
 
 
@@ -224,14 +251,17 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         map.destroyDrawingCache();
         locationManager.removeUpdates(myLocationListener);
+        myLocationListener.mapActivity = null;
+        updateRoadTask = null;
     }
 
     @Override
     public void onRouteReceived(@NonNull Road[] roads) {
+        routeIsBeingDrawn = false;
         Context context = this;
         Road firstRoad = roads[0];
         if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
@@ -254,6 +284,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         roadPolyline.setWidth(5);
         // TODO: ADD Later
         //roadPolyline.setOnClickListener(new RoadOnClickListener());
+        if (lastPolyline != null) {
+            map.getOverlays().remove(lastPolyline);
+        }
+        lastPolyline = roadPolyline;
         mapOverlays.add(roadPolyline);
     }
 

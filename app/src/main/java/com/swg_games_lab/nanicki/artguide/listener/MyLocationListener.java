@@ -6,30 +6,27 @@ import android.os.Bundle;
 
 import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 
+import java.lang.ref.WeakReference;
+
 public class MyLocationListener implements LocationListener {
 
-    private final LocationManager locationManager;
+    public WeakReference<MapActivity> mapActivity;
+    private long minTimeForUpdate = 4000;
+    private long lastUpdate;
 
-    public MyLocationListener(MapActivity mapActivity, LocationManager locationManager) {
-        this.locationManager = locationManager;
+    public MyLocationListener(MapActivity mapActivity) {
+        this.mapActivity = new WeakReference<>(mapActivity);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-//        // если местоположение не загружено, то выходим
-//        if (myLocationOverlay == null) {
-//            Toast.makeText(MapActivity.this, "Определяем местоположение", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        // если маркер не выбран, то выходим
-//        if (lastMarker == null)
-//            return;
-//        // если запрос не завершен, то выходим
-//        if (routeWasDrown)
-//            return;
-//        // Перерисовываем маршрут
-////        updateRoadTask = new UpdateRoadTask(location, lastMarker, locationNet, locationGPS, MapActivity.this);;// передаем текщие координаты (location)
-////        updateRoadTask.execute();
+
+        MapActivity mapActivity = this.mapActivity.get();
+        long currentTimeMillis = System.currentTimeMillis();
+        if (mapActivity != null && currentTimeMillis - lastUpdate > minTimeForUpdate) {
+            mapActivity.requestDrawRoute(null);
+            lastUpdate = currentTimeMillis;
+        }
     }
 
     @Override

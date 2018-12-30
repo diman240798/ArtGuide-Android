@@ -20,13 +20,12 @@ import java.util.ArrayList;
 public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
 
     private WeakReference<RouteReceiver> routeReceiver;
-    private final ArrayList<GeoPoint> waypoints;
+    private ArrayList<GeoPoint> waypoints = null;
 
     public UpdateRoadTask(Location userLocation, OverlayItem item, RouteReceiver routeReceiver) {
         this.routeReceiver = new WeakReference<>(routeReceiver);
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
         waypoints.add(new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
-
         // crutch
         IGeoPoint markerpoint = item.getPoint();
         GeoPoint marker_location = new GeoPoint(markerpoint.getLatitude(), markerpoint.getLongitude());
