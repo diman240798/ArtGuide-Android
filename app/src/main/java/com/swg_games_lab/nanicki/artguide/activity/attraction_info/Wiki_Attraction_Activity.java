@@ -30,7 +30,7 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
             if (extras.getString("TAG") != null)
             switch (extras.getString("TAG")) {
                 case "Музей Искусств":
-                    
+
                     break;
             }
         }
@@ -41,6 +41,4 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
         titleTW.setText(title);
         descrTW.setText(description);
     }
-
-
 }

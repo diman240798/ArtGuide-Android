@@ -38,8 +38,8 @@
 
     <Button
         android:id="@+id/main_wikiBT"
-        android:layout_width="120dp"
-        android:layout_height="25dp"
+        android:layout_width="125dp"
+        android:layout_height="30dp"
         android:background="@drawable/main_wiki_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

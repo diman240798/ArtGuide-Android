@@ -1,10 +1,10 @@
 package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
+import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.Adapter;
@@ -60,10 +59,10 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         setupAdapter();
         // TODO: ENABLE IN THE END
         //mRecyclerView.setHasFixedSize(true);
-        bt_museum.setOnClickListener(v -> adapter.sortList(places, "Музей"));
-        bt_theatre.setOnClickListener(v -> adapter.sortList(places, "Театр"));
-        bt_memorial.setOnClickListener(v -> adapter.sortList(places, "Памятник"));
-        bt_stadium.setOnClickListener(v -> adapter.sortList(places, "Стадион"));
+        bt_museum.setOnClickListener(this);
+        bt_theatre.setOnClickListener(this);
+        bt_memorial.setOnClickListener(this);
+        bt_stadium.setOnClickListener(this);
     }
 
     private void setupAdapter() {
@@ -89,8 +88,31 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        int id = view.getId();
+        setDefaultImages();
 
+        if (id == R.id.wiki_bt_museum) {
+            bt_museum.setBackgroundResource(R.drawable.item_museam_chosen);
+            adapter.sortList(places, "Музей");
+        } else if (id == R.id.wiki_bt_stadium) {
+            bt_stadium.setBackgroundResource(R.drawable.item_stadium_chosen);
+            adapter.sortList(places, "Стадион");
+        } else if (id == R.id.wiki_bt_memorial) {
+            bt_memorial.setBackgroundResource(R.drawable.item_memorial_chosen);
+            adapter.sortList(places, "Памятник");
+        } else if (id == R.id.wiki_bt_theatre) {
+            bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
+            adapter.sortList(places, "Театр");
+        }
     }
+
+    private void setDefaultImages() {
+        bt_theatre.setBackgroundResource(R.drawable.item_theatre);
+        bt_museum.setBackgroundResource(R.drawable.item_museam);
+        bt_memorial.setBackgroundResource(R.drawable.item_memorial);
+        bt_stadium.setBackgroundResource(R.drawable.item_stadium);
+    }
+
 
     @Override
     public boolean onQueryTextSubmit(String s) {
