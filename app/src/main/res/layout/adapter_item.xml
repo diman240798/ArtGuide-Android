@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
         android:scaleType="fitXY"
-        android:src="@drawable/museaum_rail_train_big"
+        android:src="@drawable/museum_rail_train_big"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
