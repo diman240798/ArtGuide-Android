@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.Adapter;
+import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.ui.BottomNavigationBehavior;
@@ -28,7 +29,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium;
     private Adapter adapter;
-    private List<NewPlace> places = getPlaces();
+    private List<NewPlace> places;
 
 
     @Override
@@ -47,6 +48,9 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wiki);
+
+        places = getPlaces();
+
         bt_museum = (Button) findViewById(R.id.wiki_bt_museum);
         bt_theatre = (Button) findViewById(R.id.wiki_bt_theatre);
         bt_memorial = (Button) findViewById(R.id.wiki_bt_memorial);
@@ -79,7 +83,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
     // TODO: ADD DATA
     // TODO: ADD DATA
     private List<NewPlace> getPlaces() {
-        List<NewPlace> list = new ArrayList<>();
+
         /*list.addAll(Arrays.asList(new Place[]{
                 new Place(R.drawable.muzey_kraevedeniya_small, "Музей", "Ростовский областной музей изобразительных."),
                 new Place(R.drawable.muzey_kraevedeniya_small, "НЕМузей", "Ростовский областной музей изобразительных."),
@@ -89,7 +93,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
                 new Place(R.drawable.muzey_kraevedeniya_small, "НЕМузей", "Ростовский областной музей изобразительных."),
                 new Place(R.drawable.muzey_kraevedeniya_small, "1", "Ростовский областной музей изобразительных.")
         }));*/
-        return list;
+        return CSVreader.getData(this);
     }
 
     @Override
