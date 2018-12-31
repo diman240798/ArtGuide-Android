@@ -68,6 +68,14 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         bt_theatre.setOnClickListener(this);
         bt_memorial.setOnClickListener(this);
         bt_stadium.setOnClickListener(this);
+
+        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_up);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down);
     }
 
     private void setupAdapter() {
