@@ -90,9 +90,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            Log.d("App", mPlaces.get(getAdapterPosition()).getTitle());
+            NewPlace place = mPlaces.get(getAdapterPosition());
+            Log.d("App", place.getTitle());
             Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
-            intent.putExtra("TAG", titleTextView.getText());
+            intent.putExtra("TAG", place.getId());
             v.getContext().startActivity(intent);
 
         }

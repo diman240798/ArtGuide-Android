@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
+import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
+import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -22,7 +24,7 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
 
     ImageView imageView;
     TextView titleTW, descrTW;
-    Button listenBTN;
+    Button listenBTN, bottomBTN;
     private GifImageView guideSpeaker;
     private GifDrawable gifFromResource;
     private Drawable playImage;
@@ -34,6 +36,8 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
         super.onCreate(bundle);
         setContentView(R.layout.activity_wiki__attraction);
 
+        bottomBTN = (Button) findViewById(R.id.wiki_attr_bottomBT);
+        bottomBTN.setOnClickListener(v -> finish());
         imageView = (ImageView) findViewById(R.id.wiki_attr_Image);
         titleTW = (TextView) findViewById(R.id.wiki_attr_titleTW);
         descrTW = (TextView) findViewById(R.id.wiki_attr_descriptionTW);
@@ -78,12 +82,17 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
 
         if (bundle == null) {
             Bundle extras = getIntent().getExtras();
-
-            if (extras.getString("TAG") != null)
-            switch (extras.getString("TAG")) {
-                case "Музей Искусств":
-
-                    break;
+            if (extras != null) {
+                int placeId = extras.getInt("TAG");
+                NewPlace place = CSVreader.getPlaceById(placeId);
+                // get data
+                int placeImageBig = place.getImageBig();
+                String title = place.getTitle();
+                String description = place.getDescription();
+                // set data
+                imageView.setImageResource(placeImageBig);
+                titleTW.setText(title);
+                descrTW.setText(description);
             }
         }
     }

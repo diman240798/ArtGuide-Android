@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.model.NewPlace;
+import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,16 +42,19 @@ public class CSVreader {
                 // Split the line into different tokens (using the comma as a separator).
                 if (line.startsWith(commentariy))
                     continue;
-                String[] tokens = line.split(separator);
+                String[] splitDescription = line.split("::");
+
+                String[] tokens = splitDescription[0].split(separator);
+                String description = splitDescription[1];
 
                 // Read the data and store it.
                 String id = tokens[0];
+                Log.d("__ID__", String.valueOf(id));
                 String title = tokens[1];
                 String latitude = tokens[2];
-                String  longitude = tokens[3];
+                String longitude = tokens[3];
                 String imageSmall = tokens[4];
                 String imageBig = tokens[5];
-                String description = tokens[6];
 
                 NewPlace newPlace = new NewPlace(
                         Integer.parseInt(id),
@@ -68,5 +72,13 @@ public class CSVreader {
             e1.printStackTrace();
         }
         return result;
+    }
+
+    public static NewPlace getPlaceById(int placeId) {
+        for(NewPlace place : data) {
+            if (place.getId() == placeId)
+                return place;
+        }
+        throw new RuntimeException("No such place with id: " + placeId);
     }
 }
