@@ -1,9 +1,5 @@
 package com.swg_games_lab.nanicki.artguide.model;
 
-/**
- * Created by dmitriy on 06.04.18.
- */
-
 public class Place {
     private int mDrawable;
     private String title;
@@ -38,4 +34,5 @@ public class Place {
     public void setBrief_description(String brief_description) {
         this.brief_description = brief_description;
     }
+
 }

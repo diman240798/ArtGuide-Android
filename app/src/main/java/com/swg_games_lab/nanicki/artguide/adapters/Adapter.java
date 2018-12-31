@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    private List<Place> mPlaces;
+    private List<NewPlace> mPlaces;
 
-    public Adapter(List<Place> places) {
+    public Adapter(List<NewPlace> places) {
         mPlaces = places;
     }
 
@@ -37,10 +38,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Place place = mPlaces.get(position);
-        holder.imageView.setImageResource(place.getDrawable());
+        NewPlace place = mPlaces.get(position);
+        holder.imageView.setImageResource(place.getImageBig());
         holder.titleTextView.setText(place.getTitle());
-        holder.brief_descriptionTextView.setText(String.valueOf(place.getBrief_description()));
+        holder.brief_descriptionTextView.setText(place.getDescription());
         holder.learn_moreBT.setText(R.string.Learn_More_btn);
     }
 
@@ -54,16 +55,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return mPlaces.size();
     }
 
-    public List<Place> getList() {
+    public List<NewPlace> getList() {
         return mPlaces;
     }
 
-    public void sortList(List<Place> places, String key) {
+    public void sortList(List<NewPlace> places, String key) {
         //Collections.sort(mPlaces, ((place, t1) -> place.getTitle().compareTo(key)));
-        List<Place> result = new ArrayList<>();
-        for (Place place : places) {
+        List<NewPlace> result = new ArrayList<>();
+        for (NewPlace place : places) {
             if (place.getTitle().toLowerCase().contains(key.toLowerCase()) ||
-                    place.getBrief_description().toLowerCase().contains(key.toLowerCase()))
+                    place.getDescription().toLowerCase().contains(key.toLowerCase()))
                 result.add(place);
         }
         mPlaces = result;
