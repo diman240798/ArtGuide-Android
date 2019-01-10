@@ -37,6 +37,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textStyle="bold"
         app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="16dp"
+        app:autoSizeMinTextSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +47,6 @@
         android:id="@+id/brief_descriptionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
         android:maxLines="2"
         android:text="Филиал Музея истории Северо-Кавказской железной дороги открылся в 2003 году на западной окраине Ростова, на станции Гниловской. Общая протяженность выставочных путей занимает почти две тысячи метров. Коллекция старого подвижного состава собиралась на протяжении двадцати лет энтузиастами и работниками железной дороги. Сегодня в музее более 50 паровозов, электровозов, вагонов и путейной техники, большинство из которых сохранились в единственном экземпляре или несут важную историческую нагрузку. Например, здесь можно увидеть механический семафор, румынскую цистерну середины XIX века, военную мотодрезину, 45-тонный грузоподъемный кран 1935 года и многое другое — можно не только трогать все экспонаты, но и забираться внутрь."

@@ -37,6 +37,7 @@
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
     <include
+        android:visibility="gone"
         android:id="@+id/map_marker"
         layout="@layout/map_marker_item"
         android:layout_width="match_parent"

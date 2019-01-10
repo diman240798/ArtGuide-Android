@@ -19,8 +19,10 @@ import android.widget.Toast;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
+import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
+import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 
 import org.osmdroid.api.IMapController;
@@ -52,7 +54,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium;
-    private ImageView markdesc_closeIV;
     // Fields
     private UpdateRoadTask updateRoadTask;
     private MyLocationListener myLocationListener;
@@ -77,6 +78,21 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         setUpMap();
         // Setting up dialog (appears on tap up)
         initMarkerView();
+        Bundle extras = getIntent().getExtras();
+///////////     TODO UNCOMMENT WHEN IMAGES ARE READY
+//        if (extras != null) {
+//            int id = extras.getInt("ID");
+//            NewPlace placeById = CSVreader.getPlaceById(id);
+//            String title = placeById.getTitle();
+//            String placeByIdDescription = placeById.getDescription();
+//            int placeByIdImageSmall = placeById.getImageSmall();
+//            double latitude = placeById.getLatitude();
+//            double longitude = placeById.getLongitude();
+//            OverlayItem item = new OverlayItem(title, placeByIdDescription, new GeoPoint(latitude, longitude));
+//            item.setMarker(this.getDrawable(placeByIdImageSmall));
+//            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
+//        }
+
         // Добавление маркеров
         myMarkers = getMyMarkers();
         // Маркеры настроены можно добавить
@@ -102,7 +118,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         bt_stadium.setOnClickListener(this);
 
         mapMarker = (ConstraintLayout) findViewById(R.id.map_marker);
-        markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
+        ImageView markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
         markdesc_closeIV.setOnClickListener(v -> mapMarker.setVisibility(View.GONE));
 
         layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);

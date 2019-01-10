@@ -39,7 +39,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         NewPlace place = mPlaces.get(position);
-        holder.imageView.setImageResource(place.getImageBig());
+        holder.imageView.setImageResource(place.getImageSmall());
         holder.titleTextView.setText(place.getTitle());
         holder.brief_descriptionTextView.setText(place.getDescription());
         holder.learn_moreBT.setText(R.string.Learn_More_btn);
