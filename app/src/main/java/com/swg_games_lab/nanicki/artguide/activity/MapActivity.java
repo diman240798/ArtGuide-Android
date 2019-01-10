@@ -225,6 +225,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                 Toast.makeText(MapActivity.this, "Уже строим", Toast.LENGTH_SHORT).show();
                 return;
             }
+            Location userLocation = getUserLocation(locationManager);
+            if (userLocation == null)
+                return;
 
             routeIsBeingDrawn = true;
 
@@ -273,6 +276,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
         updateRoadTask = null;
+        finish();
     }
 
     @Override
