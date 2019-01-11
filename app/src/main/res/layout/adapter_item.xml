@@ -14,7 +14,7 @@
     android:foreground="?selectableItemBackground">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/wiki_item_imageView"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
@@ -26,7 +26,7 @@
 
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/wiki_item_titleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -40,11 +40,11 @@
         app:autoSizeMaxTextSize="16dp"
         app:autoSizeMinTextSize="13dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintStart_toEndOf="@id/wiki_item_imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/brief_descriptionTextView"
+        android:id="@+id/wiki_item_descriptionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -52,11 +52,11 @@
         android:text="Филиал Музея истории Северо-Кавказской железной дороги открылся в 2003 году на западной окраине Ростова, на станции Гниловской. Общая протяженность выставочных путей занимает почти две тысячи метров. Коллекция старого подвижного состава собиралась на протяжении двадцати лет энтузиастами и работниками железной дороги. Сегодня в музее более 50 паровозов, электровозов, вагонов и путейной техники, большинство из которых сохранились в единственном экземпляре или несут важную историческую нагрузку. Например, здесь можно увидеть механический семафор, румынскую цистерну середины XIX века, военную мотодрезину, 45-тонный грузоподъемный кран 1935 года и многое другое — можно не только трогать все экспонаты, но и забираться внутрь."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/titleTextView"
-        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+        app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
+        app:layout_constraintTop_toBottomOf="@id/wiki_item_titleTextView" />
 
     <Button
-        android:id="@+id/learn_more_btn"
+        android:id="@+id/wiki_item_learn_more_Button"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginTop="25dp"
@@ -67,8 +67,8 @@
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/titleTextView"
-        app:layout_constraintTop_toBottomOf="@+id/brief_descriptionTextView" />
+        app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/wiki_item_descriptionTextView" />
 
     <TextView
         android:id="@+id/imageView_text_on_map"
@@ -78,12 +78,12 @@
         android:text="На карте"
         android:textColor="@color/colorGreen"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/map_markdesc_build_routeBT"
-        app:layout_constraintEnd_toStartOf="@+id/map_markdesc_build_routeBT"
-        app:layout_constraintTop_toTopOf="@+id/map_markdesc_build_routeBT" />
+        app:layout_constraintBottom_toBottomOf="@id/wiki_item_build_routeBT"
+        app:layout_constraintEnd_toStartOf="@+id/wiki_item_build_routeBT"
+        app:layout_constraintTop_toTopOf="@+id/wiki_item_build_routeBT" />
 
     <Button
-        android:id="@+id/map_markdesc_build_routeBT"
+        android:id="@+id/wiki_item_build_routeBT"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="16dp"
@@ -92,9 +92,9 @@
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/learn_more_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/wiki_item_learn_more_Button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/learn_more_btn" />
+        app:layout_constraintTop_toTopOf="@id/wiki_item_learn_more_Button" />
 
 
 </android.support.constraint.ConstraintLayout>

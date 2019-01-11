@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.model.NewPlace;
-import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,10 +80,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            imageView = (ImageView) itemView.findViewById(R.id.imageView);
-            titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
-            brief_descriptionTextView = (TextView) itemView.findViewById(R.id.brief_descriptionTextView);
-            learn_moreBT = (Button) itemView.findViewById(R.id.learn_more_btn);
+            imageView = (ImageView) itemView.findViewById(R.id.wiki_item_imageView);
+            titleTextView = (TextView) itemView.findViewById(R.id.wiki_item_titleTextView);
+            brief_descriptionTextView = (TextView) itemView.findViewById(R.id.wiki_item_descriptionTextView);
+            learn_moreBT = (Button) itemView.findViewById(R.id.wiki_item_learn_more_Button);
             learn_moreBT.setOnClickListener(this);
         }
 

@@ -2,6 +2,7 @@ package com.swg_games_lab.nanicki.artguide.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -170,25 +171,24 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map_markdesc_titleTextView = (TextView) findViewById(R.id.map_markdesc_titleTextView);
         map_markdesc_brief_descriptionTextView = (TextView) findViewById(R.id.map_markdesc_brief_descriptionTextView);
         map_markdesc_show_moreBT = (Button) findViewById(R.id.map_markdesc_show_moreBT);
-        map_markdesc_build_routeBT = (Button) findViewById(R.id.map_markdesc_build_routeBT);
+        map_markdesc_build_routeBT = (Button) findViewById(R.id.wiki_item_build_routeBT);
     }
 
     private ItemizedIconOverlay<OverlayItem> getMyMarkers() {
         // Создаем лист маркеров
         List<OverlayItem> overlayItems = new ArrayList<>();
         // Добавляем маркеры
-        // TODO: Доделать
-        // Аксайский скейт парк
-        OverlayItem overlayItem = new OverlayItem("Парк", "Скейт Парк",
-                new GeoPoint(47.271563, 39.856363));
-        overlayItem.setMarker(this.getDrawable(R.drawable.aksay_park));
-        overlayItems.add(overlayItem);
-        // Дом Маргариты Черновой
-        overlayItem = new OverlayItem("Музей", "Дом Маргариты Черновой",
-                new GeoPoint(47.219196, 39.702261));
-        overlayItem.setMarker(this.getDrawable(R.drawable.museum_small));
-        overlayItems.add(overlayItem);
-        // OnClickListener на маркер
+        List<NewPlace> data = CSVreader.getData(this);
+        for (int i = 0; i < data.size(); i++) {
+            NewPlace newPlace = data.get(i);
+            int id = newPlace.getId();
+            double latitude = newPlace.getLatitude();
+            double longitude = newPlace.getLongitude();
+            OverlayItem iconOverlay = new OverlayItem(String.valueOf(id), null, new GeoPoint(latitude, longitude));
+            iconOverlay.setMarker(this.getDrawable(R.drawable.map_marker_small));
+            overlayItems.add(iconOverlay);
+        }
+
         ItemizedIconOverlay<OverlayItem> anotherItemizedIconOverlay = new ItemizedIconOverlay<>(
                 this, overlayItems, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
@@ -208,26 +208,32 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     private void onOverlayTapUp(OverlayItem item) {
 
-        map_markdesc_titleTextView.setText(item.getTitle());
-        map_markdesc_brief_descriptionTextView.setText(item.getSnippet());
-        map_markdesc_imageView.setImageDrawable(item.getDrawable());
+        int id = Integer.parseInt(item.getTitle());
+        NewPlace place = CSVreader.getPlaceById(id);
+        int imageSmall = place.getImageSmall();
+        String title = place.getTitle();
+        String description = place.getDescription();
+
+        Drawable imageSmallDrawable = this.getDrawable(imageSmall);
+
+
+        map_markdesc_titleTextView.setText(title);
+        map_markdesc_brief_descriptionTextView.setText(description);
+        map_markdesc_imageView.setImageDrawable(imageSmallDrawable);
 
         map_markdesc_show_moreBT.setOnClickListener((View v) -> {
             Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
-            intent.putExtra("TAG", map_markdesc_titleTextView.getText());
+            intent.putExtra("TAG", id);
             v.getContext().startActivity(intent);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
-            if (myLocationOverlay == null) {
+            if (myLocationOverlay == null || getUserLocation(locationManager) == null) {
                 Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
             } else if (routeIsBeingDrawn) {
                 Toast.makeText(MapActivity.this, "Уже строим", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Location userLocation = getUserLocation(locationManager);
-            if (userLocation == null)
-                return;
 
             routeIsBeingDrawn = true;
 
@@ -237,7 +243,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(myMarkers);
             overlays.add(myLocationOverlay);
-            overlays.add(new IconOverlay(item.getPoint(), item.getDrawable()));
+            overlays.add(new IconOverlay(item.getPoint(), this.getDrawable(R.drawable.map_marker_small)));
 
             lastItem = item;
             requestDrawRoute(item);
@@ -276,7 +282,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
         updateRoadTask = null;
-        finish();
     }
 
     @Override

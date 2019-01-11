@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map_markdesc_rel_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="130dp"
     android:layout_marginStart="-20dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="16dp"
@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_launcher_background"
+        android:src="@drawable/museum_rail_train_big"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,15 +24,20 @@
     <TextView
         android:id="@+id/map_markdesc_titleTextView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:maxLines="1"
-        android:text="Музей Исскуств"
+        android:text="Музей железнодорожной техники"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="16dp"
+        app:autoSizeMinTextSize="10dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/map_markdesc_closeIV"
         app:layout_constraintEnd_toStartOf="@+id/map_markdesc_closeIV"
         app:layout_constraintStart_toEndOf="@id/map_markdesc_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/map_markdesc_closeIV" />
 
 
     <ImageView
@@ -49,11 +54,12 @@
         android:id="@+id/map_markdesc_brief_descriptionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
         android:maxLines="2"
-        android:text="Ростовский областной музей изобразительных."
+        android:text="Ростовский областной музей изобразительных.областной музей изобразительных.областной музей изобразительных."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toTopOf="@+id/wiki_item_build_routeBT"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
         app:layout_constraintTop_toBottomOf="@id/map_markdesc_titleTextView" />
@@ -62,7 +68,6 @@
         android:id="@+id/map_markdesc_show_moreBT"
         android:layout_width="100dp"
         android:layout_height="30dp"
-        android:layout_marginTop="25dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/button_background_green"
         android:text="Подробнее"
@@ -70,8 +75,7 @@
         android:textColor="@color/colorWhite"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView"
-        app:layout_constraintTop_toBottomOf="@+id/map_markdesc_brief_descriptionTextView" />
+        app:layout_constraintStart_toStartOf="@id/map_markdesc_titleTextView" />
 
     <TextView
         android:id="@+id/map_markdesc_image_text_on_map"
@@ -81,12 +85,12 @@
         android:text="На карте"
         android:textColor="@color/colorGreen"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/map_markdesc_build_routeBT"
-        app:layout_constraintEnd_toStartOf="@+id/map_markdesc_build_routeBT"
-        app:layout_constraintTop_toTopOf="@+id/map_markdesc_build_routeBT" />
+        app:layout_constraintBottom_toBottomOf="@id/wiki_item_build_routeBT"
+        app:layout_constraintEnd_toStartOf="@+id/wiki_item_build_routeBT"
+        app:layout_constraintTop_toTopOf="@+id/wiki_item_build_routeBT" />
 
     <Button
-        android:id="@+id/map_markdesc_build_routeBT"
+        android:id="@+id/wiki_item_build_routeBT"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="16dp"
