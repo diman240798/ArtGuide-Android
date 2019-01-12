@@ -60,10 +60,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private MyLocationListener myLocationListener;
     public static volatile boolean routeIsBeingDrawn = false;
     // Marker things
-    private ImageView map_markdesc_imageView;
-    private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView;
-    private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
     private ConstraintLayout mapMarker;
+    private ImageView map_markdesc_imageView;
+    private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView, map_markdesc_distanceTextView;
+    private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
     private ItemizedIconOverlay<OverlayItem> myMarkers;
     private LinearLayout layoutBottomButtons;
     private OverlayItem lastItem;
@@ -120,7 +120,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
         mapMarker = (ConstraintLayout) findViewById(R.id.map_marker);
         ImageView markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
-        markdesc_closeIV.setOnClickListener(v -> mapMarker.setVisibility(View.GONE));
+        markdesc_closeIV.setOnClickListener(v -> {
+            mapMarker.setVisibility(View.GONE);
+            map_markdesc_distanceTextView.setVisibility(View.GONE);
+        });
 
         layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);
 
@@ -171,7 +174,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map_markdesc_titleTextView = (TextView) findViewById(R.id.map_markdesc_titleTextView);
         map_markdesc_brief_descriptionTextView = (TextView) findViewById(R.id.map_markdesc_brief_descriptionTextView);
         map_markdesc_show_moreBT = (Button) findViewById(R.id.map_markdesc_show_moreBT);
-        map_markdesc_build_routeBT = (Button) findViewById(R.id.wiki_item_build_routeBT);
+        map_markdesc_build_routeBT = (Button) findViewById(R.id.map_markdesc_build_routeBT);
+        map_markdesc_distanceTextView = (TextView) findViewById(R.id.map_markdesc_distanceTW);
+
     }
 
     private ItemizedIconOverlay<OverlayItem> getMyMarkers() {
@@ -227,7 +232,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             v.getContext().startActivity(intent);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
-            if (myLocationOverlay == null || getUserLocation(locationManager) == null) {
+            Location userLocation = getUserLocation(locationManager);
+            Toast.makeText(MapActivity.this, String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
+            if (userLocation == null || myLocationOverlay == null) {
                 Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
             } else if (routeIsBeingDrawn) {
@@ -248,6 +255,27 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             lastItem = item;
             requestDrawRoute(item);
         });
+
+        Location userLocation = getUserLocation(locationManager);
+        if (userLocation != null) {
+            Location itemLocation = new Location("");
+            itemLocation.setLatitude(item.getPoint().getLatitude());
+            itemLocation.setLongitude(item.getPoint().getLongitude());
+            double distanceTo = userLocation.distanceTo(itemLocation);
+            int porog = 0;
+            String suffix;
+            if (distanceTo > 1000) {
+                porog = 100;
+                suffix = "км";
+                distanceTo = Math.floor(distanceTo / porog) * porog / 1000;
+            } else {
+                porog = 100;
+                suffix = "м";
+                distanceTo = Math.floor(distanceTo / porog) * porog;
+            }
+            map_markdesc_distanceTextView.setText(String.valueOf(distanceTo + suffix));
+            map_markdesc_distanceTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void requestDrawRoute(OverlayItem item) {

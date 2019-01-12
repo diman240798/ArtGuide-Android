@@ -78,12 +78,12 @@
         android:text="На карте"
         android:textColor="@color/colorGreen"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/wiki_item_build_routeBT"
-        app:layout_constraintEnd_toStartOf="@+id/wiki_item_build_routeBT"
-        app:layout_constraintTop_toTopOf="@+id/wiki_item_build_routeBT" />
+        app:layout_constraintBottom_toBottomOf="@id/map_markdesc_build_routeBT"
+        app:layout_constraintEnd_toStartOf="@+id/map_markdesc_build_routeBT"
+        app:layout_constraintTop_toTopOf="@+id/map_markdesc_build_routeBT" />
 
     <Button
-        android:id="@+id/wiki_item_build_routeBT"
+        android:id="@+id/map_markdesc_build_routeBT"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="16dp"
