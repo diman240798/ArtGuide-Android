@@ -9,6 +9,7 @@
     tools:context=".activity.attraction_info.WikiActivity">
 
     <include
+        app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior"
         android:id="@+id/wiki_tool_bar"
         layout="@layout/toolbar" />
 
