@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,24 +51,37 @@ import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocati
 
 
 public class MapActivity extends AppCompatActivity implements RouteReceiver, View.OnClickListener {
+
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
     private LocationManager locationManager;
+
+    // Markers
+    private RadiusMarkerClusterer myMarkers;
+
+    // Markers sorting
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium;
-    // Fields
+
+    // Route Building
     private UpdateRoadTask updateRoadTask;
     private MyLocationListener myLocationListener;
     public static volatile boolean routeIsBeingDrawn = false;
+    private Marker lastItem;
+    private Polyline lastPolyline;
+
     // Marker things
     private ConstraintLayout mapMarker;
     private ImageView map_markdesc_imageView;
     private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView, map_markdesc_distanceTextView;
     private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
-    private RadiusMarkerClusterer myMarkers;
     private LinearLayout layoutBottomButtons;
-    private Marker lastItem;
-    private Polyline lastPolyline;
+
+    // Route info things
+    private ConstraintLayout mapRouteInfo;
+    private ImageView mapRouteImage, mapRouteClose, mapRouteWalkImage;
+    private TextView mapRouteLength, mapRouteTime, mapRouteTitle;
+    private ProgressBar mapRouteProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +89,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         setContentView(R.layout.activity_map);
         // Инициализация layoutов
         init();
+        // Place Description layout
+        initMapMarker();
+        // Bottom srting buttons
+        initBottomSortingButtons();
+        // Route Info
+        initRouteInfoLayout();
         // Настройка карты
         setUpMap();
         // Setting up dialog (appears on tap up)
@@ -100,6 +120,20 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map.getOverlays().add(myMarkers);
     }
 
+    private void initRouteInfoLayout() {
+        mapRouteInfo = (ConstraintLayout) findViewById(R.id.map_route_info);
+        mapRouteImage = (ImageView) findViewById(R.id.route_info_image);
+        mapRouteClose = (ImageView) findViewById(R.id.route_info_close);
+        mapRouteClose.setOnClickListener(v -> {
+
+        });
+        mapRouteWalkImage = (ImageView) findViewById(R.id.route_info_walk_image);
+        mapRouteTitle = (TextView) findViewById(R.id.route_info_title);
+        mapRouteTime = (TextView) findViewById(R.id.route_info_time);
+        mapRouteLength = (TextView) findViewById(R.id.route_info_length);
+        mapRouteProgressBar = (ProgressBar) findViewById(R.id.route_info_progress_bar);
+    }
+
     private void init() {
         //load/initialize the osmdroid configuration, this can be done
         Context context = this;
@@ -107,6 +141,21 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         //inflate and create the map
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
+
+        // Получение текущих координат
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        assert locationManager != null;
+        myLocationListener = new MyLocationListener(this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+        // TODO: Add Later
+//        this.registerReceiver(mConnReceiver,
+//                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+    }
+
+    private void initBottomSortingButtons() {
+
+        layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);
 
         bt_museum = (Button) findViewById(R.id.map_bt_museum);
         bt_theatre = (Button) findViewById(R.id.map_bt_theatre);
@@ -118,23 +167,15 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         bt_memorial.setOnClickListener(this);
         bt_stadium.setOnClickListener(this);
 
+    }
+
+    private void initMapMarker() {
         mapMarker = (ConstraintLayout) findViewById(R.id.map_marker);
         ImageView markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
         markdesc_closeIV.setOnClickListener(v -> {
             mapMarker.setVisibility(View.GONE);
             map_markdesc_distanceTextView.setVisibility(View.GONE);
         });
-
-        layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);
-
-        // Получение текущих координат
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        assert locationManager != null;
-        myLocationListener = new MyLocationListener(this);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
-        // TODO: Add Later
-//        this.registerReceiver(mConnReceiver,
-//                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
     }
 
@@ -249,6 +290,16 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(R.drawable.map_marker_small)));
 
             lastItem = item;
+            mapRouteImage.setImageDrawable(imageSmallDrawable);
+            mapRouteTitle.setText(title);
+            // Hide description
+            mapRouteTime.setVisibility(View.GONE);
+            mapRouteWalkImage.setVisibility(View.GONE);
+            mapRouteLength.setVisibility(View.GONE);
+            // Show progress bar
+            mapRouteProgressBar.setVisibility(View.VISIBLE);
+            // Show
+            mapRouteInfo.setVisibility(View.VISIBLE);
             requestDrawRoute(item);
         });
 
@@ -321,6 +372,14 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             return;
         }
 
+        double roadLength = firstRoad.mLength;
+
+        mapRouteLength.setText(String.format("%.3f км",roadLength));
+        mapRouteTime.setText(String.format("%.0f мин",roadLength * 12));
+        mapRouteProgressBar.setVisibility(View.GONE);
+        mapRouteWalkImage.setVisibility(View.VISIBLE);
+        mapRouteLength.setVisibility(View.VISIBLE);
+        mapRouteTime.setVisibility(View.VISIBLE);
 
         List<Overlay> mapOverlays = map.getOverlays();
         Polyline roadPolyline = RoadManager.buildRoadOverlay(firstRoad);

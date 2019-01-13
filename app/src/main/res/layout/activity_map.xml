@@ -130,9 +130,10 @@
     </LinearLayout>
 
     <include
+        android:id="@+id/map_route_info"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/route_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         layout="@layout/route_bottom_info"/>
