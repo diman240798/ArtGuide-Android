@@ -129,6 +129,14 @@
         </LinearLayout>
     </LinearLayout>
 
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/route_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        layout="@layout/route_bottom_info"/>
+
     <!-- <Button
          android:id="@+id/map_wikiBT"
          android:layout_width="120dp"

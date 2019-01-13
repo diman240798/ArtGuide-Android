@@ -4,7 +4,7 @@
     android:id="@+id/map_markdesc_rel_layout"
     android:layout_width="match_parent"
     android:layout_gravity="bottom"
-    android:layout_height="80dp">
+    android:layout_height="60dp">
 
     <ImageView
         android:id="@+id/route_info_image"
@@ -21,7 +21,7 @@
         android:id="@+id/route_info_title"
         android:layout_width="0dp"
         android:layout_height="20dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:maxLines="1"
         android:text="Музей железнодорожной техники"
@@ -50,19 +50,54 @@
         android:id="@+id/route_info_progress_bar"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:indeterminate="true"
         android:indeterminateTint="@color/colorGreen"
         android:indeterminateTintMode="src_atop"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/route_info_image"
-        app:layout_constraintTop_toBottomOf="@+id/route_info_title"
-        app:layout_constraintVertical_bias="0.39" />
+        app:layout_constraintTop_toBottomOf="@+id/route_info_title" />
+    <ImageView
+        android:id="@+id/route_info_walk_image"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="visible"
+        android:src="@drawable/man_walk"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/route_info_image"
+        app:layout_constraintTop_toBottomOf="@+id/route_info_title" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="600 м"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintBottom_toBottomOf="@+id/route_info_walk_image"
+        app:layout_constraintEnd_toStartOf="@+id/route_info_walk_image"
+        app:layout_constraintStart_toEndOf="@+id/route_info_image"
+        app:layout_constraintTop_toTopOf="@+id/route_info_walk_image" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="25 мин"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintBottom_toBottomOf="@+id/route_info_walk_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/route_info_walk_image"
+        app:layout_constraintTop_toTopOf="@+id/route_info_walk_image" />
 
 
 </android.support.constraint.ConstraintLayout>
