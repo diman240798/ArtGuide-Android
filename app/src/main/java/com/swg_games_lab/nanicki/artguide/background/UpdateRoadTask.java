@@ -12,6 +12,7 @@ import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.lang.ref.WeakReference;
@@ -22,12 +23,12 @@ public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
     private WeakReference<RouteReceiver> routeReceiver;
     private ArrayList<GeoPoint> waypoints = null;
 
-    public UpdateRoadTask(Location userLocation, OverlayItem item, RouteReceiver routeReceiver) {
+    public UpdateRoadTask(Location userLocation, Marker item, RouteReceiver routeReceiver) {
         this.routeReceiver = new WeakReference<>(routeReceiver);
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
         waypoints.add(new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
         // crutch
-        IGeoPoint markerpoint = item.getPoint();
+        IGeoPoint markerpoint = item.getPosition();
         GeoPoint marker_location = new GeoPoint(markerpoint.getLatitude(), markerpoint.getLongitude());
         waypoints.add(marker_location);
 

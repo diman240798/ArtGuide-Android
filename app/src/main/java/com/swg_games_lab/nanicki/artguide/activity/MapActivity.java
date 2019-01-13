@@ -27,6 +27,7 @@ import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.config.Configuration;
@@ -34,9 +35,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.IconOverlay;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
@@ -64,9 +64,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private ImageView map_markdesc_imageView;
     private TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView, map_markdesc_distanceTextView;
     private Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
-    private ItemizedIconOverlay<OverlayItem> myMarkers;
+    private RadiusMarkerClusterer myMarkers;
     private LinearLayout layoutBottomButtons;
-    private OverlayItem lastItem;
+    private Marker lastItem;
     private Polyline lastPolyline;
 
     @Override
@@ -179,39 +179,35 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     }
 
-    private ItemizedIconOverlay<OverlayItem> getMyMarkers() {
+    private RadiusMarkerClusterer getMyMarkers() {
+        RadiusMarkerClusterer cluster = new RadiusMarkerClusterer(this);
         // Создаем лист маркеров
-        List<OverlayItem> overlayItems = new ArrayList<>();
+        List<RadiusMarkerClusterer> overlayItems = new ArrayList<>();
         // Добавляем маркеры
         List<NewPlace> data = CSVreader.getData(this);
         for (int i = 0; i < data.size(); i++) {
+            // retrieve data
             NewPlace newPlace = data.get(i);
             int id = newPlace.getId();
             double latitude = newPlace.getLatitude();
             double longitude = newPlace.getLongitude();
-            OverlayItem iconOverlay = new OverlayItem(String.valueOf(id), null, new GeoPoint(latitude, longitude));
-            iconOverlay.setMarker(this.getDrawable(R.drawable.map_marker_small));
-            overlayItems.add(iconOverlay);
-        }
-
-        ItemizedIconOverlay<OverlayItem> anotherItemizedIconOverlay = new ItemizedIconOverlay<>(
-                this, overlayItems, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(int index, OverlayItem item) {
-                onOverlayTapUp(item);
+            GeoPoint markerPosition = new GeoPoint(latitude, longitude);
+            // create Marker
+            Marker marker = new Marker(map);
+            marker.setTitle(String.valueOf(id));
+            marker.setPosition(markerPosition);
+            marker.setIcon(this.getDrawable(R.drawable.map_marker_small));
+            marker.setOnMarkerClickListener((Marker mark, MapView map) -> {
+                onOverlayTapUp(mark);
                 mapMarker.setVisibility(View.VISIBLE);
                 return false;
-            }
-
-            @Override
-            public boolean onItemLongPress(int index, OverlayItem item) {
-                return false;
-            }
-        });
-        return anotherItemizedIconOverlay;
+            });
+            cluster.add(marker);
+        }
+        return cluster;
     }
 
-    private void onOverlayTapUp(OverlayItem item) {
+    private void onOverlayTapUp(Marker item) {
 
         int id = Integer.parseInt(item.getTitle());
         NewPlace place = CSVreader.getPlaceById(id);
@@ -250,7 +246,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(myMarkers);
             overlays.add(myLocationOverlay);
-            overlays.add(new IconOverlay(item.getPoint(), this.getDrawable(R.drawable.map_marker_small)));
+            overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(R.drawable.map_marker_small)));
 
             lastItem = item;
             requestDrawRoute(item);
@@ -259,8 +255,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         Location userLocation = getUserLocation(locationManager);
         if (userLocation != null) {
             Location itemLocation = new Location("");
-            itemLocation.setLatitude(item.getPoint().getLatitude());
-            itemLocation.setLongitude(item.getPoint().getLongitude());
+            itemLocation.setLatitude(item.getPosition().getLatitude());
+            itemLocation.setLongitude(item.getPosition().getLongitude());
             double distanceTo = userLocation.distanceTo(itemLocation);
             int porog = 0;
             String suffix;
@@ -278,7 +274,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         }
     }
 
-    public void requestDrawRoute(OverlayItem item) {
+    public void requestDrawRoute(Marker item) {
         if (myLocationListener == null || lastItem == null) {
             return;
         } else if (item == null) {
