@@ -1,0 +1,68 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_markdesc_rel_layout"
+    android:layout_width="match_parent"
+    android:layout_gravity="bottom"
+    android:layout_height="80dp">
+
+    <ImageView
+        android:id="@+id/route_info_image"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/museum_rail_train_big"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/route_info_title"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:maxLines="1"
+        android:text="Музей железнодорожной техники"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="16dp"
+        app:autoSizeMinTextSize="10dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/route_info_close"
+        app:layout_constraintEnd_toStartOf="@+id/route_info_close"
+        app:layout_constraintStart_toEndOf="@id/route_info_image"
+        app:layout_constraintTop_toTopOf="@+id/route_info_close" />
+
+
+    <ImageView
+        android:id="@+id/route_info_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/close_sign" />
+
+    <ProgressBar
+        android:id="@+id/route_info_progress_bar"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorGreen"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/route_info_image"
+        app:layout_constraintTop_toBottomOf="@+id/route_info_title"
+        app:layout_constraintVertical_bias="0.39" />
+
+
+</android.support.constraint.ConstraintLayout>
