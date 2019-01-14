@@ -37,7 +37,6 @@
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
     <include
-        android:visibility="gone"
         android:id="@+id/map_marker"
         layout="@layout/map_marker_item"
         android:layout_width="match_parent"
@@ -45,9 +44,22 @@
         android:layout_marginStart="-20dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="15dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <include
+        android:id="@+id/map_close_route"
+        layout="@layout/close_route_request"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <LinearLayout
         android:id="@+id/bottom_linear_with_buttons"
@@ -126,6 +138,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_stadium" />
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="50dp"
@@ -145,12 +158,12 @@
 
     <include
         android:id="@+id/map_route_info"
-        android:visibility="gone"
+        layout="@layout/route_bottom_info"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        layout="@layout/route_bottom_info"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- <Button
          android:id="@+id/map_wikiBT"

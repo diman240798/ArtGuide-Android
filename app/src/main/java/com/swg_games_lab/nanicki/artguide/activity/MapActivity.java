@@ -87,6 +87,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private TextView mapRouteLength, mapRouteTime, mapRouteTitle;
     private ProgressBar mapRouteProgressBar;
 
+    // Close Route info things
+    private ConstraintLayout closeRouteView;
+    private ImageView closeRouteImage, closeRouteCloseImage;
+    private Button closeRouteYes, closeRouteNo;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +109,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         setUpMap();
         // Setting up dialog (appears on tap up)
         initMarkerView();
+        // Setting up close route Dialog
+        initCloseRouteView();
         Bundle extras = getIntent().getExtras();
 ///////////     TODO UNCOMMENT WHEN IMAGES ARE READY
 //        if (extras != null) {
@@ -124,12 +132,28 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map.getOverlays().add(myMarkers);
     }
 
+    private void initCloseRouteView() {
+        closeRouteView = (ConstraintLayout) findViewById(R.id.map_close_route);
+        closeRouteImage = (ImageView) findViewById(R.id.close_request_image);
+        closeRouteCloseImage = (ImageView) findViewById(R.id.close_request_close);
+        closeRouteYes = (Button) findViewById(R.id.close_request_yes);
+        closeRouteNo = (Button) findViewById(R.id.close_request_no);
+
+        View.OnClickListener closeRouteDialog = v -> closeRouteView.setVisibility(View.GONE);
+        closeRouteNo.setOnClickListener(closeRouteDialog);
+        closeRouteCloseImage.setOnClickListener(closeRouteDialog);
+
+        closeRouteYes.setOnClickListener(v -> {
+
+        });
+    }
+
     private void initRouteInfoLayout() {
         mapRouteInfo = (ConstraintLayout) findViewById(R.id.map_route_info);
         mapRouteImage = (ImageView) findViewById(R.id.route_info_image);
         mapRouteClose = (ImageView) findViewById(R.id.route_info_close);
         mapRouteClose.setOnClickListener(v -> {
-
+            closeRouteView.setVisibility(View.VISIBLE);
         });
         mapRouteWalkImage = (ImageView) findViewById(R.id.route_info_walk_image);
         mapRouteTitle = (TextView) findViewById(R.id.route_info_title);
@@ -297,6 +321,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
             lastItem = item;
             mapRouteImage.setImageDrawable(imageSmallDrawable);
+            closeRouteImage.setImageDrawable(this.getDrawable(imageSmall));
             mapRouteTitle.setText(title);
             // Hide description
             mapRouteTime.setVisibility(View.GONE);
