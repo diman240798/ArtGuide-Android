@@ -97,7 +97,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.wiki_bt_theatre) {
             bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
             adapter.sortList(places, "Театр");
-        } else if (id == R.id.map_bt_park) {
+        } else if (id == R.id.wiki_bt_park) {
             bt_park.setBackgroundResource(R.drawable.item_park_chosen);
             adapter.sortList(places, "Парк");
         }
