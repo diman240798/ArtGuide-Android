@@ -1,9 +1,9 @@
 package com.swg_games_lab.nanicki.artguide.listener;
+
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 
@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 
 public class MyLocationListener implements LocationListener {
 
+    private static final String TAG = "MyLocationListener";
     public WeakReference<MapActivity> mapActivity;
     private long minTimeForUpdate = 2000;
     private long lastUpdate;
@@ -21,10 +22,13 @@ public class MyLocationListener implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        if (mapActivity.get() == null)
+        Log.d(TAG, "New location received");
+        if (mapActivity.get() == null) {
+            Log.d(TAG, "MapActivity is null. Return;");
             return;
+        }
 
-        Toast.makeText(mapActivity.get(), location.toString(), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, location.toString());
 
         MapActivity mapActivity = this.mapActivity.get();
         long currentTimeMillis = System.currentTimeMillis();

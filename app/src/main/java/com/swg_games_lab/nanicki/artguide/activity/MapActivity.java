@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,6 +46,7 @@ import org.osmdroid.views.overlay.infowindow.BasicInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,7 @@ import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocati
 
 public class MapActivity extends AppCompatActivity implements RouteReceiver, View.OnClickListener {
 
+    private static final String TAG = "MapActivity";
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
@@ -147,7 +150,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;
         myLocationListener = new MyLocationListener(this);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+
         // TODO: Add Later
 //        this.registerReceiver(mConnReceiver,
 //                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -346,6 +349,20 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     public void onResume() {
         super.onResume();
         map.onResume();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+        myLocationListener.mapActivity = new WeakReference<>(this);
+        if (lastItem != null)
+            requestDrawRoute(lastItem);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // FIXME: Sould this method call exist
+        //map.destroyDrawingCache();
+        locationManager.removeUpdates(myLocationListener);
+        myLocationListener.mapActivity = null;
+        updateRoadTask = null;
     }
 
     public void onPause() {
@@ -354,31 +371,22 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        map.destroyDrawingCache();
-        locationManager.removeUpdates(myLocationListener);
-        myLocationListener.mapActivity = null;
-        updateRoadTask = null;
-    }
-
-    @Override
     public void onRouteReceived(@NonNull Road[] roads) {
         routeIsBeingDrawn = false;
         Context context = this;
         Road firstRoad = roads[0];
         if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
-            Toast.makeText(context, "Technical issue when getting the route", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Technical issue when getting the route");
             return;
         } else if (firstRoad.mStatus > Road.STATUS_TECHNICAL_ISSUE) {
-            Toast.makeText(context, "No possible route here", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "No possible route here");
             return;
         }
 
         double roadLength = firstRoad.mLength;
 
-        mapRouteLength.setText(String.format("%.3f км",roadLength));
-        mapRouteTime.setText(String.format("%.0f мин",roadLength * 12));
+        mapRouteLength.setText(String.format("%.3f км", roadLength));
+        mapRouteTime.setText(String.format("%.0f мин", roadLength * 12));
         mapRouteProgressBar.setVisibility(View.GONE);
         mapRouteWalkImage.setVisibility(View.VISIBLE);
         mapRouteLength.setVisibility(View.VISIBLE);
