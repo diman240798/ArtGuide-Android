@@ -126,6 +126,20 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_stadium" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="50dp"
+                android:background="#002D3A"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+
+            <Button
+                android:id="@+id/map_bt_park"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_park" />
         </LinearLayout>
     </LinearLayout>
 

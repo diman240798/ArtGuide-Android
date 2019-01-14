@@ -26,6 +26,7 @@ import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
+import com.swg_games_lab.nanicki.artguide.util.MarkerUtil;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
@@ -61,7 +62,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private RadiusMarkerClusterer myMarkers;
 
     // Markers sorting
-    private Button bt_museum, bt_theatre, bt_memorial, bt_stadium;
+    private Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
 
     // Route Building
     private UpdateRoadTask updateRoadTask;
@@ -161,11 +162,13 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         bt_theatre = (Button) findViewById(R.id.map_bt_theatre);
         bt_memorial = (Button) findViewById(R.id.map_bt_memorial);
         bt_stadium = (Button) findViewById(R.id.map_bt_stadium);
+        bt_park = (Button) findViewById(R.id.map_bt_park);
 
         bt_museum.setOnClickListener(this);
         bt_theatre.setOnClickListener(this);
         bt_memorial.setOnClickListener(this);
         bt_stadium.setOnClickListener(this);
+        bt_park.setOnClickListener(this);
 
     }
 
@@ -237,7 +240,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             Marker marker = new Marker(map);
             marker.setTitle(String.valueOf(id));
             marker.setPosition(markerPosition);
-            marker.setIcon(this.getDrawable(R.drawable.map_marker_small));
+            marker.setIcon(this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
             marker.setOnMarkerClickListener((Marker mark, MapView map) -> {
                 onOverlayTapUp(mark);
                 mapMarker.setVisibility(View.VISIBLE);
@@ -287,7 +290,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(myMarkers);
             overlays.add(myLocationOverlay);
-            overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(R.drawable.map_marker_small)));
+            overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id))));
 
             lastItem = item;
             mapRouteImage.setImageDrawable(imageSmallDrawable);
@@ -399,13 +402,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         mapOverlays.add(roadPolyline);
     }
 
-    private void setDefaultImages() {
-        bt_theatre.setBackgroundResource(R.drawable.item_theatre);
-        bt_museum.setBackgroundResource(R.drawable.item_museam);
-        bt_memorial.setBackgroundResource(R.drawable.item_memorial);
-        bt_stadium.setBackgroundResource(R.drawable.item_stadium);
-    }
-
     @Override
     public void onClick(View view) {
         int id = view.getId();
@@ -423,6 +419,17 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         } else if (id == R.id.map_bt_theatre) {
             bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
 //            adapter.sortList(places, "Театр");
+        } else if (id == R.id.map_bt_park) {
+            bt_park.setBackgroundResource(R.drawable.item_park_chosen);
+//            adapter.sortList(places, "Театр");
         }
+    }
+
+    private void setDefaultImages() {
+        bt_theatre.setBackgroundResource(R.drawable.item_theatre);
+        bt_museum.setBackgroundResource(R.drawable.item_museam);
+        bt_memorial.setBackgroundResource(R.drawable.item_memorial);
+        bt_stadium.setBackgroundResource(R.drawable.item_stadium);
+        bt_park.setBackgroundResource(R.drawable.item_park);
     }
 }

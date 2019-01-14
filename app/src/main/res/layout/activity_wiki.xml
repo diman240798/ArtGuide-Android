@@ -16,6 +16,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_gravity="top"
+        android:paddingBottom="4dp"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -95,6 +96,20 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/item_stadium" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="50dp"
+                android:background="#002D3A"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp" />
+
+            <Button
+                android:id="@+id/wiki_bt_park"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/item_park" />
         </LinearLayout>
     </android.support.design.widget.BottomNavigationView>
 
