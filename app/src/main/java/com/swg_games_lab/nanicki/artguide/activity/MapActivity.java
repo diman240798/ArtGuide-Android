@@ -387,11 +387,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
         mapRouteLength.setText(String.format("%.3f км", roadLength));
         mapRouteTime.setText(String.format("%.0f мин", roadLength * 12));
-        mapRouteProgressBar.setVisibility(View.GONE);
-        mapRouteWalkImage.setVisibility(View.VISIBLE);
-        mapRouteLength.setVisibility(View.VISIBLE);
-        mapRouteTime.setVisibility(View.VISIBLE);
-
+        if (mapRouteProgressBar.getVisibility() == View.VISIBLE) {
+            mapRouteProgressBar.setVisibility(View.GONE);
+            mapRouteWalkImage.setVisibility(View.VISIBLE);
+            mapRouteLength.setVisibility(View.VISIBLE);
+            mapRouteTime.setVisibility(View.VISIBLE);
+        }
         List<Overlay> mapOverlays = map.getOverlays();
         Polyline roadPolyline = RoadManager.buildRoadOverlay(firstRoad);
 
