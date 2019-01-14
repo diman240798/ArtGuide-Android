@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
-import com.swg_games_lab.nanicki.artguide.model.NewPlace;
+import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -84,7 +84,7 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
                 int placeId = extras.getInt("TAG");
-                NewPlace place = CSVreader.getPlaceById(placeId);
+                Place place = CSVreader.getPlaceById(placeId);
                 // get data
                 int placeImageBig = place.getImageBig();
                 String title = place.getTitle();

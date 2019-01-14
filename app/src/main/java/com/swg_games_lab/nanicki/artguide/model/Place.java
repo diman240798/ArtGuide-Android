@@ -1,38 +1,49 @@
 package com.swg_games_lab.nanicki.artguide.model;
 
 public class Place {
-    private int mDrawable;
-    private String title;
-    private String brief_description;
+    private final int id;
+    private final String title;
+    private final double latitude;
+    private final double longitude;
+    private final int imageSmall;
+    private final int  imageBig;
+    private final String description;
 
-    public Place(int mDrawable, String title, String brief_description) {
-        this.mDrawable = mDrawable;
+    public Place(int id, String title, double latitude, double longitude, int imageSmall, int imageBig, String description) {
+        this.id = id;
         this.title = title;
-        this.brief_description = brief_description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.imageSmall = imageSmall;
+        this.imageBig = imageBig;
+        this.description = description;
     }
 
-    public int getDrawable() {
-        return mDrawable;
-    }
-
-    public void setDrawable(int mDrawable) {
-        this.mDrawable = mDrawable;
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public String getBrief_description() {
-        return brief_description;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setBrief_description(String brief_description) {
-        this.brief_description = brief_description;
+    public int getImageSmall() {
+        return imageSmall;
     }
 
+    public int  getImageBig() {
+        return imageBig;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

@@ -12,16 +12,16 @@ import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
-import com.swg_games_lab.nanicki.artguide.model.NewPlace;
+import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    private List<NewPlace> mPlaces;
+    private List<Place> mPlaces;
 
-    public Adapter(List<NewPlace> places) {
+    public Adapter(List<Place> places) {
         mPlaces = places;
     }
 
@@ -37,7 +37,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        NewPlace place = mPlaces.get(position);
+        Place place = mPlaces.get(position);
         holder.imageView.setImageResource(place.getImageSmall());
         holder.titleTextView.setText(place.getTitle());
         holder.brief_descriptionTextView.setText(place.getDescription());
@@ -54,14 +54,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return mPlaces.size();
     }
 
-    public List<NewPlace> getList() {
+    public List<Place> getList() {
         return mPlaces;
     }
 
-    public void sortList(List<NewPlace> places, String key) {
+    public void sortList(List<Place> places, String key) {
         //Collections.sort(mPlaces, ((place, t1) -> place.getTitle().compareTo(key)));
-        List<NewPlace> result = new ArrayList<>();
-        for (NewPlace place : places) {
+        List<Place> result = new ArrayList<>();
+        for (Place place : places) {
             if (place.getTitle().toLowerCase().contains(key.toLowerCase()) ||
                     place.getDescription().toLowerCase().contains(key.toLowerCase()))
                 result.add(place);
@@ -89,7 +89,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            NewPlace place = mPlaces.get(getAdapterPosition());
+            Place place = mPlaces.get(getAdapterPosition());
             Log.d("App", place.getTitle());
             Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
             intent.putExtra("TAG", place.getId());

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.model.NewPlace;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.io.BufferedReader;
@@ -16,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVreader {
-    private static volatile List<NewPlace> data;
+    private static volatile List<Place> data;
 
-    public static List<NewPlace> getData(Context context) {
+    public static List<Place> getData(Context context) {
         if (data == null) {
             data = readData(context);
         }
@@ -26,8 +25,8 @@ public class CSVreader {
     }
 
 
-    private static List<NewPlace> readData(Context context) {
-        List<NewPlace> result = new ArrayList<>();
+    private static List<Place> readData(Context context) {
+        List<Place> result = new ArrayList<>();
 
         InputStream is = context.getResources().openRawResource(R.raw.data);
         BufferedReader reader = new BufferedReader(
@@ -56,7 +55,7 @@ public class CSVreader {
                 String imageSmall = tokens[4];
                 String imageBig = tokens[5];
 
-                NewPlace newPlace = new NewPlace(
+                Place place = new Place(
                         Integer.parseInt(id),
                         title,
                         Double.parseDouble(latitude),
@@ -65,7 +64,7 @@ public class CSVreader {
                         context.getResources().getIdentifier(imageBig, "drawable", context.getPackageName()),
                         description
                 );
-                result.add(newPlace);
+                result.add(place);
             }
         } catch (IOException e1) {
             Log.e("CSVreader", "Error" + line, e1);
@@ -74,8 +73,8 @@ public class CSVreader {
         return result;
     }
 
-    public static NewPlace getPlaceById(int placeId) {
-        for(NewPlace place : data) {
+    public static Place getPlaceById(int placeId) {
+        for (Place place : data) {
             if (place.getId() == placeId)
                 return place;
         }

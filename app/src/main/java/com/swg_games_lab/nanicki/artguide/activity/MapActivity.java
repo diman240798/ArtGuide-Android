@@ -25,7 +25,7 @@ import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
-import com.swg_games_lab.nanicki.artguide.model.NewPlace;
+import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 import com.swg_games_lab.nanicki.artguide.util.MarkerUtil;
 
@@ -107,7 +107,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 ///////////     TODO UNCOMMENT WHEN IMAGES ARE READY
 //        if (extras != null) {
 //            int id = extras.getInt("ID");
-//            NewPlace placeById = CSVreader.getPlaceById(id);
+//            Place placeById = CSVreader.getPlaceById(id);
 //            String title = placeById.getTitle();
 //            String placeByIdDescription = placeById.getDescription();
 //            int placeByIdImageSmall = placeById.getImageSmall();
@@ -231,13 +231,13 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         // Создаем лист маркеров
         List<RadiusMarkerClusterer> overlayItems = new ArrayList<>();
         // Добавляем маркеры
-        List<NewPlace> data = CSVreader.getData(this);
+        List<Place> data = CSVreader.getData(this);
         for (int i = 0; i < data.size(); i++) {
             // retrieve data
-            NewPlace newPlace = data.get(i);
-            int id = newPlace.getId();
-            double latitude = newPlace.getLatitude();
-            double longitude = newPlace.getLongitude();
+            Place place = data.get(i);
+            int id = place.getId();
+            double latitude = place.getLatitude();
+            double longitude = place.getLongitude();
             GeoPoint markerPosition = new GeoPoint(latitude, longitude);
             // create Marker
             Marker marker = new Marker(map);
@@ -257,7 +257,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private void onOverlayTapUp(Marker item) {
 
         int id = Integer.parseInt(item.getTitle());
-        NewPlace place = CSVreader.getPlaceById(id);
+        Place place = CSVreader.getPlaceById(id);
         int imageSmall = place.getImageSmall();
         String title = place.getTitle();
         String description = place.getDescription();

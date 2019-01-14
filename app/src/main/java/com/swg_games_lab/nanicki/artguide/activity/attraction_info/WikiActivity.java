@@ -3,20 +3,16 @@ package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.Adapter;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
-import com.swg_games_lab.nanicki.artguide.model.NewPlace;
+import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.ui.BottomNavigationBehavior;
 
 import java.util.List;
@@ -26,7 +22,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
     private Adapter adapter;
-    private List<NewPlace> places;
+    private List<Place> places;
 
 
     @Override
@@ -76,7 +72,7 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setAdapter(adapter);
     }
 
-    private List<NewPlace> getPlaces() {
+    private List<Place> getPlaces() {
         return CSVreader.getData(this);
     }
 
