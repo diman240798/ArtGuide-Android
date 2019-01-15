@@ -73,7 +73,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     // Route Building
     private UpdateRoadTask updateRoadTask;
     private MyLocationListener myLocationListener;
-    public static volatile boolean routeIsBeingDrawn = false;
     private Marker lastItem;
     private Polyline lastPolyline;
     private IconOverlay lastDrownItem;
@@ -148,9 +147,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         closeRouteCloseImage.setOnClickListener(closeRouteDialog);
 
         closeRouteYes.setOnClickListener(v -> {
-            myLocationListener.mapActivity = null;
             if (lastDrownItem != null) {
                 map.getOverlays().remove(lastDrownItem);
+                lastDrownItem = null;
             }
             if (updateRoadTask != null)
                 updateRoadTask.cancel(true);
@@ -158,7 +157,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
             if (lastItem != null) {
                 map.getOverlays().remove(lastItem);
-            } if (lastPolyline != null) {
+            }
+            if (lastPolyline != null) {
                 map.getOverlays().remove(lastPolyline);
             }
             map.getOverlays().add(lastMarkers);
@@ -337,16 +337,11 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
             Location userLocation = getUserLocation(locationManager);
-            Toast.makeText(MapActivity.this, String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MapActivity.this, "User location: " + String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
             if (userLocation == null || myLocationOverlay == null) {
                 Toast.makeText(MapActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
-            } else if (routeIsBeingDrawn) {
-                Toast.makeText(MapActivity.this, "Уже строим", Toast.LENGTH_SHORT).show();
-                return;
             }
-
-            routeIsBeingDrawn = true;
 
             layoutBottomButtons.setVisibility(View.GONE);
             mapMarker.setVisibility(View.GONE);
@@ -394,26 +389,79 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         }
     }
 
-    public void requestDrawRoute(Marker item) {
+    public void requestDrawRoute(@NonNull Marker item) {
+        Log.d(TAG, "requestDrawRoute called");
         if (myLocationListener == null || lastItem == null) {
+            Log.d(TAG, "Will not request new route because locationListener or lastItem is: null");
             return;
-        } else if (item == null) {
-            item = lastItem;
         }
 
         Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
-        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
+        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item.getPosition(), MapActivity.this);
         updateRoadTask.execute(MapActivity.this);
+    }
+
+
+    public void onLocationChanged() {
+        Log.d(TAG, "onLocationChanged called");
+        if (lastDrownItem == null) {
+            Log.d(TAG, "Will not rebuild route because lastDrownItem is null");
+            return;
+        }
+
+        Toast.makeText(MapActivity.this, "Перестраиваю", Toast.LENGTH_SHORT).show();
+        if (updateRoadTask != null)
+            updateRoadTask.cancel(true);
+        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), (GeoPoint) lastDrownItem.getPosition(), MapActivity.this);
+        updateRoadTask.execute(MapActivity.this);
+
+    }
+
+    @Override
+    public void onRouteReceived(@NonNull Road road) {
+        Context context = this;
+
+        double roadLength = road.mLength;
+
+        Locale defaultLoacale = Locale.getDefault();
+        mapRouteLength.setText(String.format(defaultLoacale, "%.3f км", roadLength));
+        mapRouteTime.setText(String.format(defaultLoacale, "%.0f мин", roadLength * 12));
+
+        if (mapRouteProgressBar.getVisibility() == View.VISIBLE) {
+            mapRouteProgressBar.setVisibility(View.GONE);
+            mapRouteWalkImage.setVisibility(View.VISIBLE);
+            mapRouteLength.setVisibility(View.VISIBLE);
+            mapRouteTime.setVisibility(View.VISIBLE);
+        }
+
+        List<Overlay> mapOverlays = map.getOverlays();
+        Polyline roadPolyline = RoadManager.buildRoadOverlay(road);
+
+        String routeDesc = road.getLengthDurationText(context, -1);
+        roadPolyline.setTitle(context.getString(R.string.app_name) + " - " + routeDesc);
+        roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map));
+        roadPolyline.setColor(getResources().getColor(R.color.colorGreen));
+        roadPolyline.setRelatedObject(0);
+        roadPolyline.setWidth(5);
+
+        // TODO: ADD Later
+        //roadPolyline.setOnClickListener(new RoadOnClickListener());
+
+        if (lastPolyline != null) {
+            map.getOverlays().remove(lastPolyline);
+        }
+        lastPolyline = roadPolyline;
+        mapOverlays.add(roadPolyline);
     }
 
 
     public void onResume() {
         super.onResume();
         map.onResume();
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         myLocationListener.mapActivity = new WeakReference<>(this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         if (lastItem != null)
             requestDrawRoute(lastItem);
     }
@@ -421,13 +469,14 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @Override
     protected void onStop() {
         super.onStop();
-        // FIXME: Sould this method call exist???
-        //map.destroyDrawingCache();
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
         updateRoadTask = null;
+
+        // FIXME: Sould this method call exist???
+        //map.destroyDrawingCache();
     }
 
     public void onPause() {
@@ -435,46 +484,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 
-    @Override
-    public void onRouteReceived(@NonNull Road[] roads) {
-        Context context = this;
-        Road firstRoad = roads[0];
-        if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
-            Log.d(TAG, "Technical issue when getting the route");
-            return;
-        } else if (firstRoad.mStatus > Road.STATUS_TECHNICAL_ISSUE) {
-            Log.d(TAG, "No possible route here");
-            return;
-        }
-        routeIsBeingDrawn = false;
-
-        double roadLength = firstRoad.mLength;
-        Locale defaultLoacale = Locale.getDefault();
-        mapRouteLength.setText(String.format(defaultLoacale, "%.3f км", roadLength));
-        mapRouteTime.setText(String.format(defaultLoacale, "%.0f мин", roadLength * 12));
-        if (mapRouteProgressBar.getVisibility() == View.VISIBLE) {
-            mapRouteProgressBar.setVisibility(View.GONE);
-            mapRouteWalkImage.setVisibility(View.VISIBLE);
-            mapRouteLength.setVisibility(View.VISIBLE);
-            mapRouteTime.setVisibility(View.VISIBLE);
-        }
-        List<Overlay> mapOverlays = map.getOverlays();
-        Polyline roadPolyline = RoadManager.buildRoadOverlay(firstRoad);
-
-        String routeDesc = firstRoad.getLengthDurationText(context, -1);
-        roadPolyline.setTitle(context.getString(R.string.app_name) + " - " + routeDesc);
-        roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map));
-        roadPolyline.setColor(getResources().getColor(R.color.colorGreen));
-        roadPolyline.setRelatedObject(0);
-        roadPolyline.setWidth(5);
-        // TODO: ADD Later
-        //roadPolyline.setOnClickListener(new RoadOnClickListener());
-        if (lastPolyline != null) {
-            map.getOverlays().remove(lastPolyline);
-        }
-        lastPolyline = roadPolyline;
-        mapOverlays.add(roadPolyline);
-    }
 
     @Override
     public void onClick(View view) {
@@ -535,4 +544,5 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         bt_stadium.setBackgroundResource(R.drawable.item_stadium);
         bt_park.setBackgroundResource(R.drawable.item_park);
     }
+
 }

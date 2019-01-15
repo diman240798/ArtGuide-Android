@@ -33,7 +33,7 @@ public class MyLocationListener implements LocationListener {
         MapActivity mapActivity = this.mapActivity.get();
         long currentTimeMillis = System.currentTimeMillis();
         if (mapActivity != null && currentTimeMillis - lastUpdate > minTimeForUpdate) {
-            mapActivity.requestDrawRoute(null);
+            mapActivity.onLocationChanged();
             lastUpdate = currentTimeMillis;
         }
     }

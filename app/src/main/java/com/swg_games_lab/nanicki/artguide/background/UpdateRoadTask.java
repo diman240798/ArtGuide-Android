@@ -24,14 +24,12 @@ public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
     private WeakReference<RouteReceiver> routeReceiver;
     private ArrayList<GeoPoint> waypoints = null;
 
-    public UpdateRoadTask(Location userLocation, Marker item, RouteReceiver routeReceiver) {
+    public UpdateRoadTask(Location userLocation, GeoPoint markerLocation, RouteReceiver routeReceiver) {
         this.routeReceiver = new WeakReference<>(routeReceiver);
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
         waypoints.add(new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
         // crutch
-        IGeoPoint markerpoint = item.getPosition();
-        GeoPoint marker_location = new GeoPoint(markerpoint.getLatitude(), markerpoint.getLongitude());
-        waypoints.add(marker_location);
+        waypoints.add(markerLocation);
 
 
         this.waypoints = waypoints;
@@ -54,10 +52,20 @@ public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
     protected void onPostExecute(Road[] roads) {
         Log.d(TAG, "Requesting new road finished.");
         if (roads != null && !isCancelled()) {
+            Road firstRoad = roads[0];
+            if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
+                Log.d(TAG, "Technical issue when getting the route");
+                return;
+            } else if (firstRoad.mStatus > Road.STATUS_TECHNICAL_ISSUE) {
+                Log.d(TAG, "No possible route here");
+                return;
+            }
+
             Log.d(TAG, "Sending new road back.");
-            routeReceiver.get().onRouteReceived(roads);
+            routeReceiver.get().onRouteReceived(firstRoad);
+        } else {
+            Log.d(TAG, "Road is null or was closed.");
         }
-        Log.d(TAG, "Road is null or was closed.");
         routeReceiver = null;
     }
 }
