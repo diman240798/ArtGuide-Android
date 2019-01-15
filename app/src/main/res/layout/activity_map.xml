@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:background="@drawable/item_museam" />
+                android:background="@drawable/item_museum_chosen" />
 
             <View
                 android:layout_width="1dp"

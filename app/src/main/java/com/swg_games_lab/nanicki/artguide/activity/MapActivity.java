@@ -23,6 +23,7 @@ import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
+import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.model.Place;
@@ -49,6 +50,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
 
@@ -62,7 +64,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private LocationManager locationManager;
 
     // Markers
-    private RadiusMarkerClusterer myMarkers;
+    private RadiusMarkerClusterer museumMarkers, theatreMarkers, memorialMarkers, stadiumMarkers, parkMarkers;
+    private RadiusMarkerClusterer lastMarkers;
 
     // Markers sorting
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
@@ -127,9 +130,9 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 //        }
 
         // Добавление маркеров
-        myMarkers = getMyMarkers();
+        loadMarkers();
         // Маркеры настроены можно добавить
-        map.getOverlays().add(myMarkers);
+        map.getOverlays().add(lastMarkers);
     }
 
     private void initCloseRouteView() {
@@ -250,8 +253,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     }
 
-    private RadiusMarkerClusterer getMyMarkers() {
-        RadiusMarkerClusterer cluster = new RadiusMarkerClusterer(this);
+    private void loadMarkers() {
+        museumMarkers = new RadiusMarkerClusterer(this);
+        theatreMarkers = new RadiusMarkerClusterer(this);
+        memorialMarkers = new RadiusMarkerClusterer(this);
+        stadiumMarkers = new RadiusMarkerClusterer(this);
+        parkMarkers = new RadiusMarkerClusterer(this);
         // Создаем лист маркеров
         List<RadiusMarkerClusterer> overlayItems = new ArrayList<>();
         // Добавляем маркеры
@@ -273,9 +280,20 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                 mapMarker.setVisibility(View.VISIBLE);
                 return false;
             });
-            cluster.add(marker);
+            if (place.getType() == AttractionType.Museum) {
+                museumMarkers.add(marker);
+            } else if (place.getType() == AttractionType.Theatre) {
+                theatreMarkers.add(marker);
+            } else if (place.getType() == AttractionType.Memorial) {
+                memorialMarkers.add(marker);
+            } else if (place.getType() == AttractionType.Stadium) {
+                stadiumMarkers.add(marker);
+            } else if (place.getType() == AttractionType.Park) {
+                parkMarkers.add(marker);
+            }
+            lastMarkers = museumMarkers;
+
         }
-        return cluster;
     }
 
     private void onOverlayTapUp(Marker item) {
@@ -315,7 +333,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             mapMarker.setVisibility(View.GONE);
 
             List<Overlay> overlays = map.getOverlays();
-            overlays.remove(myMarkers);
+            overlays.remove(lastMarkers);
             overlays.add(myLocationOverlay);
             overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id))));
 
@@ -383,7 +401,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @Override
     protected void onStop() {
         super.onStop();
-        // FIXME: Sould this method call exist
+        // FIXME: Sould this method call exist???
         //map.destroyDrawingCache();
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
@@ -397,7 +415,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     @Override
     public void onRouteReceived(@NonNull Road[] roads) {
-        routeIsBeingDrawn = false;
         Context context = this;
         Road firstRoad = roads[0];
         if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
@@ -407,11 +424,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             Log.d(TAG, "No possible route here");
             return;
         }
+        routeIsBeingDrawn = false;
 
         double roadLength = firstRoad.mLength;
-
-        mapRouteLength.setText(String.format("%.3f км", roadLength));
-        mapRouteTime.setText(String.format("%.0f мин", roadLength * 12));
+        Locale defaultLoacale = Locale.getDefault();
+        mapRouteLength.setText(String.format(defaultLoacale, "%.3f км", roadLength));
+        mapRouteTime.setText(String.format(defaultLoacale, "%.0f мин", roadLength * 12));
         if (mapRouteProgressBar.getVisibility() == View.VISIBLE) {
             mapRouteProgressBar.setVisibility(View.GONE);
             mapRouteWalkImage.setVisibility(View.VISIBLE);
@@ -439,29 +457,58 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        setDefaultImages();
 
-        if (id == R.id.map_bt_museum) {
-            bt_museum.setBackgroundResource(R.drawable.item_museam_chosen);
-//            adapter.sortList(places, "Музей");
-        } else if (id == R.id.map_bt_stadium) {
+        if (id == R.id.map_bt_museum) { // Museum
+            if (lastMarkers == museumMarkers)
+                return;
+            map.getOverlays().remove(lastMarkers);
+            map.getOverlays().add(museumMarkers);
+            lastMarkers = museumMarkers;
+
+            setDefaultImages();
+            bt_museum.setBackgroundResource(R.drawable.item_museum_chosen);
+        } else if (id == R.id.map_bt_stadium) { // Stadium
+            if (lastMarkers == stadiumMarkers)
+                return;
+            map.getOverlays().add(stadiumMarkers);
+            map.getOverlays().remove(lastMarkers);
+            lastMarkers = stadiumMarkers;
+
+            setDefaultImages();
             bt_stadium.setBackgroundResource(R.drawable.item_stadium_chosen);
-//            adapter.sortList(places, "Стадион");
-        } else if (id == R.id.map_bt_memorial) {
+        } else if (id == R.id.map_bt_memorial) { // Memorial
+            if (lastMarkers == memorialMarkers)
+                return;
+            map.getOverlays().add(memorialMarkers);
+            map.getOverlays().remove(lastMarkers);
+            lastMarkers = memorialMarkers;
+
+            setDefaultImages();
             bt_memorial.setBackgroundResource(R.drawable.item_memorial_chosen);
-//            adapter.sortList(places, "Памятник");
-        } else if (id == R.id.map_bt_theatre) {
+        } else if (id == R.id.map_bt_theatre) { // Theatre
+            if (lastMarkers == theatreMarkers)
+                return;
+            map.getOverlays().remove(lastMarkers);
+            map.getOverlays().add(theatreMarkers);
+            lastMarkers = theatreMarkers;
+
+            setDefaultImages();
             bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
-//            adapter.sortList(places, "Театр");
-        } else if (id == R.id.map_bt_park) {
+        } else if (id == R.id.map_bt_park) { // Park
+            if (lastMarkers == parkMarkers)
+                return;
+            map.getOverlays().remove(lastMarkers);
+            map.getOverlays().add(parkMarkers);
+            lastMarkers = parkMarkers;
+
+            setDefaultImages();
             bt_park.setBackgroundResource(R.drawable.item_park_chosen);
-//            adapter.sortList(places, "Театр");
         }
     }
 
     private void setDefaultImages() {
         bt_theatre.setBackgroundResource(R.drawable.item_theatre);
-        bt_museum.setBackgroundResource(R.drawable.item_museam);
+        bt_museum.setBackgroundResource(R.drawable.item_museum);
         bt_memorial.setBackgroundResource(R.drawable.item_memorial);
         bt_stadium.setBackgroundResource(R.drawable.item_stadium);
         bt_park.setBackgroundResource(R.drawable.item_park);

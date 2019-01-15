@@ -1,5 +1,7 @@
 package com.swg_games_lab.nanicki.artguide.model;
 
+import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
+
 public class Place {
     private final int id;
     private final String title;
@@ -8,8 +10,9 @@ public class Place {
     private final int imageSmall;
     private final int  imageBig;
     private final String description;
+    private final AttractionType type;
 
-    public Place(int id, String title, double latitude, double longitude, int imageSmall, int imageBig, String description) {
+    public Place(int id, String title, double latitude, double longitude, int imageSmall, int imageBig, String description, AttractionType type) {
         this.id = id;
         this.title = title;
         this.latitude = latitude;
@@ -17,6 +20,7 @@ public class Place {
         this.imageSmall = imageSmall;
         this.imageBig = imageBig;
         this.description = description;
+        this.type = type;
     }
 
     public int getId() {
@@ -45,5 +49,9 @@ public class Place {
 
     public String getDescription() {
         return description;
+    }
+
+    public AttractionType getType() {
+        return type;
     }
 }

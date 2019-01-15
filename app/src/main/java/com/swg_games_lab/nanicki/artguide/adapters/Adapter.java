@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
@@ -58,12 +59,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return mPlaces;
     }
 
-    public void sortList(List<Place> places, String key) {
+    public void sortList(List<Place> places, AttractionType type) {
         //Collections.sort(mPlaces, ((place, t1) -> place.getTitle().compareTo(key)));
         List<Place> result = new ArrayList<>();
         for (Place place : places) {
-            if (place.getTitle().toLowerCase().contains(key.toLowerCase()) ||
-                    place.getDescription().toLowerCase().contains(key.toLowerCase()))
+            if (place.getType() == type)
                 result.add(place);
         }
         mPlaces = result;

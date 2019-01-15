@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.Adapter;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
+import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.ui.BottomNavigationBehavior;
 
@@ -82,26 +83,26 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         setDefaultImages();
 
         if (id == R.id.wiki_bt_museum) {
-            bt_museum.setBackgroundResource(R.drawable.item_museam_chosen);
-            adapter.sortList(places, "Музей");
+            bt_museum.setBackgroundResource(R.drawable.item_museum_chosen);
+            adapter.sortList(places, AttractionType.Museum);
         } else if (id == R.id.wiki_bt_stadium) {
             bt_stadium.setBackgroundResource(R.drawable.item_stadium_chosen);
-            adapter.sortList(places, "Стадион");
+            adapter.sortList(places, AttractionType.Stadium);
         } else if (id == R.id.wiki_bt_memorial) {
             bt_memorial.setBackgroundResource(R.drawable.item_memorial_chosen);
-            adapter.sortList(places, "Памятник");
+            adapter.sortList(places, AttractionType.Memorial);
         } else if (id == R.id.wiki_bt_theatre) {
             bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
-            adapter.sortList(places, "Театр");
+            adapter.sortList(places, AttractionType.Theatre);
         } else if (id == R.id.wiki_bt_park) {
             bt_park.setBackgroundResource(R.drawable.item_park_chosen);
-            adapter.sortList(places, "Парк");
+            adapter.sortList(places, AttractionType.Park);
         }
     }
 
     private void setDefaultImages() {
         bt_theatre.setBackgroundResource(R.drawable.item_theatre);
-        bt_museum.setBackgroundResource(R.drawable.item_museam);
+        bt_museum.setBackgroundResource(R.drawable.item_museum);
         bt_memorial.setBackgroundResource(R.drawable.item_memorial);
         bt_stadium.setBackgroundResource(R.drawable.item_stadium);
         bt_park.setBackgroundResource(R.drawable.item_park);

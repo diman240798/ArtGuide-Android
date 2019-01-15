@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.model.Place;
+import com.swg_games_lab.nanicki.artguide.util.PlaceUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CSVreader {
     private static volatile List<Place> data;
 
-    public static List<Place> getData(Context context) {
+    public static synchronized List<Place> getData(Context context) {
         if (data == null) {
             data = readData(context);
         }
@@ -47,7 +48,8 @@ public class CSVreader {
                 String description = splitDescription[1];
 
                 // Read the data and store it.
-                String id = tokens[0];
+                String id_s = tokens[0];
+                int id = Integer.parseInt(id_s);
                 Log.d("__ID__", String.valueOf(id));
                 String title = tokens[1];
                 String latitude = tokens[2];
@@ -56,14 +58,14 @@ public class CSVreader {
                 String imageBig = tokens[5];
 
                 Place place = new Place(
-                        Integer.parseInt(id),
+                        id,
                         title,
                         Double.parseDouble(latitude),
                         Double.parseDouble(longitude),
                         context.getResources().getIdentifier(imageSmall, "drawable", context.getPackageName()),
                         context.getResources().getIdentifier(imageBig, "drawable", context.getPackageName()),
-                        description
-                );
+                        description,
+                        PlaceUtil.getTypeByPlaceId(id));
                 result.add(place);
             }
         } catch (IOException e1) {
