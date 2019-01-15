@@ -76,6 +76,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     public static volatile boolean routeIsBeingDrawn = false;
     private Marker lastItem;
     private Polyline lastPolyline;
+    private IconOverlay lastDrownItem;
 
     // Marker things
     private ConstraintLayout mapMarker;
@@ -147,7 +148,25 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         closeRouteCloseImage.setOnClickListener(closeRouteDialog);
 
         closeRouteYes.setOnClickListener(v -> {
+            myLocationListener.mapActivity = null;
+            if (lastDrownItem != null) {
+                map.getOverlays().remove(lastDrownItem);
+            }
+            if (updateRoadTask != null)
+                updateRoadTask.cancel(true);
+            updateRoadTask = null;
 
+            if (lastItem != null) {
+                map.getOverlays().remove(lastItem);
+            } if (lastPolyline != null) {
+                map.getOverlays().remove(lastPolyline);
+            }
+            map.getOverlays().add(lastMarkers);
+
+            mapRouteInfo.setVisibility(View.GONE);
+            closeRouteDialog.onClick(v);
+
+            layoutBottomButtons.setVisibility(View.VISIBLE);
         });
     }
 
@@ -335,7 +354,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(lastMarkers);
             overlays.add(myLocationOverlay);
-            overlays.add(new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id))));
+            lastDrownItem = new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+            overlays.add(lastDrownItem);
 
             lastItem = item;
             mapRouteImage.setImageDrawable(imageSmallDrawable);
@@ -405,6 +425,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         //map.destroyDrawingCache();
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
+        if (updateRoadTask != null)
+            updateRoadTask.cancel(true);
         updateRoadTask = null;
     }
 

@@ -23,7 +23,7 @@ public class MyLocationListener implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "New location received");
-        if (mapActivity.get() == null) {
+        if (mapActivity == null || mapActivity.get() == null) {
             Log.d(TAG, "MapActivity is null. Return;");
             return;
         }
