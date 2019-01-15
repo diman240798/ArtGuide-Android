@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
@@ -39,7 +40,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Place place = mPlaces.get(position);
-        holder.imageView.setImageResource(place.getImageSmall());
+        Glide.with(holder.itemView)
+                .load(place.getImageSmall())
+                .into(holder.imageView);
+//        holder.imageView.setImageResource(place.getImageSmall());
         holder.titleTextView.setText(place.getTitle());
         holder.brief_descriptionTextView.setText(place.getDescription());
         holder.learn_moreBT.setText(R.string.Learn_More_btn);
