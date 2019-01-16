@@ -65,7 +65,7 @@ if (plugins.hasPlugin('android') || plugins.hasPlugin('android-library')) {
             versionCode = calculateVersionCode()
             applicationId "com.swg_games_lab.nanicki.artguide"
             minSdkVersion 21
-            targetSdkVersion 21
+            targetSdkVersion 23
             //testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         }
 
@@ -116,7 +116,6 @@ dependencies {
     // Show Gifs
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
 
-    // TODO: DELETE
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
