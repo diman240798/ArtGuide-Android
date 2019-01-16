@@ -8,13 +8,15 @@ import android.widget.Button;
 
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiActivity;
+import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button wikiBT, start_journeyBT;
+    Button wikiBT, startJourneyBT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CSVreader.getData(this);
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -22,8 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wikiBT = (Button) findViewById(R.id.main_wikiBT);
         wikiBT.setOnClickListener(this);
 
-        start_journeyBT = (Button) findViewById(R.id.main_start_journeyBT);
-        start_journeyBT.setOnClickListener(this);
+        startJourneyBT = (Button) findViewById(R.id.main_start_journeyBT);
+        startJourneyBT.setOnClickListener(this);
     }
 
     @Override

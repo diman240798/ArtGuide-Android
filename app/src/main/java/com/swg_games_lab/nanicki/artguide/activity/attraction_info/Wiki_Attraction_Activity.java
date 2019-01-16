@@ -1,10 +1,10 @@
 package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,14 +60,14 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
         ///////////
         guideSpeaker = (GifImageView) findViewById(R.id.wiki_attr_speaking_heroIV);
         try {
-            gifFromResource = new GifDrawable( getResources(), R.drawable.gif_speaking_hero);
+            gifFromResource = new GifDrawable(getResources(), R.drawable.gif_speaking_hero);
             gifFromResource.stop();
             guideSpeaker.setImageDrawable(gifFromResource);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        listenBTN.setOnClickListener(v-> {
+        listenBTN.setOnClickListener(v -> {
             boolean running = gifFromResource.isRunning();
             if (running) {
                 gifFromResource.pause();

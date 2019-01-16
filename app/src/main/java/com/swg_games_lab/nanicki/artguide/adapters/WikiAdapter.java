@@ -18,11 +18,11 @@ import com.swg_games_lab.nanicki.artguide.model.Place;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
     private List<Place> mPlaces;
 
-    public Adapter(List<Place> places) {
+    public WikiAdapter(List<Place> places) {
         mPlaces = places;
     }
 
