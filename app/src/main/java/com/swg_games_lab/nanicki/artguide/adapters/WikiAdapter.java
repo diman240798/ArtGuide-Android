@@ -1,5 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
+import com.swg_games_lab.nanicki.artguide.activity.attraction_info.wikiAttractionActivity;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
+import com.swg_games_lab.nanicki.artguide.listener.BuildRouteListener;
+import com.swg_games_lab.nanicki.artguide.listener.LearnMoreListener;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import java.util.List;
 
 public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
+    private static final String TAG = "WikiAdapter";
     private List<Place> mPlaces;
 
     public WikiAdapter(List<Place> places) {
@@ -32,7 +37,7 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, this::onLearnMoreClicked, this::onBuildRouteClicked);
 
     }
 
@@ -73,32 +78,45 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class ViewHolder extends RecyclerView.ViewHolder{
 
-        public ImageView imageView;
-        public TextView titleTextView;
-        public TextView brief_descriptionTextView;
-        public Button learn_moreBT;
+        private ImageView imageView;
+        private TextView titleTextView;
+        private TextView brief_descriptionTextView;
+        private Button learn_moreBT;
+        private Button buildRouteBT;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, LearnMoreListener learnMoreListener, BuildRouteListener buildRouteListener) {
             super(itemView);
-            itemView.setOnClickListener(this);
             imageView = (ImageView) itemView.findViewById(R.id.wiki_item_imageView);
             titleTextView = (TextView) itemView.findViewById(R.id.wiki_item_titleTextView);
             brief_descriptionTextView = (TextView) itemView.findViewById(R.id.wiki_item_descriptionTextView);
+
             learn_moreBT = (Button) itemView.findViewById(R.id.wiki_item_learn_more_Button);
-            learn_moreBT.setOnClickListener(this);
-        }
+            buildRouteBT = (Button) itemView.findViewById(R.id.wiki_item_build_routeBT);
 
-        @Override
-        public void onClick(View v) {
-            Place place = mPlaces.get(getAdapterPosition());
-            Log.d("App", place.getTitle());
-            Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
-            intent.putExtra("TAG", place.getId());
-            v.getContext().startActivity(intent);
+            View.OnClickListener learnMore = v -> learnMoreListener.onLearnMoreClicked(itemView.getContext(), getAdapterPosition());
+            itemView.setOnClickListener(learnMore);
+            learn_moreBT.setOnClickListener(learnMore);
+            buildRouteBT.setOnClickListener(v -> buildRouteListener.onBuildRouteClicked(itemView.getContext(), getAdapterPosition()));
 
         }
+    }
+
+    private void onLearnMoreClicked(Context context, int adapterPosition) {
+        Place place = mPlaces.get(adapterPosition);
+        Log.d(TAG, place.getTitle());
+        Intent intent = new Intent(context, wikiAttractionActivity.class);
+        intent.putExtra("TAG", place.getId());
+        context.startActivity(intent);
+    }
+
+    private void onBuildRouteClicked(Context context, int adapterPosition) {
+        Place place = mPlaces.get(adapterPosition);
+        Log.d(TAG, place.getTitle());
+        Intent intent = new Intent(context, MapActivity.class);
+        intent.putExtra("TAG", place.getId());
+        context.startActivity(intent);
     }
 
 }

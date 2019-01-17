@@ -16,6 +16,7 @@ import android.widget.Button;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiActivity;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
+import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, WikiActivity.class));
                 break;
             case R.id.main_start_journeyBT:
-                if (!hasPermissions(this, PERMISSIONS))
+                if (!PermissionUtil.hasPermissions(this, PERMISSIONS))
                     new AlertDialog.Builder(this)
                             .setTitle("Разрешения")
                             .setMessage("Следующие разрешения необходимы для работы карты")
@@ -86,17 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onPermissionFailed() {
 
-    }
-
-    public static boolean hasPermissions(Context context, String... permissions) {
-        if (context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
 }

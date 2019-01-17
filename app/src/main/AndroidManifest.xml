@@ -37,7 +37,7 @@
             android:name=".activity.attraction_info.WikiActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.attraction_info.Wiki_Attraction_Activity"
+            android:name=".activity.attraction_info.wikiAttractionActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.MapActivity"
             android:screenOrientation="portrait">

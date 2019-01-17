@@ -20,13 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.Wiki_Attraction_Activity;
+import com.swg_games_lab.nanicki.artguide.activity.attraction_info.wikiAttractionActivity;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.model.Place;
+import com.swg_games_lab.nanicki.artguide.util.ConnectionUtil;
 import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 import com.swg_games_lab.nanicki.artguide.util.MarkerUtil;
 
@@ -57,7 +58,10 @@ import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocati
 
 public class MapActivity extends AppCompatActivity implements RouteReceiver, View.OnClickListener {
 
+    // Fields
     private static final String TAG = "MapActivity";
+    private boolean NO_CONNECTION_MODE;
+
     // Views
     public MapView map;
     private MyLocationNewOverlay myLocationOverlay;
@@ -99,6 +103,18 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        assert locationManager != null;
+
+        boolean connected = ConnectionUtil.isConnected(locationManager, this);
+        if (!connected) {
+            setContentView(R.layout.out_of_connection);
+            ImageView imageView = (ImageView) findViewById(R.id.out_of_connection_show_dialog);
+            imageView.setOnClickListener(v -> ConnectionUtil.buildAlertMessageNoConncetion(this));
+            NO_CONNECTION_MODE = true;
+            return;
+        }
+
         setContentView(R.layout.activity_map);
         // Инициализация layoutов
         init();
@@ -115,24 +131,43 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         // Setting up close route Dialog
         initCloseRouteView();
         Bundle extras = getIntent().getExtras();
-///////////     TODO UNCOMMENT WHEN IMAGES ARE READY
-//        if (extras != null) {
-//            int id = extras.getInt("ID");
-//            Place placeById = CSVreader.getPlaceById(id);
-//            String title = placeById.getTitle();
-//            String placeByIdDescription = placeById.getDescription();
-//            int placeByIdImageSmall = placeById.getImageSmall();
-//            double latitude = placeById.getLatitude();
-//            double longitude = placeById.getLongitude();
-//            OverlayItem item = new OverlayItem(title, placeByIdDescription, new GeoPoint(latitude, longitude));
-//            item.setMarker(this.getDrawable(placeByIdImageSmall));
-//            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item, MapActivity.this);
-//        }
+
 
         // Добавление маркеров
         loadMarkers();
-        // Маркеры настроены можно добавить
-        map.getOverlays().add(lastMarkers);
+
+        if (extras != null) { // пришел id
+            layoutBottomButtons.setVisibility(View.GONE);
+
+            int id = extras.getInt("TAG");
+            Place place = CSVreader.getPlaceById(id);
+            String title = place.getTitle();
+            int imageSmall = place.getImageSmall();
+            double latitude = place.getLatitude();
+            double longitude = place.getLongitude();
+
+
+            lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+            map.getOverlays().add(lastDrownItem);
+
+
+            mapRouteImage.setImageDrawable(this.getDrawable(imageSmall));
+            closeRouteImage.setImageDrawable(this.getDrawable(imageSmall));
+            mapRouteTitle.setText(title);
+            // Hide description
+            mapRouteTime.setVisibility(View.GONE);
+            mapRouteWalkImage.setVisibility(View.GONE);
+            mapRouteLength.setVisibility(View.GONE);
+            // Show progress bar
+            mapRouteProgressBar.setVisibility(View.VISIBLE);
+            // Show
+            mapRouteInfo.setVisibility(View.VISIBLE);
+
+            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), new GeoPoint(latitude, longitude), MapActivity.this);
+            updateRoadTask.execute(MapActivity.this);
+        } else
+            // Маркеры настроены можно добавить
+            map.getOverlays().add(lastMarkers);
     }
 
     private void initCloseRouteView() {
@@ -193,8 +228,6 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map.setTileSource(TileSourceFactory.MAPNIK);
 
         // Получение текущих координат
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        assert locationManager != null;
         myLocationListener = new MyLocationListener(this);
 
         // TODO: Add Later
@@ -331,7 +364,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map_markdesc_imageView.setImageDrawable(imageSmallDrawable);
 
         map_markdesc_show_moreBT.setOnClickListener((View v) -> {
-            Intent intent = new Intent(v.getContext(), Wiki_Attraction_Activity.class);
+            Intent intent = new Intent(v.getContext(), wikiAttractionActivity.class);
             intent.putExtra("TAG", id);
             v.getContext().startActivity(intent);
         });
@@ -348,7 +381,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(lastMarkers);
-            overlays.add(myLocationOverlay);
+            //overlays.add(myLocationOverlay);
             lastDrownItem = new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
             overlays.add(lastDrownItem);
 
@@ -459,6 +492,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     public void onResume() {
         super.onResume();
+        if (NO_CONNECTION_MODE)
+            return;
         map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
@@ -469,6 +504,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @Override
     protected void onStop() {
         super.onStop();
+        if (NO_CONNECTION_MODE)
+            return;
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
         if (updateRoadTask != null)
@@ -481,6 +518,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     public void onPause() {
         super.onPause();
+        if (NO_CONNECTION_MODE)
+            return;
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 

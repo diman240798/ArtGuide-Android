@@ -1,17 +1,21 @@
 package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
+import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.model.Place;
+import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -20,11 +24,12 @@ import java.util.Set;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
-public class Wiki_Attraction_Activity extends AppCompatActivity {
+public class wikiAttractionActivity extends AppCompatActivity {
 
+    private static final String TAG = "wikiAttractionActivity";
     ImageView imageView;
     TextView titleTW, descrTW;
-    Button listenBTN, bottomBTN;
+    Button listenBTN, bottomBTN, showOnMap;
     private GifImageView guideSpeaker;
     private GifDrawable gifFromResource;
     private Drawable playImage;
@@ -42,6 +47,7 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
         titleTW = (TextView) findViewById(R.id.wiki_attr_titleTW);
         descrTW = (TextView) findViewById(R.id.wiki_attr_descriptionTW);
         listenBTN = (Button) findViewById(R.id.wiki_attr_listenBTN);
+        showOnMap = (Button) findViewById(R.id.wiki_attr_show_on_mapBT);
 
         playImage = getResources().getDrawable(R.drawable.listen_play);
         pauseImage = getResources().getDrawable(R.drawable.listen_pause);
@@ -93,7 +99,19 @@ public class Wiki_Attraction_Activity extends AppCompatActivity {
                 imageView.setImageResource(placeImageBig);
                 titleTW.setText(title);
                 descrTW.setText(description);
-            }
+                showOnMap.setOnClickListener(v -> {
+                    if (PermissionUtil.hasMapRequiredPermissions(this)) {
+                        PermissionUtil.requestMapRequiredPermissions(this);
+                        Log.d(TAG, place.getTitle());
+                        Intent intent = new Intent(this, MapActivity.class);
+                        intent.putExtra("TAG", place.getId());
+                        startActivity(intent);
+                    } else
+                        PermissionUtil.requestMapRequiredPermissions(this);
+
+                });
+            } else
+                throw new RuntimeException("No Bundle Here (:");
         }
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
