@@ -130,12 +130,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         initMarkerView();
         // Setting up close route Dialog
         initCloseRouteView();
-        Bundle extras = getIntent().getExtras();
-
-
-        // Добавление маркеров
+        // Loading markers
         loadMarkers();
 
+        Bundle extras = getIntent().getExtras();
         if (extras != null) { // пришел id
             layoutBottomButtons.setVisibility(View.GONE);
 
@@ -163,11 +161,34 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             // Show
             mapRouteInfo.setVisibility(View.VISIBLE);
 
-            updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), new GeoPoint(latitude, longitude), MapActivity.this);
-            updateRoadTask.execute(MapActivity.this);
+
+            postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
+
+
         } else
             // Маркеры настроены можно добавить
             map.getOverlays().add(lastMarkers);
+    }
+
+    private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
+        new Thread(() -> {
+            Location userLocation = null;
+            int times = 3;
+            while (userLocation == null && times > 0) {
+                try {
+                    userLocation = getUserLocation(locationManager);
+                    times -= 1;
+                    Thread.sleep(1000);
+                } catch (Exception ignored) {}
+            }
+            Location finalUserLocation = userLocation;
+            assert finalUserLocation != null;
+            runOnUiThread(() -> {
+                MapActivity mapActivity = MapActivity.this;
+                updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, mapActivity);
+                updateRoadTask.execute(mapActivity);
+            });
+        }).start();
     }
 
     private void initCloseRouteView() {
@@ -432,8 +453,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
-        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), item.getPosition(), MapActivity.this);
-        updateRoadTask.execute(MapActivity.this);
+        postUserLocationAndCallUpdateRoadTask(item.getPosition());
     }
 
 
@@ -447,9 +467,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         Toast.makeText(MapActivity.this, "Перестраиваю", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
-        updateRoadTask = new UpdateRoadTask(getUserLocation(locationManager), (GeoPoint) lastDrownItem.getPosition(), MapActivity.this);
-        updateRoadTask.execute(MapActivity.this);
-
+        postUserLocationAndCallUpdateRoadTask((GeoPoint) lastDrownItem.getPosition());
     }
 
     @Override
