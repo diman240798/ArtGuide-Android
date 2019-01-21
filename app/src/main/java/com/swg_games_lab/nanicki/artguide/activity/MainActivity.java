@@ -51,12 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_start_journeyBT:
                 if (!PermissionUtil.hasPermissions(this, PERMISSIONS))
-                    new AlertDialog.Builder(this)
-                            .setTitle("Разрешения")
-                            .setMessage("Следующие разрешения необходимы для работы карты")
-                            .setPositiveButton("Ок", (d,w) -> ActivityCompat.requestPermissions(this, PERMISSIONS, mRequestCode))
-                            .setCancelable(true)
-                            .create().show();
+                    PermissionUtil.requestMapRequiredPermissions(this);
 
                 else
                     startActivity(new Intent(MainActivity.this, MapActivity.class));

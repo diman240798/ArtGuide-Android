@@ -459,7 +459,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     public void onLocationChanged() {
         Log.d(TAG, "onLocationChanged called");
-        if (lastDrownItem == null || lastPolyline == null) {
+        if (lastDrownItem == null) {
             Log.d(TAG, "Will not rebuild route because lastDrownItem is null");
             return;
         }

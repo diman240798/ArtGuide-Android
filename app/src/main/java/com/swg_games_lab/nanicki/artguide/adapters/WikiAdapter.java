@@ -18,6 +18,7 @@ import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.listener.BuildRouteListener;
 import com.swg_games_lab.nanicki.artguide.listener.LearnMoreListener;
 import com.swg_games_lab.nanicki.artguide.model.Place;
+import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +115,12 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
     private void onBuildRouteClicked(Context context, int adapterPosition) {
         Place place = mPlaces.get(adapterPosition);
         Log.d(TAG, place.getTitle());
-        Intent intent = new Intent(context, MapActivity.class);
-        intent.putExtra("TAG", place.getId());
-        context.startActivity(intent);
+        if (PermissionUtil.hasMapRequiredPermissions(context)) {
+            Intent intent = new Intent(context, MapActivity.class);
+            intent.putExtra("TAG", place.getId());
+            context.startActivity(intent);
+        } else
+            PermissionUtil.requestMapRequiredPermissions(context);
     }
 
 }

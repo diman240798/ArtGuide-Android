@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 
 public class PermissionUtil {
     private static final String[] MAP_PERMISSIONS = {
@@ -22,9 +24,21 @@ public class PermissionUtil {
         }
         return true;
     }
+    private void showMapPermissionDialog(Context context) {
+
+    }
 
     public static void requestMapRequiredPermissions(Activity activity) {
-        ActivityCompat.requestPermissions(activity, MAP_PERMISSIONS, 654);
+        new AlertDialog.Builder(activity)
+                .setTitle("Разрешения")
+                .setMessage("Следующие разрешения необходимы для работы карты")
+                .setPositiveButton("Ок", (d,w) -> ActivityCompat.requestPermissions(activity, MAP_PERMISSIONS, 654))
+                .setCancelable(true)
+                .create().show();
+    }
+
+    public static void requestMapRequiredPermissions(Context context) {
+        requestMapRequiredPermissions((AppCompatActivity) context);
     }
 
     public static boolean hasMapRequiredPermissions(Context context) {

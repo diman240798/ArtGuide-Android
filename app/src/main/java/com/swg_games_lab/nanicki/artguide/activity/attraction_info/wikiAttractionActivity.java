@@ -101,7 +101,6 @@ public class wikiAttractionActivity extends AppCompatActivity {
                 descrTW.setText(description);
                 showOnMap.setOnClickListener(v -> {
                     if (PermissionUtil.hasMapRequiredPermissions(this)) {
-                        PermissionUtil.requestMapRequiredPermissions(this);
                         Log.d(TAG, place.getTitle());
                         Intent intent = new Intent(this, MapActivity.class);
                         intent.putExtra("TAG", place.getId());
