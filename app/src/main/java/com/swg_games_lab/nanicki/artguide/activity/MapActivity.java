@@ -61,6 +61,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     // Fields
     private static final String TAG = "MapActivity";
     private boolean NO_CONNECTION_MODE;
+    private volatile boolean routeBuilding = true;
 
     // Views
     public MapView map;
@@ -194,8 +195,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             Location finalUserLocation = userLocation;
             runOnUiThread(() -> {
                 MapActivity mapActivity = MapActivity.this;
-                updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, mapActivity);
-                updateRoadTask.execute(mapActivity);
+                if (updateRoadTask == null && routeBuilding) {
+                    updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, mapActivity);
+                    updateRoadTask.execute(mapActivity);
+                }
             });
         }).start();
     }
@@ -216,6 +219,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                 map.getOverlays().remove(lastDrownItem);
                 lastDrownItem = null;
             }
+            routeBuilding = false;
             if (updateRoadTask != null)
                 updateRoadTask.cancel(true);
             updateRoadTask = null;
@@ -458,7 +462,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             Log.d(TAG, "Will not request new route because locationListener or lastItem is: null");
             return;
         }
-
+        routeBuilding = true;
         Toast.makeText(MapActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
@@ -473,9 +477,11 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             return;
         }
 
+        routeBuilding = true;
         Toast.makeText(MapActivity.this, "Перестраиваю", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
+        updateRoadTask = null;
         postUserLocationAndCallUpdateRoadTask((GeoPoint) lastDrownItem.getPosition());
     }
 
@@ -514,6 +520,18 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         }
         lastPolyline = roadPolyline;
         mapOverlays.add(roadPolyline);
+        if (updateRoadTask != null) {
+            updateRoadTask.cancel(true);
+        }
+        updateRoadTask = null;
+    }
+
+    @Override
+    public void onRouteBadReceived() {
+        if (updateRoadTask != null) {
+            updateRoadTask.cancel(true);
+        }
+        updateRoadTask = null;
     }
 
 

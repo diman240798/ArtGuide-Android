@@ -55,14 +55,17 @@ public class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
             Road firstRoad = roads[0];
             if (firstRoad.mStatus == Road.STATUS_TECHNICAL_ISSUE) {
                 Log.d(TAG, "Technical issue when getting the route");
+                routeReceiver.get().onRouteBadReceived();
                 return;
             } else if (firstRoad.mStatus > Road.STATUS_TECHNICAL_ISSUE) {
                 Log.d(TAG, "No possible route here");
+                routeReceiver.get().onRouteBadReceived();
                 return;
             }
 
             Log.d(TAG, "Sending new road back.");
             routeReceiver.get().onRouteReceived(firstRoad);
+
         } else {
             Log.d(TAG, "Road is null or was closed.");
         }
