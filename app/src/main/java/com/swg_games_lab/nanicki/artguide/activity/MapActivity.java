@@ -173,16 +173,25 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
         new Thread(() -> {
             Location userLocation = null;
-            int times = 10;
+            int times = 20;
             while (userLocation == null && times > 0) {
                 try {
                     userLocation = getUserLocation(locationManager);
                     times -= 1;
-                    Thread.sleep(1000);
-                } catch (Exception ignored) {}
+                    Thread.sleep(2000);
+                } catch (Exception ignored) {
+
+                }
+            }
+
+            // FIXME: Crutch produce NullPointer
+            if (userLocation == null) {
+                Toast.makeText(this, "Couldn't detect user location!", Toast.LENGTH_SHORT).show();
+                userLocation = new Location("");
+                userLocation.setLatitude(47.219196);
+                userLocation.setLongitude(39.702261);
             }
             Location finalUserLocation = userLocation;
-            assert finalUserLocation != null;
             runOnUiThread(() -> {
                 MapActivity mapActivity = MapActivity.this;
                 updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, mapActivity);
