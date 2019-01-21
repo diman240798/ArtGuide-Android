@@ -173,7 +173,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
         new Thread(() -> {
             Location userLocation = null;
-            int times = 3;
+            int times = 10;
             while (userLocation == null && times > 0) {
                 try {
                     userLocation = getUserLocation(locationManager);
@@ -459,7 +459,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     public void onLocationChanged() {
         Log.d(TAG, "onLocationChanged called");
-        if (lastDrownItem == null) {
+        if (lastDrownItem == null || lastPolyline == null) {
             Log.d(TAG, "Will not rebuild route because lastDrownItem is null");
             return;
         }
