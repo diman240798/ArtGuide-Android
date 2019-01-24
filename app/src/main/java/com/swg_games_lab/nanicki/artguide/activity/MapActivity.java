@@ -174,7 +174,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
         new Thread(() -> {
             Location userLocation = null;
-            int times = 20;
+            int times = 40;
             while (userLocation == null && times > 0) {
                 try {
                     userLocation = getUserLocation(locationManager);
@@ -189,8 +189,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             if (userLocation == null) {
                 Toast.makeText(this, "Couldn't detect user location!", Toast.LENGTH_SHORT).show();
                 userLocation = new Location("");
-                userLocation.setLatitude(47.219196);
-                userLocation.setLongitude(39.702261);
+                userLocation.setLatitude(47.228480);
+                userLocation.setLongitude(39.728696);
             }
             Location finalUserLocation = userLocation;
             runOnUiThread(() -> {
@@ -304,11 +304,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         IMapController mapController = map.getController();
         mapController.setZoom(12);
 
-        Location userLocation = getUserLocation(locationManager);
-        GeoPoint startPoint = LocationUtil
-                .getGeoPointByLocationOrDefault
-                        (userLocation, new GeoPoint(47.219196, 39.702261));
-
+        GeoPoint startPoint = new GeoPoint(47.219196, 39.702261);
         mapController.setCenter(startPoint);
 
         map.setBuiltInZoomControls(false);
