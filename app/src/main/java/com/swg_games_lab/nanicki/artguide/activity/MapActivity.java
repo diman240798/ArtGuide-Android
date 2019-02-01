@@ -543,6 +543,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
         if (lastItem != null)
             requestDrawRoute(lastItem);
     }
