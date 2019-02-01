@@ -178,19 +178,14 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             while (userLocation == null && isAlive) {
                 try {
                     userLocation = getUserLocation(locationManager);
-                    Thread.sleep(2000);
-                } catch (Exception ignored) {
-
-                }
+                    if (userLocation == null)
+                        Thread.sleep(2000);
+                } catch (Exception ignored) {}
             }
 
-            // FIXME: Crutch produce NullPointer
-            if (userLocation == null) {
-                Toast.makeText(this, "Couldn't detect user location!", Toast.LENGTH_SHORT).show();
-                userLocation = new Location("");
-                userLocation.setLatitude(47.228480);
-                userLocation.setLongitude(39.728696);
-            }
+            if (!isAlive)
+                throw new RuntimeException("Stop for sure");
+
             Location finalUserLocation = userLocation;
             runOnUiThread(() -> {
                 MapActivity mapActivity = MapActivity.this;
@@ -485,6 +480,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     @Override
     public void onRouteReceived(@NonNull Road road) {
+        if (!routeBuilding || lastItem == null)
+            return;
         Context context = this;
 
         double roadLength = road.mLength;
