@@ -9,7 +9,7 @@ import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 import java.lang.ref.WeakReference;
 
 public class MyLocationListener implements LocationListener {
-    private final static long minTimeForUpdate = 3000;
+    private final static long minTimeForUpdate = 6000;
 
     private static final String TAG = "MyLocationListener";
     public WeakReference<MapActivity> mapActivity;
