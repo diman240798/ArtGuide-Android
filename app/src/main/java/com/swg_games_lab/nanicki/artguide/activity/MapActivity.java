@@ -1,5 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -28,7 +29,6 @@ import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.util.ConnectionUtil;
-import com.swg_games_lab.nanicki.artguide.util.LocationUtil;
 import com.swg_games_lab.nanicki.artguide.util.MarkerUtil;
 
 import org.osmdroid.api.IMapController;
@@ -99,6 +99,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     private ConstraintLayout closeRouteView;
     private ImageView closeRouteImage, closeRouteCloseImage;
     private Button closeRouteYes, closeRouteNo;
+    private volatile boolean isAlive = true;
 
 
     @Override
@@ -172,13 +173,11 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     }
 
     private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
-        new Thread(() -> {
+        Thread threadGettingUserLocation = new Thread(() -> {
             Location userLocation = null;
-            int times = 40;
-            while (userLocation == null && times > 0) {
+            while (userLocation == null && isAlive) {
                 try {
                     userLocation = getUserLocation(locationManager);
-                    times -= 1;
                     Thread.sleep(2000);
                 } catch (Exception ignored) {
 
@@ -200,7 +199,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                     updateRoadTask.execute(mapActivity);
                 }
             });
-        }).start();
+        });
+        threadGettingUserLocation.start();
     }
 
     private void initCloseRouteView() {
@@ -215,6 +215,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         closeRouteCloseImage.setOnClickListener(closeRouteDialog);
 
         closeRouteYes.setOnClickListener(v -> {
+            isAlive = false;
             if (lastDrownItem != null) {
                 map.getOverlays().remove(lastDrownItem);
                 lastDrownItem = null;
@@ -399,6 +400,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
             v.getContext().startActivity(intent);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
+            isAlive = true;
             Location userLocation = getUserLocation(locationManager);
             Toast.makeText(MapActivity.this, "User location: " + String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
             if (userLocation == null || myLocationOverlay == null) {
@@ -530,11 +532,14 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         updateRoadTask = null;
     }
 
-
-    public void onResume() {
-        super.onResume();
-        if (NO_CONNECTION_MODE)
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onStart() {
+        if (NO_CONNECTION_MODE) {
             return;
+        }
+        super.onStart();
+        isAlive = true;
         map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
@@ -547,6 +552,7 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
         super.onStop();
         if (NO_CONNECTION_MODE)
             return;
+        isAlive = false;
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapActivity = null;
         if (updateRoadTask != null)
