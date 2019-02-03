@@ -173,21 +173,29 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     }
 
     private void postUserLocationAndCallUpdateRoadTask(GeoPoint geoPoint) {
+        Log.d(TAG, "postUserLoaction is called");
         Thread threadGettingUserLocation = new Thread(() -> {
             Location userLocation = null;
+            Log.d(TAG, "Start getting user location");
             while (userLocation == null && isAlive) {
                 try {
                     userLocation = getUserLocation(locationManager);
-                    if (userLocation == null)
+                    if (userLocation == null) {
+                        Log.d(TAG, "User location is null. Will sleep 2000!");
                         Thread.sleep(2000);
+                    }
                 } catch (Exception ignored) {}
             }
 
-            if (!isAlive)
-                throw new RuntimeException("Stop for sure");
+            Log.d(TAG, "Have user location " + userLocation.toString());
+            if (!isAlive) {
+                Log.d(TAG, "Not alive. Return.");
+                return;
+            }
 
             Location finalUserLocation = userLocation;
             runOnUiThread(() -> {
+                Log.d(TAG, "Have user location. Request road building!");
                 MapActivity mapActivity = MapActivity.this;
                 if (updateRoadTask == null && routeBuilding) {
                     updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, mapActivity);
@@ -480,7 +488,8 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
 
     @Override
     public void onRouteReceived(@NonNull Road road) {
-        if (!routeBuilding || lastItem == null)
+
+        if (!routeBuilding || lastDrownItem == null)
             return;
         Context context = this;
 
