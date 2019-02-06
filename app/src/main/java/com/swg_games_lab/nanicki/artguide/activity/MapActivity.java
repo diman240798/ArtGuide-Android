@@ -541,10 +541,10 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
     @SuppressLint("MissingPermission")
     @Override
     public void onStart() {
+        super.onStart();
         if (NO_CONNECTION_MODE) {
             return;
         }
-        super.onStart();
         isAlive = true;
         map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
