@@ -187,11 +187,12 @@ public class MapActivity extends AppCompatActivity implements RouteReceiver, Vie
                 } catch (Exception ignored) {}
             }
 
-            Log.d(TAG, "Have user location " + userLocation.toString());
             if (!isAlive) {
                 Log.d(TAG, "Not alive. Return.");
                 return;
             }
+
+            Log.d(TAG, "Have user location " + userLocation.toString());
 
             Location finalUserLocation = userLocation;
             runOnUiThread(() -> {
