@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 public class PermissionUtil {
     private static final String[] MAP_PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
