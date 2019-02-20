@@ -7,7 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.wikiAttractionActivity;
+import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
@@ -48,9 +48,9 @@ import java.util.Locale;
 
 import static com.swg_games_lab.nanicki.artguide.util.LocationUtil.getUserLocation;
 
-public class MapInitActivity extends AppCompatActivity implements RouteReceiver {
+public class MapInitFragment extends Fragment implements RouteReceiver {
 
-    protected static final String TAG = "MapInitActivity";
+    protected static final String TAG = "MapInitFragment";
     protected volatile boolean routeBuilding = true;
 
 
@@ -93,12 +93,12 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
     protected volatile boolean isAlive = true;
 
 
-    protected void initCloseRouteView() {
-        closeRouteView = (ConstraintLayout) findViewById(R.id.map_close_route);
-        closeRouteImage = (ImageView) findViewById(R.id.close_request_image);
-        closeRouteCloseImage = (ImageView) findViewById(R.id.close_request_close);
-        closeRouteYes = (Button) findViewById(R.id.close_request_yes);
-        closeRouteNo = (Button) findViewById(R.id.close_request_no);
+    protected void initCloseRouteView(View view) {
+        closeRouteView = (ConstraintLayout) view.findViewById(R.id.map_close_route);
+        closeRouteImage = (ImageView) view.findViewById(R.id.close_request_image);
+        closeRouteCloseImage = (ImageView) view.findViewById(R.id.close_request_close);
+        closeRouteYes = (Button) view.findViewById(R.id.close_request_yes);
+        closeRouteNo = (Button) view.findViewById(R.id.close_request_no);
 
         View.OnClickListener closeRouteDialog = v -> closeRouteView.setVisibility(View.GONE);
         closeRouteNo.setOnClickListener(closeRouteDialog);
@@ -130,24 +130,24 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
         });
     }
 
-    protected void initRouteInfoLayout() {
-        mapRouteInfo = (ConstraintLayout) findViewById(R.id.map_route_info);
-        mapRouteImage = (ImageView) findViewById(R.id.route_info_image);
-        mapRouteClose = (ImageView) findViewById(R.id.route_info_close);
+    protected void initRouteInfoLayout(View view) {
+        mapRouteInfo = (ConstraintLayout) view.findViewById(R.id.map_route_info);
+        mapRouteImage = (ImageView) view.findViewById(R.id.route_info_image);
+        mapRouteClose = (ImageView) view.findViewById(R.id.route_info_close);
         mapRouteClose.setOnClickListener(v -> {
             closeRouteView.setVisibility(View.VISIBLE);
         });
-        mapRouteWalkImage = (ImageView) findViewById(R.id.route_info_walk_image);
-        mapRouteTitle = (TextView) findViewById(R.id.route_info_title);
-        mapRouteTime = (TextView) findViewById(R.id.route_info_time);
-        mapRouteLength = (TextView) findViewById(R.id.route_info_length);
-        mapRouteProgressBar = (ProgressBar) findViewById(R.id.route_info_progress_bar);
+        mapRouteWalkImage = (ImageView) view.findViewById(R.id.route_info_walk_image);
+        mapRouteTitle = (TextView) view.findViewById(R.id.route_info_title);
+        mapRouteTime = (TextView) view.findViewById(R.id.route_info_time);
+        mapRouteLength = (TextView) view.findViewById(R.id.route_info_length);
+        mapRouteProgressBar = (ProgressBar) view.findViewById(R.id.route_info_progress_bar);
     }
 
 
-    protected void initMapMarker() {
-        mapMarker = (ConstraintLayout) findViewById(R.id.map_marker);
-        ImageView markdesc_closeIV = (ImageView) findViewById(R.id.map_markdesc_closeIV);
+    protected void initMapMarker(View view) {
+        mapMarker = (ConstraintLayout) view.findViewById(R.id.map_marker);
+        ImageView markdesc_closeIV = (ImageView) view.findViewById(R.id.map_markdesc_closeIV);
         markdesc_closeIV.setOnClickListener(v -> {
             mapMarker.setVisibility(View.GONE);
             map_markdesc_distanceTextView.setVisibility(View.GONE);
@@ -156,7 +156,7 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
     }
 
     protected void setUpMap() {
-        Context context = this;
+        Context context = getContext();
 
         IMapController mapController = map.getController();
         mapController.setZoom(12);
@@ -181,27 +181,28 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
         map.getOverlays().add(mRotationGestureOverlay);
     }
 
-    protected void initMarkerView() {
+    protected void initMarkerView(View view) {
         // marker Info
-        map_markdesc_imageView = (ImageView) findViewById(R.id.map_markdesc_image);
-        map_markdesc_titleTextView = (TextView) findViewById(R.id.map_markdesc_titleTextView);
-        map_markdesc_brief_descriptionTextView = (TextView) findViewById(R.id.map_markdesc_brief_descriptionTextView);
-        map_markdesc_show_moreBT = (Button) findViewById(R.id.map_markdesc_show_moreBT);
-        map_markdesc_build_routeBT = (Button) findViewById(R.id.map_markdesc_build_routeBT);
-        map_markdesc_distanceTextView = (TextView) findViewById(R.id.map_markdesc_distanceTW);
+        map_markdesc_imageView = (ImageView) view.findViewById(R.id.map_markdesc_image);
+        map_markdesc_titleTextView = (TextView) view.findViewById(R.id.map_markdesc_titleTextView);
+        map_markdesc_brief_descriptionTextView = (TextView) view.findViewById(R.id.map_markdesc_brief_descriptionTextView);
+        map_markdesc_show_moreBT = (Button) view.findViewById(R.id.map_markdesc_show_moreBT);
+        map_markdesc_build_routeBT = (Button) view.findViewById(R.id.map_markdesc_build_routeBT);
+        map_markdesc_distanceTextView = (TextView) view.findViewById(R.id.map_markdesc_distanceTW);
 
     }
 
     protected void loadMarkers() {
-        museumMarkers = new RadiusMarkerClusterer(this);
-        theatreMarkers = new RadiusMarkerClusterer(this);
-        memorialMarkers = new RadiusMarkerClusterer(this);
-        stadiumMarkers = new RadiusMarkerClusterer(this);
-        parkMarkers = new RadiusMarkerClusterer(this);
+        Context context = getContext();
+        museumMarkers = new RadiusMarkerClusterer(context);
+        theatreMarkers = new RadiusMarkerClusterer(context);
+        memorialMarkers = new RadiusMarkerClusterer(context);
+        stadiumMarkers = new RadiusMarkerClusterer(context);
+        parkMarkers = new RadiusMarkerClusterer(context);
         // Создаем лист маркеров
         List<RadiusMarkerClusterer> overlayItems = new ArrayList<>();
         // Добавляем маркеры
-        List<Place> data = CSVreader.getData(this);
+        List<Place> data = CSVreader.getData(context);
         for (int i = 0; i < data.size(); i++) {
             // retrieve data
             Place place = data.get(i);
@@ -213,7 +214,7 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
             Marker marker = new Marker(map);
             marker.setTitle(String.valueOf(id));
             marker.setPosition(markerPosition);
-            marker.setIcon(this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+            marker.setIcon(context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
             marker.setOnMarkerClickListener((Marker mark, MapView map) -> {
                 onOverlayTapUp(mark);
                 mapMarker.setVisibility(View.VISIBLE);
@@ -243,7 +244,7 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
         String title = place.getTitle();
         String description = place.getDescription();
 
-        Drawable imageSmallDrawable = this.getDrawable(imageSmall);
+        Drawable imageSmallDrawable = getContext().getDrawable(imageSmall);
 
 
         map_markdesc_titleTextView.setText(title);
@@ -251,16 +252,18 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
         map_markdesc_imageView.setImageDrawable(imageSmallDrawable);
 
         map_markdesc_show_moreBT.setOnClickListener((View v) -> {
-            Intent intent = new Intent(v.getContext(), wikiAttractionActivity.class);
+            Context context = v.getContext();
+            Intent intent = new Intent(context, WikiAttractionFragment.class);
             intent.putExtra("TAG", id);
-            v.getContext().startActivity(intent);
+            context.startActivity(intent);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
+            Context context = v.getContext();
             isAlive = true;
             Location userLocation = getUserLocation(locationManager);
-            Toast.makeText(MapInitActivity.this, "User location: " + String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "User location: " + String.valueOf(userLocation), Toast.LENGTH_SHORT).show();
             if (userLocation == null || myLocationOverlay == null) {
-                Toast.makeText(MapInitActivity.this, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Погодь, еще не определил местоположение", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -270,12 +273,12 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
             List<Overlay> overlays = map.getOverlays();
             overlays.remove(lastMarkers);
             //overlays.add(myLocationOverlay);
-            lastDrownItem = new IconOverlay(item.getPosition(), this.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+            lastDrownItem = new IconOverlay(item.getPosition(), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
             overlays.add(lastDrownItem);
 
             lastItem = item;
             mapRouteImage.setImageDrawable(imageSmallDrawable);
-            closeRouteImage.setImageDrawable(this.getDrawable(imageSmall));
+            closeRouteImage.setImageDrawable(context.getDrawable(imageSmall));
             mapRouteTitle.setText(title);
             // Hide description
             mapRouteTime.setVisibility(View.GONE);
@@ -318,7 +321,7 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
             return;
         }
         routeBuilding = true;
-        Toast.makeText(MapInitActivity.this, "Погодь, ща построим", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Погодь, ща построим", Toast.LENGTH_SHORT).show();
         if (updateRoadTask != null)
             updateRoadTask.cancel(true);
         postUserLocationAndCallUpdateRoadTask(item.getPosition());
@@ -348,12 +351,12 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
             Log.d(TAG, "Have user location " + userLocation.toString());
 
             Location finalUserLocation = userLocation;
-            runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 Log.d(TAG, "Have user location. Request road building!");
-                RouteReceiver routeReceiver = MapInitActivity.this;
+                RouteReceiver routeReceiver = MapInitFragment.this;
                 if (updateRoadTask == null && routeBuilding) {
                     updateRoadTask = new UpdateRoadTask(finalUserLocation, geoPoint, routeReceiver);
-                    Context context = MapInitActivity.this;
+                    Context context = getContext();
                     updateRoadTask.execute(context);
                 }
             });
@@ -367,7 +370,7 @@ public class MapInitActivity extends AppCompatActivity implements RouteReceiver 
 
         if (!routeBuilding || lastDrownItem == null)
             return;
-        Context context = this;
+        Context context = getContext();
 
         double roadLength = road.mLength;
 

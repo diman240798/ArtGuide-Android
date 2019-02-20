@@ -1,24 +1,32 @@
 package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.WikiAdapter;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.ui.BottomNavigationBehavior;
+import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.util.List;
 
-public class WikiActivity extends AppCompatActivity implements View.OnClickListener {
+public class WikiFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "WikiFragment";
 
     private RecyclerView mRecyclerView;
     private Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
@@ -26,33 +34,45 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
     private List<Place> places;
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        return LayoutInflater.from(container.getContext()).inflate(R.layout.activity_wiki, container, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wiki);
+
+        // TODO: ENABLE IN THE END
+        //mRecyclerView.setHasFixedSize(true);
+        // TODO: Add animations
+        //overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_up);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         places = getPlaces();
 
-        initSortingButtons();
+        initSortingButtons(view);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.wiki_bottom_navig_with_buttons);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) view.findViewById(R.id.wiki_bottom_navig_with_buttons);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomNavigationView.getLayoutParams();
         layoutParams.setBehavior(new BottomNavigationBehavior());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         setupAdapter();
-        // TODO: ENABLE IN THE END
-        //mRecyclerView.setHasFixedSize(true);
-        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_up);
     }
 
-    private void initSortingButtons() {
-        bt_museum = (Button) findViewById(R.id.wiki_bt_museum);
-        bt_theatre = (Button) findViewById(R.id.wiki_bt_theatre);
-        bt_memorial = (Button) findViewById(R.id.wiki_bt_memorial);
-        bt_stadium = (Button) findViewById(R.id.wiki_bt_stadium);
-        bt_park = (Button) findViewById(R.id.wiki_bt_park);
+    private void initSortingButtons(View view) {
+        bt_museum = (Button) view.findViewById(R.id.wiki_bt_museum);
+        bt_theatre = (Button) view.findViewById(R.id.wiki_bt_theatre);
+        bt_memorial = (Button) view.findViewById(R.id.wiki_bt_memorial);
+        bt_stadium = (Button) view.findViewById(R.id.wiki_bt_stadium);
+        bt_park = (Button) view.findViewById(R.id.wiki_bt_park);
 
         bt_museum.setOnClickListener(this);
         bt_theatre.setOnClickListener(this);
@@ -60,21 +80,39 @@ public class WikiActivity extends AppCompatActivity implements View.OnClickListe
         bt_stadium.setOnClickListener(this);
         bt_park.setOnClickListener(this);
     }
-
+/*
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down);
-    }
+    }*/
 
     private void setupAdapter() {
 
-        wikiAdapter = new WikiAdapter(places);
+        wikiAdapter = new WikiAdapter(places, this::onLearnMoreClicked, this::onBuildRouteClicked);
         mRecyclerView.setAdapter(wikiAdapter);
     }
 
+    private void onLearnMoreClicked(Context context, int adapterPosition) {
+        Place place = wikiAdapter.getList().get(adapterPosition);
+        Log.d(TAG, place.getTitle());
+        ApplicationActivity activity = (ApplicationActivity) getActivity();
+        activity.startWikiDetailsScreen(place.getId());
+    }
+
+    private void onBuildRouteClicked(Context context, int adapterPosition) {
+        Place place = wikiAdapter.getList().get(adapterPosition);
+        Log.d(TAG, place.getTitle());
+        if (PermissionUtil.hasMapRequiredPermissions(context)) {
+            ApplicationActivity activity = (ApplicationActivity) getActivity();
+            activity.startMapScreen(place.getId());
+
+        } else
+            PermissionUtil.requestMapRequiredPermissions(context);
+    }
+
     private List<Place> getPlaces() {
-        return CSVreader.getData(this);
+        return CSVreader.getData(getContext());
     }
 
     @Override

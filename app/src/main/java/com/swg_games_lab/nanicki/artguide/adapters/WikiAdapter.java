@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.wikiAttractionActivity;
+import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
+import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.listener.BuildRouteListener;
 import com.swg_games_lab.nanicki.artguide.listener.LearnMoreListener;
@@ -26,10 +26,14 @@ import java.util.List;
 public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
     private static final String TAG = "WikiAdapter";
+    private final LearnMoreListener learnMoreListener;
+    private final BuildRouteListener buildRouteListener;
     private List<Place> mPlaces;
 
-    public WikiAdapter(List<Place> places) {
+    public WikiAdapter(List<Place> places, LearnMoreListener learnMoreListener, BuildRouteListener buildRouteListener) {
         mPlaces = places;
+        this.learnMoreListener = learnMoreListener;
+        this.buildRouteListener = buildRouteListener;
     }
 
     @Override
@@ -38,7 +42,7 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_item, parent, false);
-        return new ViewHolder(view, this::onLearnMoreClicked, this::onBuildRouteClicked);
+        return new ViewHolder(view, learnMoreListener, buildRouteListener);
 
     }
 
@@ -104,23 +108,6 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
         }
     }
 
-    private void onLearnMoreClicked(Context context, int adapterPosition) {
-        Place place = mPlaces.get(adapterPosition);
-        Log.d(TAG, place.getTitle());
-        Intent intent = new Intent(context, wikiAttractionActivity.class);
-        intent.putExtra("TAG", place.getId());
-        context.startActivity(intent);
-    }
 
-    private void onBuildRouteClicked(Context context, int adapterPosition) {
-        Place place = mPlaces.get(adapterPosition);
-        Log.d(TAG, place.getTitle());
-        if (PermissionUtil.hasMapRequiredPermissions(context)) {
-            Intent intent = new Intent(context, MapActivity.class);
-            intent.putExtra("TAG", place.getId());
-            context.startActivity(intent);
-        } else
-            PermissionUtil.requestMapRequiredPermissions(context);
-    }
 
 }

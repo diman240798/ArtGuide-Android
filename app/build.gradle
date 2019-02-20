@@ -27,9 +27,9 @@ Properties readVersion() {
         if (stream != null) stream.close()
     }
     // safety defaults in case file is missing
-    if(!version['major']) version['major'] = "1"
-    if(!version['minor']) version['minor'] = "0"
-    if(!version['build']) version['build'] = "0"
+    if (!version['major']) version['major'] = "1"
+    if (!version['minor']) version['minor'] = "0"
+    if (!version['build']) version['build'] = "0"
     return version
 }
 
@@ -82,7 +82,8 @@ if (plugins.hasPlugin('android') || plugins.hasPlugin('android-library')) {
 
         afterEvaluate {
             def autoIncrementVariant = { variant ->
-                if (variant.buildType.name == buildTypes.release.name) { // don't increment on debug builds
+                if (variant.buildType.name == buildTypes.release.name) {
+                    // don't increment on debug builds
                     variant.preBuild.dependsOn incrementVersion
                     incrementVersion.doLast {
                         variant.mergedFlavor.versionName = calculateVersionName()
@@ -115,15 +116,13 @@ dependencies {
     implementation 'org.osmdroid:osmdroid-geopackage:6.0.0'
     // Show Gifs
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
-
+    // Ethernet
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-
+    // Location
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
 }
-
-
-
 
 //implementation 'org.osmdroid:osmdroid-third-party:6.0.0'
 //implementation 'com.google.android.gms:play-services-location:12.0.0'
@@ -134,13 +133,12 @@ dependencies {
 //compile 'com.nihaskalam.android:progress-button:1.0.1'
 
 //
-   /* implementation files('libs/osmbonuspack_6.5.1 - Copy.jar')
+/* implementation files('libs/osmbonuspack_6.5.1 - Copy.jar')
     implementation files(name:'libs/osmbonuspack_v6.5.1', ext:'aar')*/
 
-    /*compile 'com.github.MKergall.osmbonuspack:MapsForgeForOsmdroid:v5.7'
+/*compile 'com.github.MKergall.osmbonuspack:MapsForgeForOsmdroid:v5.7'
     compile 'org.osmdroid:osmdroid-android:6.0.1'
     compile "com.android.support:support-v4:23.4.0"
     compile 'org.apache.commons:commons-lang3:3.3.4'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.okhttp3:okhttp:3.7.0'*/
-

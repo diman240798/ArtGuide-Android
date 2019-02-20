@@ -1,18 +1,22 @@
 package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
 
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.model.Place;
 import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
@@ -24,9 +28,9 @@ import java.util.Set;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
-public class wikiAttractionActivity extends AppCompatActivity {
+public class WikiAttractionFragment extends Fragment {
 
-    private static final String TAG = "wikiAttractionActivity";
+    private static final String TAG = "WikiAttractionFragment";
     ImageView imageView;
     TextView titleTW, descrTW;
     Button listenBTN, bottomBTN, showOnMap;
@@ -36,23 +40,33 @@ public class wikiAttractionActivity extends AppCompatActivity {
     private Drawable pauseImage;
     private TextToSpeech textToSpeech;
 
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        setContentView(R.layout.activity_wiki__attraction);
 
-        bottomBTN = (Button) findViewById(R.id.wiki_attr_bottomBT);
-        bottomBTN.setOnClickListener(v -> finish());
-        imageView = (ImageView) findViewById(R.id.wiki_attr_Image);
-        titleTW = (TextView) findViewById(R.id.wiki_attr_titleTW);
-        descrTW = (TextView) findViewById(R.id.wiki_attr_descriptionTW);
-        listenBTN = (Button) findViewById(R.id.wiki_attr_listenBTN);
-        showOnMap = (Button) findViewById(R.id.wiki_attr_show_on_mapBT);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return LayoutInflater.from(container.getContext()).inflate(R.layout.activity_wiki__attraction, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle bundle) {
+        super.onViewCreated(view, bundle);
+
+        bottomBTN = (Button) view.findViewById(R.id.wiki_attr_bottomBT);
+        bottomBTN.setOnClickListener(v -> {
+            ApplicationActivity activity = (ApplicationActivity) getActivity();
+            activity.startPreviousScreen();
+        });
+        imageView = (ImageView) view.findViewById(R.id.wiki_attr_Image);
+        titleTW = (TextView) view.findViewById(R.id.wiki_attr_titleTW);
+        descrTW = (TextView) view.findViewById(R.id.wiki_attr_descriptionTW);
+        listenBTN = (Button) view.findViewById(R.id.wiki_attr_listenBTN);
+        showOnMap = (Button) view.findViewById(R.id.wiki_attr_show_on_mapBT);
 
         playImage = getResources().getDrawable(R.drawable.listen_play);
         pauseImage = getResources().getDrawable(R.drawable.listen_pause);
 
-        textToSpeech = new TextToSpeech(this, status -> {
+        Context context = getContext();
+        textToSpeech = new TextToSpeech(context, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech.setLanguage(new Locale("ru"));
                 Set<Voice> voices = textToSpeech.getVoices();
@@ -64,7 +78,7 @@ public class wikiAttractionActivity extends AppCompatActivity {
         });
 
         ///////////
-        guideSpeaker = (GifImageView) findViewById(R.id.wiki_attr_speaking_heroIV);
+        guideSpeaker = (GifImageView) view.findViewById(R.id.wiki_attr_speaking_heroIV);
         try {
             gifFromResource = new GifDrawable(getResources(), R.drawable.gif_speaking_hero);
             gifFromResource.stop();
@@ -86,10 +100,22 @@ public class wikiAttractionActivity extends AppCompatActivity {
             }
         });
 
-        if (bundle == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                int placeId = extras.getInt("TAG");
+//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+    }
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle != null) {
+                int placeId = bundle.getInt("TAG");
                 Place place = CSVreader.getPlaceById(placeId);
                 // get data
                 int placeImageBig = place.getImageBig();
@@ -100,24 +126,21 @@ public class wikiAttractionActivity extends AppCompatActivity {
                 titleTW.setText(title);
                 descrTW.setText(description);
                 showOnMap.setOnClickListener(v -> {
-                    if (PermissionUtil.hasMapRequiredPermissions(this)) {
+                    if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
                         Log.d(TAG, place.getTitle());
-                        Intent intent = new Intent(this, MapActivity.class);
-                        intent.putExtra("TAG", place.getId());
-                        startActivity(intent);
+                        ApplicationActivity activity = (ApplicationActivity) getActivity();
+                        activity.startMapScreen();
                     } else
-                        PermissionUtil.requestMapRequiredPermissions(this);
+                        PermissionUtil.requestMapRequiredPermissions(getContext());
 
                 });
             } else
                 throw new RuntimeException("No Bundle Here (:");
         }
-
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         gifFromResource.stop();
         textToSpeech.stop();
@@ -130,9 +153,11 @@ public class wikiAttractionActivity extends AppCompatActivity {
         descrTW.setText(description);
     }
 
+    /*
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
+        // TODO: Add Animations
+        //overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }*/
 }

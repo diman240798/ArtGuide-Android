@@ -1,23 +1,23 @@
-package com.swg_games_lab.nanicki.artguide;
+package com.swg_games_lab.nanicki.artguide.activity;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.swg_games_lab.nanicki.artguide.activity.MapInitActivity;
+import com.swg_games_lab.nanicki.artguide.R;
 
-public class MapBottomButtons extends MapInitActivity implements View.OnClickListener {
+public class MapBottomButtonsFragment extends MapInitFragment implements View.OnClickListener {
 
 
-    protected void initBottomSortingButtons() {
+    protected void initBottomSortingButtons(View view) {
 
-        layoutBottomButtons = (LinearLayout) findViewById(R.id.bottom_linear_with_buttons);
+        layoutBottomButtons = (LinearLayout) view.findViewById(R.id.bottom_linear_with_buttons);
 
-        bt_museum = (Button) findViewById(R.id.map_bt_museum);
-        bt_theatre = (Button) findViewById(R.id.map_bt_theatre);
-        bt_memorial = (Button) findViewById(R.id.map_bt_memorial);
-        bt_stadium = (Button) findViewById(R.id.map_bt_stadium);
-        bt_park = (Button) findViewById(R.id.map_bt_park);
+        bt_museum = (Button) view.findViewById(R.id.map_bt_museum);
+        bt_theatre = (Button) view.findViewById(R.id.map_bt_theatre);
+        bt_memorial = (Button) view.findViewById(R.id.map_bt_memorial);
+        bt_stadium = (Button) view.findViewById(R.id.map_bt_stadium);
+        bt_park = (Button) view.findViewById(R.id.map_bt_park);
 
         bt_museum.setOnClickListener(this);
         bt_theatre.setOnClickListener(this);

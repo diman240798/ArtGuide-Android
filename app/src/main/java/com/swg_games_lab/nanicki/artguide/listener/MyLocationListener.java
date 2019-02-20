@@ -4,7 +4,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
-import com.swg_games_lab.nanicki.artguide.activity.MapActivity;
+
+import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
 
 import java.lang.ref.WeakReference;
 
@@ -12,27 +13,27 @@ public class MyLocationListener implements LocationListener {
     private final static long minTimeForUpdate = 6000;
 
     private static final String TAG = "MyLocationListener";
-    public WeakReference<MapActivity> mapActivity;
+    public WeakReference<MapFragment> mapActivity;
     private long lastUpdate;
 
-    public MyLocationListener(MapActivity mapActivity) {
-        this.mapActivity = new WeakReference<>(mapActivity);
+    public MyLocationListener(MapFragment mapFragment) {
+        this.mapActivity = new WeakReference<>(mapFragment);
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "New location received");
         if (mapActivity == null || mapActivity.get() == null) {
-            Log.d(TAG, "MapActivity is null. Return;");
+            Log.d(TAG, "MapFragment is null. Return;");
             return;
         }
 
         Log.d(TAG, location.toString());
 
-        MapActivity mapActivity = this.mapActivity.get();
+        MapFragment mapFragment = this.mapActivity.get();
         long currentTimeMillis = System.currentTimeMillis();
-        if (mapActivity != null && currentTimeMillis - lastUpdate > minTimeForUpdate) {
-            mapActivity.onLocationChanged();
+        if (mapFragment != null && currentTimeMillis - lastUpdate > minTimeForUpdate) {
+            mapFragment.onLocationChanged();
             lastUpdate = currentTimeMillis;
         }
     }
