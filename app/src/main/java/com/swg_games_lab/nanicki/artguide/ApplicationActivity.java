@@ -23,7 +23,20 @@ public class ApplicationActivity extends AppCompatActivity {
     private Fragment CURRENT;
     Stack<Fragment> screens;
 
+    public volatile boolean animating = false;
 
+    void countIsAnimating() {
+        animating = true;
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                animating = false;
+            }
+            animating = false;
+        }).start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +44,6 @@ public class ApplicationActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application);
-
-        FrameLayout screen = (FrameLayout) findViewById(R.id.activity_screen);
 
         screens = new Stack<>();
         MAIN_SCREEN = new MainFragment();
@@ -48,38 +59,6 @@ public class ApplicationActivity extends AppCompatActivity {
         screens.push(MAIN_SCREEN);
     }
 
-    private void setPrevScreen(Fragment screen) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.activity_screen, screen)
-                .commit();
-        CURRENT = screen;
-    }
-
-    public void startWikiScreen() {
-        setScreenWithAnimation(WIKI_SCREEN, AnimationSetting.DOWN);
-    }
-
-    public void startMapScreen() {
-        setScreenWithAnimation(MAP_SCREEN, AnimationSetting.RIGHT);
-    }
-
-    public void startPreviousScreen() {
-        Fragment previous = screens.pop();
-        AnimationSetting animation = AnimationSetting.LEFT;
-        if (previous == MAP_SCREEN) {
-            animation = AnimationSetting.LEFT;
-        } else if (previous == MAIN_SCREEN) {
-            if (CURRENT == WIKI_SCREEN)
-            animation = AnimationSetting.UP;
-            else
-                animation = AnimationSetting.LEFT;
-        } else if (previous == WIKI_SCREEN) {
-            animation = AnimationSetting.LEFT;
-        }
-        setPrevScreenWithAnimation(previous, animation);
-    }
-
     private void setPrevScreenWithAnimation(Fragment previous, AnimationSetting animationSetting) {
         int start = animationSetting.getStart();
         int end = animationSetting.getEnd();
@@ -91,23 +70,40 @@ public class ApplicationActivity extends AppCompatActivity {
         CURRENT = previous;
     }
 
-    public void startWikiDetailsScreen(int id) {
-        Bundle args = new Bundle();
-        args.putInt("TAG", id);
-        WIKI_DETAIL_SCREEN.setArguments(args);
-        setScreenWithAnimation(WIKI_DETAIL_SCREEN, AnimationSetting.RIGHT);
+    public void startPreviousScreen() {
+        Fragment previous = screens.pop();
+        AnimationSetting animation = AnimationSetting.LEFT;
+        if (previous == MAIN_SCREEN && CURRENT == WIKI_SCREEN)
+            animation = AnimationSetting.UP;
+        setPrevScreenWithAnimation(previous, animation);
+    }
+
+    public void startWikiScreen() {
+        setScreenWithAnimation(WIKI_SCREEN, AnimationSetting.DOWN);
     }
 
     private void setScreenWithAnimation(Fragment screen, AnimationSetting animationSetting) {
         screens.push(CURRENT);
         int start = animationSetting.getStart();
         int end = animationSetting.getEnd();
+        countIsAnimating();
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(start, end)
                 .replace(R.id.activity_screen, screen)
                 .commit();
         CURRENT = screen;
+    }
+
+    public void startMapScreen() {
+        setScreenWithAnimation(MAP_SCREEN, AnimationSetting.RIGHT);
+    }
+
+    public void startWikiDetailsScreen(int id) {
+        Bundle args = new Bundle();
+        args.putInt("TAG", id);
+        WIKI_DETAIL_SCREEN.setArguments(args);
+        setScreenWithAnimation(WIKI_DETAIL_SCREEN, AnimationSetting.RIGHT);
     }
 
     public void startMapScreen(int id) {
@@ -120,7 +116,8 @@ public class ApplicationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (screens.size() > 1) {
-            startPreviousScreen();
+            if (!animating)
+                startPreviousScreen();
         } else {
             super.onBackPressed();
         }

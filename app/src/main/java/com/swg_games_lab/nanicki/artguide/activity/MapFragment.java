@@ -56,6 +56,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         return result;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
