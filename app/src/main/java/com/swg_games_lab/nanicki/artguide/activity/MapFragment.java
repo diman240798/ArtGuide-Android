@@ -88,42 +88,6 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         loadMarkers();
 
 
-        Bundle extras = getActivity().getIntent().getExtras();
-        if (extras != null) { // пришел id
-            Context context = getContext();
-            layoutBottomButtons.setVisibility(View.GONE);
-
-            int id = extras.getInt("TAG");
-            Place place = CSVreader.getPlaceById(id);
-            String title = place.getTitle();
-            int imageSmall = place.getImageSmall();
-            double latitude = place.getLatitude();
-            double longitude = place.getLongitude();
-
-
-            lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
-            map.getOverlays().add(lastDrownItem);
-
-
-            mapRouteImage.setImageDrawable(context.getDrawable(imageSmall));
-            closeRouteImage.setImageDrawable(context.getDrawable(imageSmall));
-            mapRouteTitle.setText(title);
-            // Hide description
-            mapRouteTime.setVisibility(View.GONE);
-            mapRouteWalkImage.setVisibility(View.GONE);
-            mapRouteLength.setVisibility(View.GONE);
-            // Show progress bar
-            mapRouteProgressBar.setVisibility(View.VISIBLE);
-            // Show
-            mapRouteInfo.setVisibility(View.VISIBLE);
-
-
-            postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
-
-
-        } else
-            // Маркеры настроены можно добавить
-            map.getOverlays().add(lastMarkers);
     }
 
 
@@ -168,12 +132,55 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
             return;
         }
         isAlive = true;
-        map.onResume();
+//        map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
-        if (lastItem != null)
+        if (lastDrownItem != null)
             requestDrawRoute(lastItem);
+        else
+            chehkBundle();
+    }
+
+    private void chehkBundle() {
+
+        Bundle extras = getArguments();
+        if (extras != null) { // пришел id
+            Context context = getContext();
+            layoutBottomButtons.setVisibility(View.GONE);
+
+            int id = extras.getInt("TAG");
+            setArguments(null);
+            Place place = CSVreader.getPlaceById(id);
+            String title = place.getTitle();
+            int imageSmall = place.getImageSmall();
+            double latitude = place.getLatitude();
+            double longitude = place.getLongitude();
+
+
+            lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+            map.getOverlays().add(lastDrownItem);
+
+
+            mapRouteImage.setImageDrawable(context.getDrawable(imageSmall));
+            closeRouteImage.setImageDrawable(context.getDrawable(imageSmall));
+            mapRouteTitle.setText(title);
+            // Hide description
+            mapRouteTime.setVisibility(View.GONE);
+            mapRouteWalkImage.setVisibility(View.GONE);
+            mapRouteLength.setVisibility(View.GONE);
+            // Show progress bar
+            mapRouteProgressBar.setVisibility(View.VISIBLE);
+            // Show
+            mapRouteInfo.setVisibility(View.VISIBLE);
+
+
+            postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
+
+
+        } else if (!map.getOverlays().contains(lastMarkers))
+            // Маркеры настроены можно добавить
+            map.getOverlays().add(lastMarkers);
     }
 
     @Override
@@ -197,7 +204,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         super.onPause();
         if (NO_CONNECTION_MODE)
             return;
-        map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+//        map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 
 }
