@@ -10,6 +10,7 @@ import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiFragment;
 import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
+import com.swg_games_lab.nanicki.artguide.ui.AnimationSetting;
 
 import java.util.Stack;
 
@@ -21,6 +22,7 @@ public class ApplicationActivity extends AppCompatActivity {
     private Fragment WIKI_DETAIL_SCREEN;
     private Fragment CURRENT;
     Stack<Fragment> screens;
+
 
 
     @Override
@@ -68,7 +70,7 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     public void startWikiScreen() {
-        setScreen(WIKI_SCREEN);
+        setScreenWithAnimation(WIKI_SCREEN, AnimationSetting.DOWN);
     }
 
     public void startMapScreen() {
@@ -77,14 +79,48 @@ public class ApplicationActivity extends AppCompatActivity {
 
     public void startPreviousScreen() {
         Fragment previous = screens.pop();
-        setPrevScreen(previous);
+        AnimationSetting animation = AnimationSetting.LEFT;
+        if (previous == MAP_SCREEN) {
+            animation = AnimationSetting.RIGHT;
+        } else if (previous == MAIN_SCREEN) {
+            if (CURRENT == WIKI_SCREEN)
+            animation = AnimationSetting.UP;
+            else
+                animation = AnimationSetting.RIGHT;
+        } else if (previous == WIKI_SCREEN) {
+            animation = AnimationSetting.RIGHT;
+        }
+        setPrevScreenWithAnimation(previous, animation);
+    }
+
+    private void setPrevScreenWithAnimation(Fragment previous, AnimationSetting animationSetting) {
+        int start = animationSetting.getStart();
+        int end = animationSetting.getEnd();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(start, end)
+                .replace(R.id.activity_screen, previous)
+                .commit();
+        CURRENT = previous;
     }
 
     public void startWikiDetailsScreen(int id) {
         Bundle args = new Bundle();
         args.putInt("TAG", id);
         WIKI_DETAIL_SCREEN.setArguments(args);
-        setScreen(WIKI_DETAIL_SCREEN);
+        setScreenWithAnimation(WIKI_DETAIL_SCREEN, AnimationSetting.LEFT);
+    }
+
+    private void setScreenWithAnimation(Fragment screen, AnimationSetting animationSetting) {
+        screens.push(CURRENT);
+        int start = animationSetting.getStart();
+        int end = animationSetting.getEnd();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(start, end)
+                .replace(R.id.activity_screen, screen)
+                .commit();
+        CURRENT = screen;
     }
 
     public void startMapScreen(int id) {

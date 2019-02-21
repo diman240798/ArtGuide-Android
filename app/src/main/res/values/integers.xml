@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="left_right_animation_duration">800</integer>
+    <integer name="up_down_animation_duration">800</integer>
+</resources>
