@@ -29,7 +29,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return LayoutInflater.from(container.getContext()).inflate(R.layout.activity_main, container, false);
+        return inflater.inflate(R.layout.activity_main, container, false);
     }
 
     @Override

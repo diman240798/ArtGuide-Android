@@ -47,10 +47,10 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         boolean connected = ConnectionUtil.isConnected(locationManager, context);
         if (!connected) {
             NO_CONNECTION_MODE = true;
-            result = LayoutInflater.from(context).inflate(R.layout.out_of_connection, container, false);
+            result = inflater.inflate(R.layout.out_of_connection, container, false);
         } else {
             NO_CONNECTION_MODE = false;
-            result = LayoutInflater.from(context).inflate(R.layout.activity_map, container, false);
+            result = inflater.inflate(R.layout.activity_map, container, false);
         }
         return result;
     }

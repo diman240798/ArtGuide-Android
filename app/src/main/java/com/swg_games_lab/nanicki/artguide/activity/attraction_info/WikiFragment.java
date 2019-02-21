@@ -37,7 +37,7 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return LayoutInflater.from(container.getContext()).inflate(R.layout.activity_wiki, container, false);
+        return inflater.inflate(R.layout.activity_wiki, container, false);
     }
 
     @Override

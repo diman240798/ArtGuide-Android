@@ -44,7 +44,7 @@ public class WikiAttractionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return LayoutInflater.from(container.getContext()).inflate(R.layout.activity_wiki__attraction, container, false);
+        return inflater.inflate(R.layout.activity_wiki__attraction, container, false);
     }
 
     @Override
