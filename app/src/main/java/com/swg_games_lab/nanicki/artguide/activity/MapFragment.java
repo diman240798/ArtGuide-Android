@@ -39,6 +39,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         Context context = container.getContext();
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         assert locationManager != null;

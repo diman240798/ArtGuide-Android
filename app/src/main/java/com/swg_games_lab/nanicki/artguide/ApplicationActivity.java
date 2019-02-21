@@ -48,15 +48,6 @@ public class ApplicationActivity extends AppCompatActivity {
         screens.push(MAIN_SCREEN);
     }
 
-    private void setScreen(Fragment screen) {
-        screens.push(CURRENT);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.activity_screen, screen)
-                .commit();
-        CURRENT = screen;
-    }
-
     private void setPrevScreen(Fragment screen) {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -65,30 +56,26 @@ public class ApplicationActivity extends AppCompatActivity {
         CURRENT = screen;
     }
 
-    private void setMainScreen() {
-        setScreen(MAIN_SCREEN);
-    }
-
     public void startWikiScreen() {
         setScreenWithAnimation(WIKI_SCREEN, AnimationSetting.DOWN);
     }
 
     public void startMapScreen() {
-        setScreen(MAP_SCREEN);
+        setScreenWithAnimation(MAP_SCREEN, AnimationSetting.RIGHT);
     }
 
     public void startPreviousScreen() {
         Fragment previous = screens.pop();
         AnimationSetting animation = AnimationSetting.LEFT;
         if (previous == MAP_SCREEN) {
-            animation = AnimationSetting.RIGHT;
+            animation = AnimationSetting.LEFT;
         } else if (previous == MAIN_SCREEN) {
             if (CURRENT == WIKI_SCREEN)
             animation = AnimationSetting.UP;
             else
-                animation = AnimationSetting.RIGHT;
+                animation = AnimationSetting.LEFT;
         } else if (previous == WIKI_SCREEN) {
-            animation = AnimationSetting.RIGHT;
+            animation = AnimationSetting.LEFT;
         }
         setPrevScreenWithAnimation(previous, animation);
     }
@@ -108,7 +95,7 @@ public class ApplicationActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putInt("TAG", id);
         WIKI_DETAIL_SCREEN.setArguments(args);
-        setScreenWithAnimation(WIKI_DETAIL_SCREEN, AnimationSetting.LEFT);
+        setScreenWithAnimation(WIKI_DETAIL_SCREEN, AnimationSetting.RIGHT);
     }
 
     private void setScreenWithAnimation(Fragment screen, AnimationSetting animationSetting) {
@@ -127,7 +114,7 @@ public class ApplicationActivity extends AppCompatActivity {
         Bundle args = new Bundle();
         args.putInt("TAG", id);
         MAP_SCREEN.setArguments(args);
-        setScreen(MAP_SCREEN);
+        setScreenWithAnimation(MAP_SCREEN, AnimationSetting.RIGHT);
     }
 
     @Override
