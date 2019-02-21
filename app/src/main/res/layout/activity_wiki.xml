@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_map_graphic"
-    android:fitsSystemWindows="true"
     tools:context=".activity.attraction_info.WikiFragment">
-
+    
     <include
         app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior"
         android:id="@+id/wiki_tool_bar"
