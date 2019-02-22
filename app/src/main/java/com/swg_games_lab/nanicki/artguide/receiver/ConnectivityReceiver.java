@@ -18,7 +18,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 
         if (currentNetworkInfo.isConnected()) {
             //Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG).show();
-            //setContentView(R.layout.activity_map);
+            //setContentView(R.layout.fragment_map);
         } else {
             //Toast.makeText(getApplicationContext(), "Not Connected", Toast.LENGTH_LONG).show();
 //                setContentView(R.layout.out_of_connection);

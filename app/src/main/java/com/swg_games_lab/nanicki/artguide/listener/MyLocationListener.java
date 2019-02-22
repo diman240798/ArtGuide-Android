@@ -5,7 +5,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.MapFragment;
 
 import java.lang.ref.WeakReference;
 

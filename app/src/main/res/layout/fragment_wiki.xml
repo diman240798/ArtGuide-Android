@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_map_graphic"
-    tools:context=".activity.attraction_info.WikiFragment">
+    tools:context=".fragment.attraction_info.WikiFragment">
 
     <include
         app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior"
@@ -38,7 +38,7 @@
 
         <LinearLayout
             android:paddingTop="8dp"
-            android:id="@+id/linear_bottom_buttons"
+            android:id="@+id/wiki_bottom_buttons"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal">

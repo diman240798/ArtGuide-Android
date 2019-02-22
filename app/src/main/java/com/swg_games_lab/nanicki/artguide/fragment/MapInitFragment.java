@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.activity;
+package com.swg_games_lab.nanicki.artguide.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;

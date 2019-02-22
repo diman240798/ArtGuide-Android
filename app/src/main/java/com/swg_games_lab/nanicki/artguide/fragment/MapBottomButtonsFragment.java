@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.activity;
+package com.swg_games_lab.nanicki.artguide.fragment;
 
 import android.view.View;
 import android.widget.Button;

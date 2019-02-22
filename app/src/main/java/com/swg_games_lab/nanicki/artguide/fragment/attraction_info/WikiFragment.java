@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
+package com.swg_games_lab.nanicki.artguide.fragment.attraction_info;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
+import com.swg_games_lab.nanicki.artguide.MainActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.WikiAdapter;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
@@ -29,15 +29,16 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "WikiFragment";
 
     private RecyclerView mRecyclerView;
-    private Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
+    private Button btMuseum, btTheatre, btMemorial, btStadium, btPark;
     private WikiAdapter wikiAdapter;
     private List<Place> places;
+    private BottomNavigationView wikiBottomButtons;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_wiki, container, false);
+        return inflater.inflate(R.layout.fragment_wiki, container, false);
     }
 
     @Override
@@ -68,17 +69,18 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initSortingButtons(View view) {
-        bt_museum = (Button) view.findViewById(R.id.wiki_bt_museum);
-        bt_theatre = (Button) view.findViewById(R.id.wiki_bt_theatre);
-        bt_memorial = (Button) view.findViewById(R.id.wiki_bt_memorial);
-        bt_stadium = (Button) view.findViewById(R.id.wiki_bt_stadium);
-        bt_park = (Button) view.findViewById(R.id.wiki_bt_park);
+        wikiBottomButtons = (BottomNavigationView) view.findViewById(R.id.wiki_bottom_navig_with_buttons);
+        btMuseum = (Button) view.findViewById(R.id.wiki_bt_museum);
+        btTheatre = (Button) view.findViewById(R.id.wiki_bt_theatre);
+        btMemorial = (Button) view.findViewById(R.id.wiki_bt_memorial);
+        btStadium = (Button) view.findViewById(R.id.wiki_bt_stadium);
+        btPark = (Button) view.findViewById(R.id.wiki_bt_park);
 
-        bt_museum.setOnClickListener(this);
-        bt_theatre.setOnClickListener(this);
-        bt_memorial.setOnClickListener(this);
-        bt_stadium.setOnClickListener(this);
-        bt_park.setOnClickListener(this);
+        btMuseum.setOnClickListener(this);
+        btTheatre.setOnClickListener(this);
+        btMemorial.setOnClickListener(this);
+        btStadium.setOnClickListener(this);
+        btPark.setOnClickListener(this);
     }
 /*
     @Override
@@ -96,15 +98,17 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
     private void onLearnMoreClicked(Context context, int adapterPosition) {
         Place place = wikiAdapter.getList().get(adapterPosition);
         Log.d(TAG, place.getTitle());
-        ApplicationActivity activity = (ApplicationActivity) getActivity();
-        activity.startWikiDetailsScreen(place.getId());
+        int id = place.getId();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.startWikiDetailsScreen(id);
+
     }
 
     private void onBuildRouteClicked(Context context, int adapterPosition) {
         Place place = wikiAdapter.getList().get(adapterPosition);
         Log.d(TAG, place.getTitle());
         if (PermissionUtil.hasMapRequiredPermissions(context)) {
-            ApplicationActivity activity = (ApplicationActivity) getActivity();
+            MainActivity activity = (MainActivity) getActivity();
             activity.startMapScreen(place.getId());
 
         } else
@@ -121,29 +125,28 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
         setDefaultImages();
 
         if (id == R.id.wiki_bt_museum) {
-            bt_museum.setBackgroundResource(R.drawable.item_museum_chosen);
+            btMuseum.setBackgroundResource(R.drawable.item_museum_chosen);
             wikiAdapter.sortList(places, AttractionType.Museum);
         } else if (id == R.id.wiki_bt_stadium) {
-            bt_stadium.setBackgroundResource(R.drawable.item_stadium_chosen);
+            btStadium.setBackgroundResource(R.drawable.item_stadium_chosen);
             wikiAdapter.sortList(places, AttractionType.Stadium);
         } else if (id == R.id.wiki_bt_memorial) {
-            bt_memorial.setBackgroundResource(R.drawable.item_memorial_chosen);
+            btMemorial.setBackgroundResource(R.drawable.item_memorial_chosen);
             wikiAdapter.sortList(places, AttractionType.Memorial);
         } else if (id == R.id.wiki_bt_theatre) {
-            bt_theatre.setBackgroundResource(R.drawable.item_theatre_chosen);
+            btTheatre.setBackgroundResource(R.drawable.item_theatre_chosen);
             wikiAdapter.sortList(places, AttractionType.Theatre);
         } else if (id == R.id.wiki_bt_park) {
-            bt_park.setBackgroundResource(R.drawable.item_park_chosen);
+            btPark.setBackgroundResource(R.drawable.item_park_chosen);
             wikiAdapter.sortList(places, AttractionType.Park);
         }
     }
 
     private void setDefaultImages() {
-        bt_theatre.setBackgroundResource(R.drawable.item_theatre);
-        bt_museum.setBackgroundResource(R.drawable.item_museum);
-        bt_memorial.setBackgroundResource(R.drawable.item_memorial);
-        bt_stadium.setBackgroundResource(R.drawable.item_stadium);
-        bt_park.setBackgroundResource(R.drawable.item_park);
+        btTheatre.setBackgroundResource(R.drawable.item_theatre);
+        btMuseum.setBackgroundResource(R.drawable.item_museum);
+        btMemorial.setBackgroundResource(R.drawable.item_memorial);
+        btStadium.setBackgroundResource(R.drawable.item_stadium);
+        btPark.setBackgroundResource(R.drawable.item_park);
     }
-
 }

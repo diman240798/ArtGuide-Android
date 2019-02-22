@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.activity.attraction_info;
+package com.swg_games_lab.nanicki.artguide.fragment.attraction_info;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
+import com.swg_games_lab.nanicki.artguide.MainActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.model.Place;
@@ -44,7 +44,7 @@ public class WikiAttractionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_wiki__attraction, container, false);
+        return inflater.inflate(R.layout.fragment_wiki__attraction, container, false);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class WikiAttractionFragment extends Fragment {
 
         bottomBTN = (Button) view.findViewById(R.id.wiki_attr_bottomBT);
         bottomBTN.setOnClickListener(v -> {
-            ApplicationActivity activity = (ApplicationActivity) getActivity();
+            MainActivity activity = (MainActivity) getActivity();
             activity.startPreviousScreen();
         });
         imageView = (ImageView) view.findViewById(R.id.wiki_attr_Image);
@@ -128,7 +128,7 @@ public class WikiAttractionFragment extends Fragment {
                 showOnMap.setOnClickListener(v -> {
                     if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
                         Log.d(TAG, place.getTitle());
-                        ApplicationActivity activity = (ApplicationActivity) getActivity();
+                        MainActivity activity = (MainActivity) getActivity();
                         activity.startMapScreen();
                     } else
                         PermissionUtil.requestMapRequiredPermissions(getContext());

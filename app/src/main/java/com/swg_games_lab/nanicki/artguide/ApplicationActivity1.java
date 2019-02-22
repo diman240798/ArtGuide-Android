@@ -3,18 +3,17 @@ package com.swg_games_lab.nanicki.artguide;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
-import com.swg_games_lab.nanicki.artguide.activity.MainFragment;
-import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiFragment;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.MainFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.MapFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.ui.AnimationSetting;
 
 import java.util.Stack;
 
-public class ApplicationActivity extends AppCompatActivity {
+public class ApplicationActivity1 extends AppCompatActivity {
 
     private Fragment MAIN_SCREEN;
     private Fragment MAP_SCREEN;

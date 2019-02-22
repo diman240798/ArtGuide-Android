@@ -1,9 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.activity.MapFragment;
-import com.swg_games_lab.nanicki.artguide.activity.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
 import com.swg_games_lab.nanicki.artguide.listener.BuildRouteListener;
 import com.swg_games_lab.nanicki.artguide.listener.LearnMoreListener;
+import com.swg_games_lab.nanicki.artguide.listener.OnBottomReachedListener;
 import com.swg_games_lab.nanicki.artguide.model.Place;
-import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +36,7 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
 
 
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.adapter_item, parent, false);
+                .inflate(R.layout.wiki_item, parent, false);
         return new ViewHolder(view, learnMoreListener, buildRouteListener);
 
     }
@@ -82,6 +77,7 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiAdapter.ViewHolder> {
         mPlaces = result;
         notifyDataSetChanged();
     }
+
 
     static class ViewHolder extends RecyclerView.ViewHolder{
 

@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.activity;
+package com.swg_games_lab.nanicki.artguide.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -51,7 +51,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
             result = inflater.inflate(R.layout.out_of_connection, container, false);
         } else {
             NO_CONNECTION_MODE = false;
-            result = inflater.inflate(R.layout.activity_map, container, false);
+            result = inflater.inflate(R.layout.fragment_map, container, false);
         }
         return result;
     }
@@ -134,7 +134,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
             return;
         }
         isAlive = true;
-//        map.onResume();
+        map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
@@ -206,7 +206,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         super.onPause();
         if (NO_CONNECTION_MODE)
             return;
-//        map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+        map.onPause();
     }
 
 }
