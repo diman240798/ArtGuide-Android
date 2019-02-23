@@ -93,8 +93,8 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
 
     public void onLocationChanged() {
         Log.d(TAG, "onLocationChanged called");
-        if (isAlive || lastDrownItem == null) {
-            Log.d(TAG, "Will not rebuild route because lastDrownItem is null");
+        if (!isAlive || lastDrownItem == null) {
+            Log.d(TAG, "Will not rebuild route because lastDrownItem is null or Not Alive");
             return;
         }
 
