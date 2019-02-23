@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.fragment;
+package com.swg_games_lab.nanicki.artguide.fragment.main;
 
 import android.Manifest;
 import android.content.Context;
@@ -62,7 +62,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     PermissionUtil.requestMapRequiredPermissions(context);
 
                 else
-                    activity.startMapScreen();
+                    activity.startMapScreen(null);
                 break;
         }
     }
@@ -87,7 +87,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private void onPermissionGrunted() {
         ApplicationActivity activity = (ApplicationActivity) getActivity();
-        activity.startMapScreen();
+        activity.startMapScreen(null);
     }
 
     private void onPermissionFailed() {

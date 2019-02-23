@@ -10,16 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
 import com.swg_games_lab.nanicki.artguide.listener.RouteReceiver;
 import com.swg_games_lab.nanicki.artguide.model.Place;
-import com.swg_games_lab.nanicki.artguide.util.ConnectionUtil;
 import com.swg_games_lab.nanicki.artguide.util.MarkerUtil;
 
 import org.osmdroid.config.Configuration;
@@ -35,26 +32,11 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
 
     // Fields
     private static final String TAG = "MapFragment";
-    private boolean NO_CONNECTION_MODE;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        Context context = container.getContext();
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        assert locationManager != null;
-
-        View result;
-        boolean connected = ConnectionUtil.isConnected(locationManager, context);
-        if (!connected) {
-            NO_CONNECTION_MODE = true;
-            result = inflater.inflate(R.layout.out_of_connection, container, false);
-        } else {
-            NO_CONNECTION_MODE = false;
-            result = inflater.inflate(R.layout.fragment_map, container, false);
-        }
-        return result;
+        return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
 
@@ -67,11 +49,6 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (NO_CONNECTION_MODE) {
-            ImageView imageView = (ImageView) view.findViewById(R.id.out_of_connection_show_dialog);
-            imageView.setOnClickListener(v -> ConnectionUtil.buildAlertMessageNoConncetion(view.getContext()));
-            return;
-        }
 
         // Инициализация layoutов
         init(view);
@@ -131,17 +108,6 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStart() {
         super.onStart();
-        if (NO_CONNECTION_MODE) {
-            Context context = getContext();
-            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            assert locationManager != null;
-            boolean connected = ConnectionUtil.isConnected(locationManager, context);
-            if (connected) {
-                ApplicationActivity activity = (ApplicationActivity) getActivity();
-                activity.rebindMapFragment();
-            }
-            return;
-        }
 
         if (isAlive) {
             return;
@@ -211,8 +177,6 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStop() {
         super.onStop();
-        if (NO_CONNECTION_MODE)
-            return;
 
         locationManager.removeUpdates(myLocationListener);
         myLocationListener.mapFragment = null;
@@ -232,8 +196,6 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onPause() {
         super.onPause();
-        if (NO_CONNECTION_MODE)
-            return;
         map.onPause();
     }
 

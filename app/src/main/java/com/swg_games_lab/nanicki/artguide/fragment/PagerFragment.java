@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.main.MainFragment;
 import com.swg_games_lab.nanicki.artguide.ui.AnimationSetting;
 
 import java.util.Stack;
