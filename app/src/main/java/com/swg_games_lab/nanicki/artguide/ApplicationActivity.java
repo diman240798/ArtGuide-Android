@@ -16,6 +16,7 @@ import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
 import com.swg_games_lab.nanicki.artguide.ui.PagerAdapter;
 import com.swg_games_lab.nanicki.artguide.ui.NoScrollingViewPager;
 import com.swg_games_lab.nanicki.artguide.util.ConnectionUtil;
+import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class ApplicationActivity extends AppCompatActivity {
         pagerFragment = new PagerFragment();
 
 
-
         wikiFragment = new WikiFragment();
         wikiAttractionFragment = new WikiAttractionFragment();
 
@@ -56,14 +56,16 @@ public class ApplicationActivity extends AppCompatActivity {
         };
 
         boolean connected = isConnected();
+        boolean hasMapRequiredPermissions = PermissionUtil.hasMapRequiredPermissions(this);
 
-        if (connected) {
-            mapFragment = new MapFragment();
-            horizontelFragments.add(mapFragment);
-        } else {
+        if (!connected || !hasMapRequiredPermissions) {
             noConnectionFragment = new NoConnectionFragment();
             horizontelFragments.add(noConnectionFragment);
+        } else {
+            mapFragment = new MapFragment();
+            horizontelFragments.add(mapFragment);
         }
+
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), horizontelFragments);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setPagingEnabled(false);
