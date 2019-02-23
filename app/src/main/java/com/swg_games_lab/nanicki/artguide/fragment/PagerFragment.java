@@ -1,6 +1,5 @@
 package com.swg_games_lab.nanicki.artguide.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,13 +11,11 @@ import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
 import com.swg_games_lab.nanicki.artguide.ui.AnimationSetting;
-import com.swg_games_lab.nanicki.artguide.ui.VerticalViewPager;
 
 import java.util.Stack;
 
 public class PagerFragment extends Fragment {
 
-    VerticalViewPager verticalViewPager;
     MainFragment MAIN_FRAGMENT;
     WikiFragment WIKI_FRAGMENT;
     WikiAttractionFragment WIKI_ATTRACTION_FRAGMENT;
@@ -53,29 +50,21 @@ public class PagerFragment extends Fragment {
                 .commit();
     }
 
-    private void setScreenWithAnimation(Fragment screen) {
+    private void setScreenWithAnimation(Fragment screen, AnimationSetting animationSetting) {
         screens.push(CURRENT);
-        AnimationSetting animationSetting = AnimationSetting.DOWN;
-        int start = animationSetting.getStart();
-        int end = animationSetting.getEnd();
-        getChildFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(start, end)
-                .replace(R.id.activity_screen, screen)
-                .commit();
-        CURRENT = screen;
+        countIsAnimating();
+        setPrevScreenWithAnimation(screen, animationSetting);
     }
 
 
     public void startWikiScreen() {
-        setScreenWithAnimation(WIKI_FRAGMENT);
+        setScreenWithAnimation(WIKI_FRAGMENT, AnimationSetting.DOWN);
     }
 
 
     private void setPrevScreenWithAnimation(Fragment previous, AnimationSetting animationSetting) {
         int start = animationSetting.getStart();
         int end = animationSetting.getEnd();
-        countIsAnimating();
         getChildFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(start, end)
@@ -87,6 +76,8 @@ public class PagerFragment extends Fragment {
     public void startPreviousScreen() {
         Fragment previous = screens.pop();
         AnimationSetting animation = AnimationSetting.UP;
+        if (CURRENT == WIKI_ATTRACTION_FRAGMENT)
+            animation = AnimationSetting.LEFT;
         setPrevScreenWithAnimation(previous, animation);
     }
 
@@ -94,7 +85,7 @@ public class PagerFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt("TAG", id);
         WIKI_ATTRACTION_FRAGMENT.setArguments(args);
-        setScreenWithAnimation(WIKI_ATTRACTION_FRAGMENT);
+        setScreenWithAnimation(WIKI_ATTRACTION_FRAGMENT, AnimationSetting.RIGHT);
     }
 
     public volatile boolean animating = false;

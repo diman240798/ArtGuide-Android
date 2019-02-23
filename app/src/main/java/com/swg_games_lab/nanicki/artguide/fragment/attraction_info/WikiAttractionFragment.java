@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.swg_games_lab.nanicki.artguide.MainActivity;
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.model.Place;
@@ -53,7 +53,7 @@ public class WikiAttractionFragment extends Fragment {
 
         bottomBTN = (Button) view.findViewById(R.id.wiki_attr_bottomBT);
         bottomBTN.setOnClickListener(v -> {
-            MainActivity activity = (MainActivity) getActivity();
+            ApplicationActivity activity = (ApplicationActivity) getActivity();
             activity.startPreviousScreen();
         });
         imageView = (ImageView) view.findViewById(R.id.wiki_attr_Image);
@@ -128,7 +128,7 @@ public class WikiAttractionFragment extends Fragment {
                 showOnMap.setOnClickListener(v -> {
                     if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
                         Log.d(TAG, place.getTitle());
-                        MainActivity activity = (MainActivity) getActivity();
+                        ApplicationActivity activity = (ApplicationActivity) getActivity();
                         activity.startMapScreen();
                     } else
                         PermissionUtil.requestMapRequiredPermissions(getContext());

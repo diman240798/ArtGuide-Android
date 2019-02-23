@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.swg_games_lab.nanicki.artguide.MainActivity;
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.adapters.WikiAdapter;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
@@ -99,7 +99,7 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
         Place place = wikiAdapter.getList().get(adapterPosition);
         Log.d(TAG, place.getTitle());
         int id = place.getId();
-        MainActivity activity = (MainActivity) getActivity();
+        ApplicationActivity activity = (ApplicationActivity) getActivity();
         activity.startWikiDetailsScreen(id);
 
     }
@@ -108,7 +108,7 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
         Place place = wikiAdapter.getList().get(adapterPosition);
         Log.d(TAG, place.getTitle());
         if (PermissionUtil.hasMapRequiredPermissions(context)) {
-            MainActivity activity = (MainActivity) getActivity();
+            ApplicationActivity activity = (ApplicationActivity) getActivity();
             activity.startMapScreen(place.getId());
 
         } else

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.swg_games_lab.nanicki.artguide.MainActivity;
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
@@ -51,7 +51,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        MainActivity activity = (MainActivity) getActivity();
+        ApplicationActivity activity = (ApplicationActivity) getActivity();
         switch (view.getId()) {
             case R.id.main_wikiBT:
                 activity.startWikiScreen();
@@ -86,7 +86,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void onPermissionGrunted() {
-        MainActivity activity = (MainActivity) getActivity();
+        ApplicationActivity activity = (ApplicationActivity) getActivity();
         activity.startMapScreen();
     }
 

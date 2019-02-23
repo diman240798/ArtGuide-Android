@@ -16,7 +16,7 @@ import com.swg_games_lab.nanicki.artguide.ui.FragmentAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class ApplicationActivity extends AppCompatActivity {
 
     private NoScrollingViewPager viewPager;
     private PagerFragment pagerFragment;
