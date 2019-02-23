@@ -94,7 +94,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     public void onLocationChanged() {
         Log.d(TAG, "onLocationChanged called");
         if (!isAlive || lastDrownItem == null) {
-            Log.d(TAG, "Will not rebuild route because lastDrownItem is null or Not Alive");
+            Log.d(TAG, "Will not rebuild route because lastDrownItem is null or Not Alive)");
             return;
         }
 
@@ -110,11 +110,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStart() {
         super.onStart();
-
-        if (isAlive) {
-            return;
-        }
-
+        
         myLocationListener.mapFragment = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
