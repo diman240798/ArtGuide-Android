@@ -13,7 +13,7 @@ import com.swg_games_lab.nanicki.artguide.fragment.PagerFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
-import com.swg_games_lab.nanicki.artguide.ui.FragmentAdapter;
+import com.swg_games_lab.nanicki.artguide.ui.PagerAdapter;
 import com.swg_games_lab.nanicki.artguide.ui.NoScrollingViewPager;
 import com.swg_games_lab.nanicki.artguide.util.ConnectionUtil;
 
@@ -27,7 +27,7 @@ public class ApplicationActivity extends AppCompatActivity {
     private MapFragment mapFragment;
     private WikiFragment wikiFragment;
     private WikiAttractionFragment wikiAttractionFragment;
-    private FragmentAdapter pagerAdapter;
+    private PagerAdapter pagerAdapter;
     private NoConnectionFragment noConnectionFragment;
 
 
@@ -64,7 +64,7 @@ public class ApplicationActivity extends AppCompatActivity {
             noConnectionFragment = new NoConnectionFragment();
             horizontelFragments.add(noConnectionFragment);
         }
-        pagerAdapter = new FragmentAdapter(getSupportFragmentManager(), horizontelFragments);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), horizontelFragments);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setPagingEnabled(false);
 
@@ -81,7 +81,9 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     private void startMapScreen() {
-        mapFragment.onStart();
+        if (mapFragment != null) {
+            mapFragment.onStart();
+        }
         viewPager.setCurrentItem(1, true);
     }
 
@@ -112,7 +114,9 @@ public class ApplicationActivity extends AppCompatActivity {
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
         if (currentItem > 0) {
-            mapFragment.stopRoute();
+            if (mapFragment != null) {
+                mapFragment.stopRoute();
+            }
             viewPager.setCurrentItem(currentItem - 1, true);
         } else {
             pagerFragment.onBackPressed();
@@ -120,7 +124,7 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     public void rebindMapFragment() {
-        viewPager.setCurrentItem(0, true);
+        pagerFragment = new PagerFragment();
         mapFragment = new MapFragment();
         ArrayList<Fragment> fragments = new ArrayList<Fragment>() {
             {
@@ -128,7 +132,10 @@ public class ApplicationActivity extends AppCompatActivity {
                 add(mapFragment);
             }
         };
-        pagerAdapter.setFragments(fragments);
+
+        pagerAdapter.clearAll();
+        viewPager.setAdapter(null);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(pagerAdapter);
     }
 }

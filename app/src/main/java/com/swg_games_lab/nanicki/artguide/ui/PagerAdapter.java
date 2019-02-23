@@ -3,15 +3,18 @@ package com.swg_games_lab.nanicki.artguide.ui;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-public class FragmentAdapter extends FragmentPagerAdapter {
+public class PagerAdapter extends FragmentStatePagerAdapter {
 
+    private final FragmentManager fm;
     private List<Fragment> fragments;
 
-    public FragmentAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public PagerAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
+        this.fm = fm;
         this.fragments = fragments;
     }
 
@@ -31,5 +34,10 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return fragments.size();
+    }
+
+    public void clearAll() {
+        for(int i=0; i<fragments.size(); i++)
+            fm.beginTransaction().remove(fragments.get(i)).commit();
     }
 }

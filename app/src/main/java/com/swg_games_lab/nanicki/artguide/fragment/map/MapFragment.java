@@ -43,6 +43,8 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
     }
 
