@@ -90,8 +90,8 @@ public class WikiFragment extends Fragment implements View.OnClickListener {
     }*/
 
     private void setupAdapter() {
-
-        wikiAdapter = new WikiAdapter(places, this::onLearnMoreClicked, this::onBuildRouteClicked);
+        if (wikiAdapter == null)
+            wikiAdapter = new WikiAdapter(places, this::onLearnMoreClicked, this::onBuildRouteClicked);
         mRecyclerView.setAdapter(wikiAdapter);
     }
 

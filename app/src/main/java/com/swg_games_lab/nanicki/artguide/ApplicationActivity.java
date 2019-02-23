@@ -5,14 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.swg_games_lab.nanicki.artguide.fragment.MainFragment;
-import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
+import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.fragment.PagerFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
-import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
-import com.swg_games_lab.nanicki.artguide.ui.NoScrollingViewPager;
+import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
 import com.swg_games_lab.nanicki.artguide.ui.FragmentAdapter;
+import com.swg_games_lab.nanicki.artguide.ui.NoScrollingViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,8 @@ public class ApplicationActivity extends AppCompatActivity {
         wikiAttractionFragment = new WikiAttractionFragment();
 
 
-        List<Fragment> horizontelFragments = new ArrayList<Fragment>() {{
+        List<Fragment> horizontelFragments = new ArrayList<Fragment>() {
+            {
                 add(pagerFragment);
                 add(mapFragment);
             }
@@ -87,14 +87,14 @@ public class ApplicationActivity extends AppCompatActivity {
         if (currentItem > 0) {
             mapFragment.stopRoute();
             viewPager.setCurrentItem(currentItem - 1, true);
-        }else {
+        } else {
             pagerFragment.onBackPressed();
         }
     }
 
     public void rebindMapFragment() {
         viewPager.setCurrentItem(0, true);
-        mapFragment =  new MapFragment();
+        mapFragment = new MapFragment();
         ArrayList<Fragment> fragments = new ArrayList<Fragment>() {
             {
                 add(pagerFragment);
