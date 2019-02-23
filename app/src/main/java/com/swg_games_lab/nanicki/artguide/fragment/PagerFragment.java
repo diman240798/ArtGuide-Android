@@ -17,11 +17,12 @@ import java.util.Stack;
 
 public class PagerFragment extends Fragment {
 
-    MainFragment MAIN_FRAGMENT;
-    WikiFragment WIKI_FRAGMENT;
-    WikiAttractionFragment WIKI_ATTRACTION_FRAGMENT;
+    private MainFragment MAIN_FRAGMENT;
+    private WikiFragment WIKI_FRAGMENT;
+    private WikiAttractionFragment WIKI_ATTRACTION_FRAGMENT;
     private Fragment CURRENT;
     Stack<Fragment> screens;
+
 
     @Nullable
     @Override
@@ -37,24 +38,30 @@ public class PagerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        screens = new Stack<>();
-        MAIN_FRAGMENT = new MainFragment();
-        WIKI_FRAGMENT = new WikiFragment();
-        WIKI_ATTRACTION_FRAGMENT = new WikiAttractionFragment();
+        if (MAIN_FRAGMENT == null) {
+            screens = new Stack<>();
+            MAIN_FRAGMENT = new MainFragment();
+            WIKI_FRAGMENT = new WikiFragment();
+            WIKI_ATTRACTION_FRAGMENT = new WikiAttractionFragment();
+        }
 
-        CURRENT = MAIN_FRAGMENT;
-        screens.push(CURRENT);
+        if (screens.size() == 0) {
+            CURRENT = MAIN_FRAGMENT;
+            screens.push(CURRENT);
+        } else {
+            CURRENT = screens.peek();
+        }
 
         getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.activity_screen, MAIN_FRAGMENT)
+                .add(R.id.activity_screen, CURRENT)
                 .commit();
     }
 
     private void setScreenWithAnimation(Fragment screen, AnimationSetting animationSetting) {
-        screens.push(CURRENT);
         countIsAnimating();
         setPrevScreenWithAnimation(screen, animationSetting);
+        screens.push(CURRENT);
     }
 
 
@@ -75,7 +82,8 @@ public class PagerFragment extends Fragment {
     }
 
     public void startPreviousScreen() {
-        Fragment previous = screens.pop();
+        Fragment current = screens.pop();
+        Fragment previous = screens.peek();
         AnimationSetting animation = AnimationSetting.UP;
         if (CURRENT == WIKI_ATTRACTION_FRAGMENT)
             animation = AnimationSetting.LEFT;
@@ -110,5 +118,37 @@ public class PagerFragment extends Fragment {
         } else {
             getActivity().finish();
         }
+    }
+
+    public MainFragment getMAIN_FRAGMENT() {
+        return MAIN_FRAGMENT;
+    }
+
+    public WikiFragment getWIKI_FRAGMENT() {
+        return WIKI_FRAGMENT;
+    }
+
+    public WikiAttractionFragment getWIKI_ATTRACTION_FRAGMENT() {
+        return WIKI_ATTRACTION_FRAGMENT;
+    }
+
+    public void setMAIN_FRAGMENT(MainFragment MAIN_FRAGMENT) {
+        this.MAIN_FRAGMENT = MAIN_FRAGMENT;
+    }
+
+    public void setWIKI_FRAGMENT(WikiFragment WIKI_FRAGMENT) {
+        this.WIKI_FRAGMENT = WIKI_FRAGMENT;
+    }
+
+    public void setWIKI_ATTRACTION_FRAGMENT(WikiAttractionFragment WIKI_ATTRACTION_FRAGMENT) {
+        this.WIKI_ATTRACTION_FRAGMENT = WIKI_ATTRACTION_FRAGMENT;
+    }
+
+    public void setScreens(Stack<Fragment> screens) {
+        this.screens = screens;
+    }
+
+    public Stack<Fragment> getScreens() {
+        return screens;
     }
 }

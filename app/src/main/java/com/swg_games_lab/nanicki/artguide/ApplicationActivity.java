@@ -12,6 +12,7 @@ import com.swg_games_lab.nanicki.artguide.fragment.NoConnectionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.PagerFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.main.MainFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
 import com.swg_games_lab.nanicki.artguide.ui.PagerAdapter;
 import com.swg_games_lab.nanicki.artguide.ui.NoScrollingViewPager;
@@ -20,16 +21,17 @@ import com.swg_games_lab.nanicki.artguide.util.PermissionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class ApplicationActivity extends AppCompatActivity {
 
     private NoScrollingViewPager viewPager;
+    private PagerAdapter pagerAdapter;
+
     private PagerFragment pagerFragment;
     private MapFragment mapFragment;
-    private WikiFragment wikiFragment;
-    private WikiAttractionFragment wikiAttractionFragment;
-    private PagerAdapter pagerAdapter;
     private NoConnectionFragment noConnectionFragment;
+
 
 
     @Override
@@ -43,10 +45,6 @@ public class ApplicationActivity extends AppCompatActivity {
         viewPager = (NoScrollingViewPager) findViewById(R.id.app_view_pager);
 
         pagerFragment = new PagerFragment();
-
-
-        wikiFragment = new WikiFragment();
-        wikiAttractionFragment = new WikiAttractionFragment();
 
 
         List<Fragment> horizontelFragments = new ArrayList<Fragment>() {
@@ -84,18 +82,18 @@ public class ApplicationActivity extends AppCompatActivity {
 
     private void startMapScreen() {
         if (mapFragment != null) {
-            mapFragment.onStart();
+            mapFragment.startRoute();
         }
         viewPager.setCurrentItem(1, true);
     }
 
     public void startMapScreen(Integer id) {
-        if (mapFragment == null) {
-            if (isConnected()) {
+        boolean connected = isConnected();
+
+        if (mapFragment == null && connected) {
                 rebindMapFragment();
-            }
         }
-        if (id != null) {
+        if (mapFragment != null && id != null) {
             Bundle args = new Bundle();
             args.putInt("TAG", id);
             mapFragment.setArguments(args);
@@ -126,8 +124,21 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     public void rebindMapFragment() {
+        // get Old
+        MainFragment mainFragment = pagerFragment.getMAIN_FRAGMENT();
+        WikiFragment wikiFragment = pagerFragment.getWIKI_FRAGMENT();
+        WikiAttractionFragment wikiAttractionFragment = pagerFragment.getWIKI_ATTRACTION_FRAGMENT();
+        Stack<Fragment> screens = pagerFragment.getScreens();
+        // create new
         pagerFragment = new PagerFragment();
+        // fill new
+        pagerFragment.setMAIN_FRAGMENT(mainFragment);
+        pagerFragment.setWIKI_FRAGMENT(wikiFragment);
+        pagerFragment.setWIKI_ATTRACTION_FRAGMENT(wikiAttractionFragment);
+        pagerFragment.setScreens(screens);
+        // create map
         mapFragment = new MapFragment();
+
         ArrayList<Fragment> fragments = new ArrayList<Fragment>() {
             {
                 add(pagerFragment);
