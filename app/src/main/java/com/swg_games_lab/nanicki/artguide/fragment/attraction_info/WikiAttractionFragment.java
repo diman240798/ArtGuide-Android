@@ -114,29 +114,28 @@ public class WikiAttractionFragment extends Fragment {
         super.onStart();
         Bundle bundle = getArguments();
         if (bundle != null) {
-            if (bundle != null) {
-                int placeId = bundle.getInt("TAG");
-                Place place = CSVreader.getPlaceById(placeId);
-                // get data
-                int placeImageBig = place.getImageBig();
-                String title = place.getTitle();
-                String description = place.getDescription();
-                // set data
-                imageView.setImageResource(placeImageBig);
-                titleTW.setText(title);
-                descrTW.setText(description);
-                showOnMap.setOnClickListener(v -> {
-                    if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
-                        Log.d(TAG, place.getTitle());
-                        ApplicationActivity activity = (ApplicationActivity) getActivity();
-                        activity.startMapScreen();
-                    } else
-                        PermissionUtil.requestMapRequiredPermissions(getContext());
+            int placeId = bundle.getInt("TAG");
+            Place place = CSVreader.getPlaceById(placeId);
+            // get data
+            int placeImageBig = place.getImageBig();
+            String title = place.getTitle();
+            String description = place.getDescription();
+            // set data
+            imageView.setImageResource(placeImageBig);
+            titleTW.setText(title);
+            descrTW.setText(description);
+            showOnMap.setOnClickListener(v -> {
+                if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
+                    Log.d(TAG, place.getTitle());
+                    ApplicationActivity activity = (ApplicationActivity) getActivity();
+                    activity.startMapScreen(placeId);
+                } else
+                    PermissionUtil.requestMapRequiredPermissions(getContext());
 
-                });
-            } else
-                throw new RuntimeException("No Bundle Here (:");
-        }
+            });
+        } else
+            throw new RuntimeException("No Bundle Here (:");
+
     }
 
     @Override

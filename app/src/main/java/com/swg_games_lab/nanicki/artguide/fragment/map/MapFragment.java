@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.fragment;
+package com.swg_games_lab.nanicki.artguide.fragment.map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -130,59 +130,62 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStart() {
         super.onStart();
-        if (NO_CONNECTION_MODE) {
+        if (NO_CONNECTION_MODE || isAlive) {
             return;
         }
+
         isAlive = true;
         map.onResume();
         myLocationListener.mapActivity = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
-        if (lastDrownItem != null)
+
+        Bundle arguments = getArguments();
+
+        if (lastDrownItem != null) {
             requestDrawRoute(lastItem);
-        else
-            chehkBundle();
-    }
-
-    private void chehkBundle() {
-
-        Bundle extras = getArguments();
-        if (extras != null) { // пришел id
-            Context context = getContext();
-            layoutBottomButtons.setVisibility(View.GONE);
-
-            int id = extras.getInt("TAG");
-            setArguments(null);
-            Place place = CSVreader.getPlaceById(id);
-            String title = place.getTitle();
-            int imageSmall = place.getImageSmall();
-            double latitude = place.getLatitude();
-            double longitude = place.getLongitude();
-
-
-            lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
-            map.getOverlays().add(lastDrownItem);
-
-
-            mapRouteImage.setImageDrawable(context.getDrawable(imageSmall));
-            closeRouteImage.setImageDrawable(context.getDrawable(imageSmall));
-            mapRouteTitle.setText(title);
-            // Hide description
-            mapRouteTime.setVisibility(View.GONE);
-            mapRouteWalkImage.setVisibility(View.GONE);
-            mapRouteLength.setVisibility(View.GONE);
-            // Show progress bar
-            mapRouteProgressBar.setVisibility(View.VISIBLE);
-            // Show
-            mapRouteInfo.setVisibility(View.VISIBLE);
-
-
-            postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
-
-
-        } else if (!map.getOverlays().contains(lastMarkers))
+        } else if (arguments != null) {
+            chehkBundle(arguments);
+        } else if (!map.getOverlays().contains(lastMarkers)) {
             // Маркеры настроены можно добавить
             map.getOverlays().add(lastMarkers);
+        }
+    }
+
+    private void chehkBundle(Bundle extras) {
+
+        Context context = getContext();
+        map.getOverlays().remove(lastMarkers);
+        layoutBottomButtons.setVisibility(View.GONE);
+
+        int id = extras.getInt("TAG");
+        setArguments(null);
+        Place place = CSVreader.getPlaceById(id);
+        String title = place.getTitle();
+        int imageSmall = place.getImageSmall();
+        double latitude = place.getLatitude();
+        double longitude = place.getLongitude();
+
+
+        lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+        map.getOverlays().add(lastDrownItem);
+
+
+        mapRouteImage.setImageDrawable(context.getDrawable(imageSmall));
+        closeRouteImage.setImageDrawable(context.getDrawable(imageSmall));
+        mapRouteTitle.setText(title);
+        // Hide description
+        mapRouteTime.setVisibility(View.GONE);
+        mapRouteWalkImage.setVisibility(View.GONE);
+        mapRouteLength.setVisibility(View.GONE);
+        // Show progress bar
+        mapRouteProgressBar.setVisibility(View.VISIBLE);
+        // Show
+        mapRouteInfo.setVisibility(View.VISIBLE);
+
+
+        postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
+
     }
 
     @Override

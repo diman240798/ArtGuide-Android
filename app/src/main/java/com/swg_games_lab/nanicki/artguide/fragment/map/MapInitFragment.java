@@ -1,4 +1,4 @@
-package com.swg_games_lab.nanicki.artguide.fragment;
+package com.swg_games_lab.nanicki.artguide.fragment.map;
 
 import android.content.Context;
 import android.content.Intent;
@@ -90,7 +90,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
     protected ConstraintLayout closeRouteView;
     protected ImageView closeRouteImage, closeRouteCloseImage;
     protected Button closeRouteYes, closeRouteNo;
-    protected volatile boolean isAlive = true;
+    protected volatile boolean isAlive = false;
 
 
     protected void initCloseRouteView(View view) {

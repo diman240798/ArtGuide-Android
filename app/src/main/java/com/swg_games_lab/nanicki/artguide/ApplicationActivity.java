@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.swg_games_lab.nanicki.artguide.fragment.MapFragment;
+import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.PagerFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragment;
@@ -61,6 +61,7 @@ public class ApplicationActivity extends AppCompatActivity {
     }
 
     public void startMapScreen() {
+        mapFragment.onStart();
         viewPager.setCurrentItem(1, true);
     }
 
@@ -83,6 +84,7 @@ public class ApplicationActivity extends AppCompatActivity {
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
         if (currentItem > 0) {
+            mapFragment.onStop();
             viewPager.setCurrentItem(currentItem - 1, true);
         }else {
             pagerFragment.onBackPressed();
