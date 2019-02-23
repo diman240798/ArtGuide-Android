@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.listener.MyLocationListener;
@@ -113,7 +114,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
 
     public void onLocationChanged() {
         Log.d(TAG, "onLocationChanged called");
-        if (lastDrownItem == null) {
+        if (isAlive || lastDrownItem == null) {
             Log.d(TAG, "Will not rebuild route because lastDrownItem is null");
             return;
         }
@@ -130,44 +131,63 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStart() {
         super.onStart();
-        if (NO_CONNECTION_MODE || isAlive) {
+        if (NO_CONNECTION_MODE) {
+            Context context = getContext();
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            assert locationManager != null;
+            boolean connected = ConnectionUtil.isConnected(locationManager, context);
+            if (connected) {
+                ApplicationActivity activity = (ApplicationActivity) getActivity();
+                activity.rebindMapFragment();
+            }
             return;
         }
 
-        isAlive = true;
-        map.onResume();
-        myLocationListener.mapActivity = new WeakReference<>(this);
+        if (isAlive) {
+            return;
+        }
+
+        myLocationListener.mapFragment = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
 
-        Bundle arguments = getArguments();
+        map.onResume();
+        isAlive = true;
+        Bundle extras = getArguments();
 
+        if (extras != null) {
+            int id = extras.getInt("TAG");
+            if (id != lastId) {
+                lastId = id;
+                checkBundle(lastId);
+                return;
+            }
+        }
         if (lastDrownItem != null) {
             requestDrawRoute(lastItem);
-        } else if (arguments != null) {
-            chehkBundle(arguments);
         } else if (!map.getOverlays().contains(lastMarkers)) {
             // Маркеры настроены можно добавить
             map.getOverlays().add(lastMarkers);
         }
     }
 
-    private void chehkBundle(Bundle extras) {
+    private void checkBundle(int id) {
 
         Context context = getContext();
         map.getOverlays().remove(lastMarkers);
         layoutBottomButtons.setVisibility(View.GONE);
 
-        int id = extras.getInt("TAG");
-        setArguments(null);
         Place place = CSVreader.getPlaceById(id);
         String title = place.getTitle();
         int imageSmall = place.getImageSmall();
         double latitude = place.getLatitude();
         double longitude = place.getLongitude();
 
+        if (lastDrownItem != null) {
+            map.getOverlays().remove(lastDrownItem);
+        }
 
-        lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
+        lastDrownItem = new IconOverlay(new GeoPoint(latitude, longitude), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(lastId)));
         map.getOverlays().add(lastDrownItem);
 
 
@@ -183,7 +203,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         // Show
         mapRouteInfo.setVisibility(View.VISIBLE);
 
-
+        setArguments(null);
         postUserLocationAndCallUpdateRoadTask(new GeoPoint(latitude, longitude));
 
     }
@@ -193,15 +213,20 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         super.onStop();
         if (NO_CONNECTION_MODE)
             return;
-        isAlive = false;
+
         locationManager.removeUpdates(myLocationListener);
-        myLocationListener.mapActivity = null;
-        if (updateRoadTask != null)
-            updateRoadTask.cancel(true);
-        updateRoadTask = null;
+        myLocationListener.mapFragment = null;
+        stopRoute();
 
         // FIXME: Sould this method call exist???
         //map.destroyDrawingCache();
+    }
+
+    public void stopRoute() {
+        isAlive = false;
+        if (updateRoadTask != null)
+            updateRoadTask.cancel(true);
+        updateRoadTask = null;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.swg_games_lab.nanicki.artguide.fragment.MainFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.map.MapFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.PagerFragment;
 import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
@@ -23,7 +24,7 @@ public class ApplicationActivity extends AppCompatActivity {
     private MapFragment mapFragment;
     private WikiFragment wikiFragment;
     private WikiAttractionFragment wikiAttractionFragment;
-    private FragmentAdapter adapter;
+    private FragmentAdapter pagerAdapter;
 
 
     @Override
@@ -50,8 +51,8 @@ public class ApplicationActivity extends AppCompatActivity {
             }
         };
 
-        adapter = new FragmentAdapter(getSupportFragmentManager(), horizontelFragments);
-        viewPager.setAdapter(adapter);
+        pagerAdapter = new FragmentAdapter(getSupportFragmentManager(), horizontelFragments);
+        viewPager.setAdapter(pagerAdapter);
         viewPager.setPagingEnabled(false);
 
     }
@@ -84,10 +85,23 @@ public class ApplicationActivity extends AppCompatActivity {
     public void onBackPressed() {
         int currentItem = viewPager.getCurrentItem();
         if (currentItem > 0) {
-            mapFragment.onStop();
+            mapFragment.stopRoute();
             viewPager.setCurrentItem(currentItem - 1, true);
         }else {
             pagerFragment.onBackPressed();
         }
+    }
+
+    public void rebindMapFragment() {
+        viewPager.setCurrentItem(0, true);
+        mapFragment =  new MapFragment();
+        ArrayList<Fragment> fragments = new ArrayList<Fragment>() {
+            {
+                add(pagerFragment);
+                add(mapFragment);
+            }
+        };
+        pagerAdapter.setFragments(fragments);
+        viewPager.setAdapter(pagerAdapter);
     }
 }

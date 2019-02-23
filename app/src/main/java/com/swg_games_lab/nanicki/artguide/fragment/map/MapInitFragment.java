@@ -72,6 +72,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
     protected Marker lastItem;
     protected Polyline lastPolyline;
     protected IconOverlay lastDrownItem;
+    protected int lastId = -1;
 
     // Marker things
     protected ConstraintLayout mapMarker;
@@ -109,6 +110,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
             if (lastDrownItem != null) {
                 map.getOverlays().remove(lastDrownItem);
                 lastDrownItem = null;
+                lastId = -1;
             }
             routeBuilding = false;
             if (updateRoadTask != null)

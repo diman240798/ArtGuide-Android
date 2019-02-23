@@ -13,24 +13,24 @@ public class MyLocationListener implements LocationListener {
     private final static long minTimeForUpdate = 6000;
 
     private static final String TAG = "MyLocationListener";
-    public WeakReference<MapFragment> mapActivity;
+    public WeakReference<MapFragment> mapFragment;
     private long lastUpdate;
 
     public MyLocationListener(MapFragment mapFragment) {
-        this.mapActivity = new WeakReference<>(mapFragment);
+        this.mapFragment = new WeakReference<>(mapFragment);
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "New location received");
-        if (mapActivity == null || mapActivity.get() == null) {
+        if (mapFragment == null || mapFragment.get() == null) {
             Log.d(TAG, "MapFragment is null. Return;");
             return;
         }
 
         Log.d(TAG, location.toString());
 
-        MapFragment mapFragment = this.mapActivity.get();
+        MapFragment mapFragment = this.mapFragment.get();
         long currentTimeMillis = System.currentTimeMillis();
         if (mapFragment != null && currentTimeMillis - lastUpdate > minTimeForUpdate) {
             mapFragment.onLocationChanged();

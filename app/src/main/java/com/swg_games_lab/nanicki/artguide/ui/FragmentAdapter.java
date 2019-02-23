@@ -19,8 +19,8 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         return fragments;
     }
 
-    public void setFirstFragment(Fragment fragment) {
-        fragments.set(0,fragment);
+    public void setFragments(List<Fragment> fragments) {
+        this.fragments = fragments;
         notifyDataSetChanged();
     }
 
