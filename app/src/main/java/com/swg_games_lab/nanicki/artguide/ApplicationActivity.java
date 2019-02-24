@@ -91,15 +91,19 @@ public class ApplicationActivity extends AppCompatActivity {
         boolean connected = isConnected();
 
         if (mapFragment == null && connected) {
-                rebindMapFragment();
+                rebindMapFragment(id);
         }
+        setMapFragmentBundle(id);
+
+        startMapScreen();
+    }
+
+    private void setMapFragmentBundle(Integer id) {
         if (mapFragment != null && id != null) {
             Bundle args = new Bundle();
             args.putInt("TAG", id);
             mapFragment.setArguments(args);
         }
-
-        startMapScreen();
     }
 
     public void startPreviousScreen() {
@@ -123,7 +127,7 @@ public class ApplicationActivity extends AppCompatActivity {
         }
     }
 
-    public void rebindMapFragment() {
+    public void rebindMapFragment(Integer id) {
         // get Old
         MainFragment mainFragment = pagerFragment.getMAIN_FRAGMENT();
         WikiFragment wikiFragment = pagerFragment.getWIKI_FRAGMENT();
@@ -138,6 +142,7 @@ public class ApplicationActivity extends AppCompatActivity {
         pagerFragment.setScreens(screens);
         // create map
         mapFragment = new MapFragment();
+        setMapFragmentBundle(id);
 
         ArrayList<Fragment> fragments = new ArrayList<Fragment>() {
             {

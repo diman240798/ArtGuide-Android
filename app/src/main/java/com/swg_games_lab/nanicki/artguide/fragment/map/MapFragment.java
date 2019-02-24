@@ -110,28 +110,38 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     @Override
     public void onStart() {
         super.onStart();
-        
+
         myLocationListener.mapFragment = new WeakReference<>(this);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
 
-        map.onResume();
-        isAlive = true;
-        Bundle extras = getArguments();
+        startRoute();
+    }
 
+    public void startRoute() {
+        Bundle extras = getArguments();
         if (extras != null) {
             int id = extras.getInt("TAG");
             if (id != lastId) {
                 lastId = id;
                 checkBundle(lastId);
+                isAlive = true;
                 return;
             }
         }
+
+        if (isAlive)
+            return;
+        map.onResume();
+        isAlive = true;
+
         if (lastDrownItem != null) {
             requestDrawRoute(lastItem);
         } else if (!map.getOverlays().contains(lastMarkers)) {
             // Маркеры настроены можно добавить
             map.getOverlays().add(lastMarkers);
+        } else {
+            isAlive = false;
         }
     }
 
