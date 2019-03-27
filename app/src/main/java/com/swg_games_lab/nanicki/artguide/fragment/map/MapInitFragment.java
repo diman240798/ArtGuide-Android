@@ -282,7 +282,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
             }, slideLeftDuration + 200);
 
             mapMarker.setVisibility(View.GONE);
-            
+
             mapPlaceDescImage.setImageResource(bigImage);
             mapPlaceDescDesc.setText(description);
             mapPlaceDescTitle.setText(title.length() < 25 ? title : title.substring(0, 25) + "...");
@@ -293,7 +293,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
                 mapMainParent.setLayoutTransition(lt);
 
                 mapPlaceDescParent.setVisibility(View.VISIBLE);
-            }, 500);
+            }, 800);
 
         });
 
