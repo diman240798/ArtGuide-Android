@@ -1,7 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.fragment.map;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
-import com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiAttractionFragment;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
 import com.swg_games_lab.nanicki.artguide.enums.AttractionType;
@@ -254,10 +253,8 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
         map_markdesc_imageView.setImageDrawable(imageSmallDrawable);
 
         map_markdesc_show_moreBT.setOnClickListener((View v) -> {
-            Context context = v.getContext();
-            Intent intent = new Intent(context, WikiAttractionFragment.class);
-            intent.putExtra("TAG", id);
-            context.startActivity(intent);
+            ApplicationActivity activity = (ApplicationActivity) getActivity();
+            activity.startWikiDetailsScreen(id);
         });
         map_markdesc_build_routeBT.setOnClickListener(v -> {
             Context context = v.getContext();
