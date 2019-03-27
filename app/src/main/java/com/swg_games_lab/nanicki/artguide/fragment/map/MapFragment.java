@@ -6,10 +6,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.swg_games_lab.nanicki.artguide.R;
@@ -64,12 +67,25 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
         setUpMap();
         // Setting up dialog (appears on tap up)
         initMarkerView(view);
+        // Setting up Description dialog (appears on tap up on Description Button)
+        initPlaceDescriptionView(view);
         // Setting up close route Dialog
         initCloseRouteView(view);
         // Loading markers
         loadMarkers();
 
 
+    }
+
+    protected void initPlaceDescriptionView(View view) {
+        mapPlaceDescParent = (ConstraintLayout) view.findViewById(R.id.map_place_desc_parent);
+        mapPlaceDescImage = (ImageView)  view.findViewById(R.id.map_place_desc_image);
+        mapClosePlaceDesc = (ImageView)  view.findViewById(R.id.map_close_place_desc);
+        mapPlaceDescDesc = (TextView)  view.findViewById(R.id.map_place_desc_desc);
+        mapPlaceDescTitle = (TextView)  view.findViewById(R.id.map_place_desc_title);
+
+        mapPlaceDescParent.setVisibility(View.GONE);
+        mapClosePlaceDesc.setOnClickListener(v -> mapPlaceDescParent.setVisibility(View.GONE));
     }
 
 

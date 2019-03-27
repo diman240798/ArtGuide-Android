@@ -1,5 +1,6 @@
 package com.swg_games_lab.nanicki.artguide.fragment.map;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -9,6 +10,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.swg_games_lab.nanicki.artguide.ApplicationActivity;
 import com.swg_games_lab.nanicki.artguide.R;
 import com.swg_games_lab.nanicki.artguide.background.UpdateRoadTask;
 import com.swg_games_lab.nanicki.artguide.csv.CSVreader;
@@ -54,7 +56,8 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
 
     // Views
-    public MapView map;
+    protected ConstraintLayout mapMainParent;
+    protected MapView map;
     protected MyLocationNewOverlay myLocationOverlay;
     protected LocationManager locationManager;
 
@@ -75,9 +78,9 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
     // Marker things
     protected ConstraintLayout mapMarker;
-    protected ImageView map_markdesc_imageView;
-    protected TextView map_markdesc_titleTextView, map_markdesc_brief_descriptionTextView, map_markdesc_distanceTextView;
-    protected Button map_markdesc_show_moreBT, map_markdesc_build_routeBT;
+    protected ImageView mapMarkdescImageView;
+    protected TextView mapMarkdescTitleTextView, mapMarkdescBriefDescriptionTextView, mapMarkdescDistanceTextView;
+    protected Button mapMarkdescShowMoreBT, mapMarkdescBuildRouteBT;
     protected LinearLayout layoutBottomButtons;
 
     // Route info things
@@ -91,6 +94,11 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
     protected ImageView closeRouteImage, closeRouteCloseImage;
     protected Button closeRouteYes, closeRouteNo;
     protected volatile boolean isAlive = false;
+
+    // Map Place DescriptionView
+    protected ConstraintLayout mapPlaceDescParent;
+    protected ImageView mapPlaceDescImage, mapClosePlaceDesc;
+    protected TextView mapPlaceDescDesc, mapPlaceDescTitle;
 
 
     protected void initCloseRouteView(View view) {
@@ -132,6 +140,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
     }
 
     protected void initRouteInfoLayout(View view) {
+        mapMainParent = (ConstraintLayout) view.findViewById(R.id.map_main_parent);
         mapRouteInfo = (ConstraintLayout) view.findViewById(R.id.map_route_info);
         mapRouteImage = (ImageView) view.findViewById(R.id.route_info_image);
         mapRouteClose = (ImageView) view.findViewById(R.id.route_info_close);
@@ -151,7 +160,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
         ImageView markdesc_closeIV = (ImageView) view.findViewById(R.id.map_markdesc_closeIV);
         markdesc_closeIV.setOnClickListener(v -> {
             mapMarker.setVisibility(View.GONE);
-            map_markdesc_distanceTextView.setVisibility(View.GONE);
+            mapMarkdescDistanceTextView.setVisibility(View.GONE);
         });
 
     }
@@ -184,12 +193,12 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
     protected void initMarkerView(View view) {
         // marker Info
-        map_markdesc_imageView = (ImageView) view.findViewById(R.id.map_markdesc_image);
-        map_markdesc_titleTextView = (TextView) view.findViewById(R.id.map_markdesc_titleTextView);
-        map_markdesc_brief_descriptionTextView = (TextView) view.findViewById(R.id.map_markdesc_brief_descriptionTextView);
-        map_markdesc_show_moreBT = (Button) view.findViewById(R.id.map_markdesc_show_moreBT);
-        map_markdesc_build_routeBT = (Button) view.findViewById(R.id.map_markdesc_build_routeBT);
-        map_markdesc_distanceTextView = (TextView) view.findViewById(R.id.map_markdesc_distanceTW);
+        mapMarkdescImageView = (ImageView) view.findViewById(R.id.map_markdesc_image);
+        mapMarkdescTitleTextView = (TextView) view.findViewById(R.id.map_markdesc_titleTextView);
+        mapMarkdescBriefDescriptionTextView = (TextView) view.findViewById(R.id.map_markdesc_brief_descriptionTextView);
+        mapMarkdescShowMoreBT = (Button) view.findViewById(R.id.map_markdesc_show_moreBT);
+        mapMarkdescBuildRouteBT = (Button) view.findViewById(R.id.map_markdesc_build_routeBT);
+        mapMarkdescDistanceTextView = (TextView) view.findViewById(R.id.map_markdesc_distanceTW);
 
     }
 
@@ -242,21 +251,53 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
         int id = Integer.parseInt(item.getTitle());
         Place place = CSVreader.getPlaceById(id);
         int imageSmall = place.getImageSmall();
+        int bigImage = place.getImageBig();
         String title = place.getTitle();
         String description = place.getDescription();
 
         Drawable imageSmallDrawable = getContext().getDrawable(imageSmall);
 
 
-        map_markdesc_titleTextView.setText(title);
-        map_markdesc_brief_descriptionTextView.setText(description);
-        map_markdesc_imageView.setImageDrawable(imageSmallDrawable);
+        mapMarkdescTitleTextView.setText(title);
+        mapMarkdescBriefDescriptionTextView.setText(description);
+        mapMarkdescImageView.setImageDrawable(imageSmallDrawable);
 
-        map_markdesc_show_moreBT.setOnClickListener((View v) -> {
-            ApplicationActivity activity = (ApplicationActivity) getActivity();
-            activity.startWikiDetailsScreen(id);
+        mapMarkdescShowMoreBT.setOnClickListener((View v) -> {
+
+            long slideLeftDuration = 1500;
+
+            mapMainParent.setLayoutTransition(null);
+
+            Animation leftAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_left);
+            leftAnimation.setDuration(slideLeftDuration);
+            Animation rightAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_right);
+            rightAnimation.setDuration(slideLeftDuration);
+
+            mapMarker.setAnimation(leftAnimation);
+            leftAnimation.startNow();
+
+            mapMarker.postDelayed(() -> {
+                mapMarker.setVisibility(View.GONE);
+                mapMarker.setTranslationX(0);
+            }, slideLeftDuration + 200);
+
+            mapMarker.setVisibility(View.GONE);
+            
+            mapPlaceDescImage.setImageResource(bigImage);
+            mapPlaceDescDesc.setText(description);
+            mapPlaceDescTitle.setText(title.length() < 25 ? title : title.substring(0, 25) + "...");
+
+            mapMarker.postDelayed(() -> {
+                LayoutTransition lt = new LayoutTransition();
+                lt.disableTransitionType(LayoutTransition.DISAPPEARING);
+                mapMainParent.setLayoutTransition(lt);
+
+                mapPlaceDescParent.setVisibility(View.VISIBLE);
+            }, 500);
+
         });
-        map_markdesc_build_routeBT.setOnClickListener(v -> {
+
+        mapMarkdescBuildRouteBT.setOnClickListener(v -> {
             Context context = v.getContext();
             isAlive = true;
             Location userLocation = getUserLocation(locationManager);
@@ -307,8 +348,8 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
                 suffix = "м";
                 distanceTo = Math.floor(distanceTo / porog) * porog;
             }
-            map_markdesc_distanceTextView.setText(String.valueOf(distanceTo + suffix));
-            map_markdesc_distanceTextView.setVisibility(View.VISIBLE);
+            mapMarkdescDistanceTextView.setText(String.valueOf(distanceTo + suffix));
+            mapMarkdescDistanceTextView.setVisibility(View.VISIBLE);
         }
     }
 
