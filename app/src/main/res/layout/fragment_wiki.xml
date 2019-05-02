@@ -1,115 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/main_map_graphic"
-    tools:context=".fragment.attraction_info.WikiFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <include
-        app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior"
-        android:id="@+id/wiki_tool_bar"
-        layout="@layout/toolbar" />
+    <data>
+        <import type="android.view.View" />
+        <import type="com.swg_games_lab.nanicki.artguide.enums.AttractionType" />
 
+        <variable
+            name="viewmodel"
+            type="com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragmentViewModel" />
+    </data>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_gravity="top"
-        android:paddingBottom="4dp"
-        android:id="@+id/recyclerView"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:background="@drawable/main_map_graphic"
+        tools:context=".fragment.attraction_info.WikiFragment">
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/wiki_bottom_navig_with_buttons"
-        android:background="@color/colorWhite"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-        <View
+        <include
+            android:id="@+id/wiki_tool_bar"
+            layout="@layout/toolbar"
+            app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#002D3A"
-            android:layout_marginTop="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:paddingBottom="4dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <LinearLayout
-            android:paddingTop="8dp"
-            android:id="@+id/wiki_bottom_buttons"
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/wiki_bottom_navig_with_buttons"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/wiki_bt_museum"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_museum" />
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="8dp"
+                android:background="#002D3A" />
+
+            <LinearLayout
+                android:id="@+id/wiki_bottom_buttons"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="#002D3A"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp" />
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
 
-            <Button
-                android:id="@+id/wiki_bt_theatre"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_theatre" />
+                <Button
+                    android:id="@+id/wiki_bt_museum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_museum"
+                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Museum)}" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="50dp"
-                android:background="#002D3A"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="#002D3A" />
+
+                <Button
+                    android:id="@+id/wiki_bt_theatre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_theatre"
+                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Theatre)}" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="#002D3A" />
 
 
-            <Button
-                android:id="@+id/wiki_bt_memorial"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_memorial" />
+                <Button
+                    android:id="@+id/wiki_bt_memorial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_memorial"
+                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Memorial)}" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="50dp"
-                android:background="#002D3A"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="#002D3A" />
 
-            <Button
-                android:id="@+id/wiki_bt_stadium"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_stadium" />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="50dp"
-                android:background="#002D3A"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp" />
+                <Button
+                    android:id="@+id/wiki_bt_stadium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_stadium"
+                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Stadium)}" />
 
-            <Button
-                android:id="@+id/wiki_bt_park"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/item_park" />
-        </LinearLayout>
-    </android.support.design.widget.BottomNavigationView>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="#002D3A" />
 
-</android.support.design.widget.CoordinatorLayout>
+                <Button
+                    android:id="@+id/wiki_bt_park"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/item_park"
+                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Park)}" />
+            </LinearLayout>
+        </android.support.design.widget.BottomNavigationView>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
