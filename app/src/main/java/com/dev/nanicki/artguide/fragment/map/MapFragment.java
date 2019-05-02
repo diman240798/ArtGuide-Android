@@ -135,6 +135,12 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     }
 
     public void startRoute() {
+        // close marker desc
+        markdesc_closeIV.callOnClick();
+        // close full place desc
+        mapClosePlaceDesc.callOnClick();
+        
+
         Bundle extras = getArguments();
         if (extras != null) {
             int id = extras.getInt("TAG");
@@ -153,7 +159,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
 
         if (lastDrownItem != null) {
             requestDrawRoute(lastItem);
-        } else if (!map.getOverlays().contains(lastMarkers)) {
+        } else if (!map.getOverlays().contains(lastMarkers.getMarkers())) {
             // Маркеры настроены можно добавить
             map.getOverlays().add(lastMarkers.getMarkers());
         } else {

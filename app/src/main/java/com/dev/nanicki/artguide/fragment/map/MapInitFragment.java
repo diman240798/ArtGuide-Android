@@ -81,7 +81,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
     // Marker things
     protected ConstraintLayout mapMarker;
-    protected ImageView mapMarkdescImageView;
+    protected ImageView mapMarkdescImageView, markdesc_closeIV;
     protected TextView mapMarkdescTitleTextView, mapMarkdescBriefDescriptionTextView, mapMarkdescDistanceTextView;
     protected Button mapMarkdescShowMoreBT, mapMarkdescBuildRouteBT;
     protected LinearLayout layoutBottomButtons;
@@ -160,7 +160,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
     protected void initMapMarker(View view) {
         mapMarker = (ConstraintLayout) view.findViewById(R.id.map_marker);
-        ImageView markdesc_closeIV = (ImageView) view.findViewById(R.id.map_markdesc_closeIV);
+        markdesc_closeIV = (ImageView) view.findViewById(R.id.map_markdesc_closeIV);
         markdesc_closeIV.setOnClickListener(v -> {
             mapMarker.setVisibility(View.GONE);
             mapMarkdescDistanceTextView.setVisibility(View.GONE);
