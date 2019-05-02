@@ -5,11 +5,11 @@
 
     <data>
         <import type="android.view.View" />
-        <import type="com.swg_games_lab.nanicki.artguide.enums.AttractionType" />
+        <import type="com.dev.nanicki.artguide.enums.AttractionType" />
 
         <variable
             name="viewmodel"
-            type="com.swg_games_lab.nanicki.artguide.fragment.attraction_info.WikiFragmentViewModel" />
+            type="com.dev.nanicki.artguide.fragment.attraction_info.WikiFragmentViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -21,7 +21,7 @@
         <include
             android:id="@+id/wiki_tool_bar"
             layout="@layout/toolbar"
-            app:layout_behavior="com.swg_games_lab.nanicki.artguide.ui.FixAppBarLayoutBehavior" />
+            app:layout_behavior="com.dev.nanicki.artguide.ui.FixAppBarLayoutBehavior" />
 
 
         <android.support.v7.widget.RecyclerView

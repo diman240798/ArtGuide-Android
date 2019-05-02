@@ -7,7 +7,7 @@
 
         <variable
             name="place"
-            type="com.swg_games_lab.nanicki.artguide.model.Place" />
+            type="com.dev.nanicki.artguide.model.Place" />
     </data>
 
     <android.support.constraint.ConstraintLayout
