@@ -164,7 +164,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
     private void checkBundle(int id) {
 
         Context context = getContext();
-        map.getOverlays().remove(lastMarkers);
+        map.getOverlays().remove(lastMarkers.getMarkers());
         layoutBottomButtons.setVisibility(View.GONE);
 
         Place place = CSVreader.getPlaceById(id);

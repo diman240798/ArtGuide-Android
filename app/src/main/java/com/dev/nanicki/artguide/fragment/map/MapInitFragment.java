@@ -321,7 +321,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
             mapMarker.setVisibility(View.GONE);
 
             List<Overlay> overlays = map.getOverlays();
-            overlays.remove(lastMarkers);
+            overlays.remove(lastMarkers.getMarkers());
             //overlays.add(myLocationOverlay);
             lastDrownItem = new IconOverlay(item.getPosition(), context.getDrawable(MarkerUtil.getMapMarkerByPlaceId(id)));
             overlays.add(lastDrownItem);
