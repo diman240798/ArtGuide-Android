@@ -21,7 +21,7 @@
         <include
             android:id="@+id/wiki_tool_bar"
             layout="@layout/toolbar"
-            app:layout_behavior="com.dev.nanicki.artguide.ui.FixAppBarLayoutBehavior" />
+            app:layout_behavior=".ui.FixAppBarLayoutBehavior" />
 
 
         <android.support.v7.widget.RecyclerView
