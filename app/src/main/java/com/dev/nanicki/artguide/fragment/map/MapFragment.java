@@ -155,7 +155,7 @@ public class MapFragment extends MapBottomButtonsFragment implements RouteReceiv
             requestDrawRoute(lastItem);
         } else if (!map.getOverlays().contains(lastMarkers)) {
             // Маркеры настроены можно добавить
-            map.getOverlays().add(lastMarkers);
+            map.getOverlays().add(lastMarkers.getMarkers());
         } else {
             isAlive = false;
         }

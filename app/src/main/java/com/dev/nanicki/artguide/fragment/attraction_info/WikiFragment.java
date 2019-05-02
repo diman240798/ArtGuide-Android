@@ -24,6 +24,7 @@ import com.dev.nanicki.artguide.enums.AttractionType;
 import com.dev.nanicki.artguide.fragment.PermissionFragment;
 import com.dev.nanicki.artguide.model.Place;
 import com.dev.nanicki.artguide.ui.BottomNavigationBehavior;
+import com.dev.nanicki.artguide.util.BottomButtonsUtil;
 import com.dev.nanicki.artguide.util.PermissionUtil;
 
 import java.util.Arrays;
@@ -115,34 +116,8 @@ public class WikiFragment extends PermissionFragment {
         return CSVreader.getData(getContext());
     }
 
-    private void setBottomImages(AttractionType attractionType) {
-        List<Integer> images = Arrays.asList(
-                attractionType.equals(AttractionType.Museum)
-                        ? R.drawable.item_museum_chosen
-                        : R.drawable.item_museum,
-                attractionType.equals(AttractionType.Theatre)
-                        ? R.drawable.item_theatre_chosen
-                        : R.drawable.item_theatre,
-                attractionType.equals(AttractionType.Memorial)
-                        ? R.drawable.item_memorial_chosen
-                        : R.drawable.item_memorial,
-                attractionType.equals(AttractionType.Stadium)
-                        ? R.drawable.item_stadium_chosen
-                        : R.drawable.item_stadium,
-                attractionType.equals(AttractionType.Park)
-                        ? R.drawable.item_park_chosen
-                        : R.drawable.item_park
-        );
-
-        for (int i = 0; i < images.size(); i++) {
-            Integer image = images.get(i);
-            Button button = bottomButtons.get(i);
-            button.setBackgroundResource(image);
-        }
-    }
-
     void sortList(AttractionType attractionType) {
-        setBottomImages(attractionType);
+        BottomButtonsUtil.setBottomImages(attractionType, bottomButtons);
         wikiAdapter.sortList(places, attractionType);
     }
 }

@@ -26,6 +26,7 @@ import com.dev.nanicki.artguide.enums.AttractionType;
 import com.dev.nanicki.artguide.listener.MyLocationListener;
 import com.dev.nanicki.artguide.listener.RouteReceiver;
 import com.dev.nanicki.artguide.model.Place;
+import com.dev.nanicki.artguide.ui.CurrentMarkers;
 import com.dev.nanicki.artguide.util.MarkerUtil;
 
 import org.osmdroid.api.IMapController;
@@ -44,6 +45,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,11 +64,12 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
     protected LocationManager locationManager;
 
     // Markers
-    protected RadiusMarkerClusterer museumMarkers, theatreMarkers, memorialMarkers, stadiumMarkers, parkMarkers;
-    protected RadiusMarkerClusterer lastMarkers;
+    protected List<CurrentMarkers> markersList;
+    protected CurrentMarkers lastMarkers;
 
     // Markers sorting
-    protected Button bt_museum, bt_theatre, bt_memorial, bt_stadium, bt_park;
+    protected List<Button> bottomButtons;
+    ;
 
     // Route Building
     protected UpdateRoadTask updateRoadTask;
@@ -130,7 +133,7 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
             if (lastPolyline != null) {
                 map.getOverlays().remove(lastPolyline);
             }
-            map.getOverlays().add(lastMarkers);
+            map.getOverlays().add(lastMarkers.getMarkers());
 
             mapRouteInfo.setVisibility(View.GONE);
             closeRouteDialog.onClick(v);
@@ -204,11 +207,12 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
 
     protected void loadMarkers() {
         Context context = getContext();
-        museumMarkers = new RadiusMarkerClusterer(context);
-        theatreMarkers = new RadiusMarkerClusterer(context);
-        memorialMarkers = new RadiusMarkerClusterer(context);
-        stadiumMarkers = new RadiusMarkerClusterer(context);
-        parkMarkers = new RadiusMarkerClusterer(context);
+        CurrentMarkers museumMarkers = new CurrentMarkers(AttractionType.Museum, new RadiusMarkerClusterer(context)),
+                theatreMarkers = new CurrentMarkers(AttractionType.Theatre, new RadiusMarkerClusterer(context)),
+                memorialMarkers = new CurrentMarkers(AttractionType.Memorial, new RadiusMarkerClusterer(context)),
+                stadiumMarkers = new CurrentMarkers(AttractionType.Stadium, new RadiusMarkerClusterer(context)),
+                parkMarkers = new CurrentMarkers(AttractionType.Park, new RadiusMarkerClusterer(context));
+
         // Создаем лист маркеров
         List<RadiusMarkerClusterer> overlayItems = new ArrayList<>();
         // Добавляем маркеры
@@ -231,19 +235,25 @@ public class MapInitFragment extends Fragment implements RouteReceiver {
                 return false;
             });
             if (place.getType() == AttractionType.Museum) {
-                museumMarkers.add(marker);
+                museumMarkers.getMarkers().add(marker);
             } else if (place.getType() == AttractionType.Theatre) {
-                theatreMarkers.add(marker);
+                theatreMarkers.getMarkers().add(marker);
             } else if (place.getType() == AttractionType.Memorial) {
-                memorialMarkers.add(marker);
+                memorialMarkers.getMarkers().add(marker);
             } else if (place.getType() == AttractionType.Stadium) {
-                stadiumMarkers.add(marker);
+                stadiumMarkers.getMarkers().add(marker);
             } else if (place.getType() == AttractionType.Park) {
-                parkMarkers.add(marker);
+                parkMarkers.getMarkers().add(marker);
             }
             lastMarkers = museumMarkers;
 
         }
+        markersList = Arrays.asList(
+                museumMarkers,
+                theatreMarkers,
+                memorialMarkers,
+                stadiumMarkers,
+                parkMarkers);
     }
 
     protected void onOverlayTapUp(Marker item) {
