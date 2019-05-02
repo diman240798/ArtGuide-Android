@@ -1,109 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/map_markdesc_rel_layout"
-    android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:layout_marginStart="-20dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="16dp"
-    android:background="@drawable/rectangle_with_bounds"
-    android:clickable="true"
-    android:focusable="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/wiki_item_imageView"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/museum_rail_train_big"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+
+        <variable
+            name="place"
+            type="com.swg_games_lab.nanicki.artguide.model.Place" />
+    </data>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="0dp"
-        android:background="@drawable/ripple_green"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/wiki_item_imageView"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/map_markdesc_rel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_marginStart="-20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rectangle_with_bounds"
+        android:clickable="true"
+        android:focusable="true">
 
-        <TextView
-            android:id="@+id/wiki_item_titleTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:maxLines="1"
-            android:text="Музей железнодорожной техники"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textStyle="bold"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMaxTextSize="16dp"
-            app:autoSizeMinTextSize="13dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+        <ImageView
+            android:id="@+id/wiki_item_imageView"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:scaleType="fitXY"
+            android:src="@{place.imageSmall}"
+            tools:src="@drawable/museum_rail_train_big"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/wiki_item_descriptionTextView"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:maxLines="2"
-            android:text="Филиал Музея истории Северо-Кавказской железной дороги открылся в 2003 году на западной окраине Ростова, на станции Гниловской. Общая протяженность выставочных путей занимает почти две тысячи метров. Коллекция старого подвижного состава собиралась на протяжении двадцати лет энтузиастами и работниками железной дороги. Сегодня в музее более 50 паровозов, электровозов, вагонов и путейной техники, большинство из которых сохранились в единственном экземпляре или несут важную историческую нагрузку. Например, здесь можно увидеть механический семафор, румынскую цистерну середины XIX века, военную мотодрезину, 45-тонный грузоподъемный кран 1935 года и многое другое — можно не только трогать все экспонаты, но и забираться внутрь."
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_height="match_parent"
+            android:background="@drawable/ripple_green"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
-            app:layout_constraintTop_toBottomOf="@id/wiki_item_titleTextView" />
+            app:layout_constraintStart_toEndOf="@id/wiki_item_imageView"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/wiki_item_learn_more_Button"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_button_background_green"
-            android:text="Подробнее"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
-            app:layout_constraintTop_toBottomOf="@+id/wiki_item_descriptionTextView" />
+            <TextView
+                android:id="@+id/wiki_item_titleTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:maxLines="1"
+                tools:text="Музей железнодорожной техники"
+                android:text="@{place.title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="16dp"
+                app:autoSizeMinTextSize="13dp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/imageView_text_on_map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="На карте"
-            android:textColor="@color/colorGreen"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/wiki_item_build_routeBT"
-            app:layout_constraintEnd_toStartOf="@+id/wiki_item_build_routeBT"
-            app:layout_constraintTop_toTopOf="@+id/wiki_item_build_routeBT" />
+            <TextView
+                android:id="@+id/wiki_item_descriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:maxLines="2"
+                tools:text="Филиал Музея истории Северо-Кавказской железной дороги открылся в 2003 году на западной окраине Ростова, на станции Гниловской. Общая протяженность выставочных путей занимает почти две тысячи метров. Коллекция старого подвижного состава собиралась на протяжении двадцати лет энтузиастами и работниками железной дороги. Сегодня в музее более 50 паровозов, электровозов, вагонов и путейной техники, большинство из которых сохранились в единственном экземпляре или несут важную историческую нагрузку. Например, здесь можно увидеть механический семафор, румынскую цистерну середины XIX века, военную мотодрезину, 45-тонный грузоподъемный кран 1935 года и многое другое — можно не только трогать все экспонаты, но и забираться внутрь."
+                android:text="@{place.description}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
+                app:layout_constraintTop_toBottomOf="@id/wiki_item_titleTextView" />
 
-        <Button
-            android:id="@+id/wiki_item_build_routeBT"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/build_road_red"
-            android:gravity="end"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/wiki_item_learn_more_Button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/wiki_item_learn_more_Button" />
+            <Button
+                android:id="@+id/wiki_item_learn_more_Button"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_button_background_green"
+                android:text="Подробнее"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/wiki_item_titleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/wiki_item_descriptionTextView" />
+
+            <TextView
+                android:id="@+id/imageView_text_on_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="На карте"
+                android:textColor="@color/colorGreen"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/wiki_item_build_routeBT"
+                app:layout_constraintEnd_toStartOf="@+id/wiki_item_build_routeBT"
+                app:layout_constraintTop_toTopOf="@+id/wiki_item_build_routeBT" />
+
+            <Button
+                android:id="@+id/wiki_item_build_routeBT"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/build_road_red"
+                android:gravity="end"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/wiki_item_learn_more_Button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/wiki_item_learn_more_Button" />
+
+
+        </android.support.constraint.ConstraintLayout>
 
 
     </android.support.constraint.ConstraintLayout>
-
-
-</android.support.constraint.ConstraintLayout>
+</layout>
