@@ -78,6 +78,19 @@ public class WikiAttractionFragment extends PermissionFragment {
         });
 
         ///////////
+        setUpGif(view);
+
+        listenBTN.setOnClickListener(v -> {
+            boolean running = gifFromResource.isRunning();
+            if (running) {
+                stopPlaying();
+            } else {
+                startPlaying();
+            }
+        });
+    }
+
+    private void setUpGif(View view) {
         guideSpeaker = (GifImageView) view.findViewById(R.id.wiki_attr_speaking_heroIV);
         try {
             gifFromResource = new GifDrawable(getResources(), R.drawable.gif_speaking_hero);
@@ -86,22 +99,18 @@ public class WikiAttractionFragment extends PermissionFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        listenBTN.setOnClickListener(v -> {
-            boolean running = gifFromResource.isRunning();
-            if (running) {
-                gifFromResource.pause();
-                listenBTN.setCompoundDrawablesWithIntrinsicBounds(playImage, null, null, null);
-                textToSpeech.stop();
-            } else {
-                gifFromResource.start();
-                listenBTN.setCompoundDrawablesWithIntrinsicBounds(pauseImage, null, null, null);
-                textToSpeech.speak(descrTW.getText().toString(), TextToSpeech.QUEUE_ADD, null);
-            }
-        });
+    private void startPlaying() {
+        gifFromResource.start();
+        listenBTN.setCompoundDrawablesWithIntrinsicBounds(pauseImage, null, null, null);
+        textToSpeech.speak(descrTW.getText().toString(), TextToSpeech.QUEUE_ADD, null);
+    }
 
-//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
+    private void stopPlaying() {
+        gifFromResource.pause();
+        listenBTN.setCompoundDrawablesWithIntrinsicBounds(playImage, null, null, null);
+        textToSpeech.stop();
     }
 
     @Override
@@ -124,6 +133,7 @@ public class WikiAttractionFragment extends PermissionFragment {
             imageView.setImageResource(placeImageBig);
             titleTW.setText(title);
             descrTW.setText(description);
+
             showOnMap.setOnClickListener(v -> {
                 if (PermissionUtil.hasMapRequiredPermissions(v.getContext())) {
                     Log.d(TAG, place.getTitle());
@@ -151,12 +161,4 @@ public class WikiAttractionFragment extends PermissionFragment {
         titleTW.setText(title);
         descrTW.setText(description);
     }
-
-    /*
-    @Override
-    public void finish() {
-        super.finish();
-        // TODO: Add Animations
-        //overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }*/
 }
