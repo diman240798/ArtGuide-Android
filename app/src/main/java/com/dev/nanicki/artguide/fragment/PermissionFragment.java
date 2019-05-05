@@ -1,8 +1,8 @@
 package com.dev.nanicki.artguide.fragment;
 
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.dev.nanicki.artguide.ApplicationActivity;
 import com.dev.nanicki.artguide.util.PermissionUtil;

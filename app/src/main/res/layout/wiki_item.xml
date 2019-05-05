@@ -10,7 +10,7 @@
             type="com.dev.nanicki.artguide.model.Place" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/map_markdesc_rel_layout"
         android:layout_width="match_parent"
         android:layout_height="130dp"
@@ -28,12 +28,11 @@
             android:layout_marginStart="20dp"
             android:scaleType="fitXY"
             android:src="@{place.imageSmall}"
-            tools:src="@drawable/museum_rail_train_big"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/museum_rail_train_big" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@drawable/ripple_green"
@@ -115,8 +114,8 @@
                 app:layout_constraintTop_toTopOf="@id/wiki_item_learn_more_Button" />
 
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

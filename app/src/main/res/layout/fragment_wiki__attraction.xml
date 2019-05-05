@@ -7,7 +7,7 @@
     android:background="@drawable/main_map_graphic"
     tools:context=".fragment.attraction_info.WikiAttractionFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -155,5 +155,5 @@
             app:layout_constraintStart_toStartOf="@+id/wiki_attr_show_on_mapBT" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

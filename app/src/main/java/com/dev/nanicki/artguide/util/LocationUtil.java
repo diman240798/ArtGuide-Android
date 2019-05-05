@@ -2,7 +2,7 @@ package com.dev.nanicki.artguide.util;
 
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.osmdroid.util.GeoPoint;
 

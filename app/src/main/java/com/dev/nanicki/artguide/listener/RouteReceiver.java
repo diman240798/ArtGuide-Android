@@ -1,6 +1,6 @@
 package com.dev.nanicki.artguide.listener;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.osmdroid.bonuspack.routing.Road;
 

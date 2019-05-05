@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 
 public class ConnectionUtil {
     public static boolean isConnected(LocationManager manager, Context context) {
