@@ -24,7 +24,6 @@ import com.dev.nanicki.artguide.enums.AttractionType;
 import com.dev.nanicki.artguide.fragment.PermissionFragment;
 import com.dev.nanicki.artguide.model.Place;
 import com.dev.nanicki.artguide.ui.BottomNavigationBehavior;
-import com.dev.nanicki.artguide.util.BottomButtonsUtil;
 import com.dev.nanicki.artguide.util.PermissionUtil;
 
 import java.util.Arrays;
@@ -117,7 +116,6 @@ public class WikiFragment extends PermissionFragment {
     }
 
     void sortList(AttractionType attractionType) {
-        BottomButtonsUtil.setBottomImages(attractionType, bottomButtons);
         wikiAdapter.sortList(places, attractionType);
     }
 }

@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:background="@drawable/item_museum"
+                    android:backgroundMuseam="@{viewmodel.obsAttrType}"
                     android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Museum)}" />
 
                 <View
@@ -76,7 +76,7 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/item_theatre"
+                    android:backgroundTheatre="@{viewmodel.obsAttrType}"
                     android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Theatre)}" />
 
                 <View
@@ -93,7 +93,7 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/item_memorial"
+                    android:backgroundMemorial="@{viewmodel.obsAttrType}"
                     android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Memorial)}" />
 
                 <View
@@ -109,7 +109,7 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/item_stadium"
+                    android:backgroundStadium="@{viewmodel.obsAttrType}"
                     android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Stadium)}" />
 
                 <View
@@ -125,7 +125,7 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/item_park"
+                    android:backgroundPark="@{viewmodel.obsAttrType}"
                     android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Park)}" />
             </LinearLayout>
         </android.support.design.widget.BottomNavigationView>
