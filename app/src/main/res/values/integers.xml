@@ -2,4 +2,5 @@
 <resources>
     <integer name="left_right_animation_duration">800</integer>
     <integer name="up_down_animation_duration">800</integer>
+    <integer name="recycler_anim_duration_long">300</integer>
 </resources>

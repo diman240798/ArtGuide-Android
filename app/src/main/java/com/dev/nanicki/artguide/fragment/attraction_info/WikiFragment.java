@@ -7,20 +7,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 
 import com.dev.nanicki.artguide.ApplicationActivity;
 import com.dev.nanicki.artguide.R;
 import com.dev.nanicki.artguide.adapters.WikiAdapter;
-import com.dev.nanicki.artguide.csv.CSVreader;
 import com.dev.nanicki.artguide.databinding.FragmentWikiBinding;
-import com.dev.nanicki.artguide.enums.AttractionType;
 import com.dev.nanicki.artguide.fragment.PermissionFragment;
 import com.dev.nanicki.artguide.model.Place;
 import com.dev.nanicki.artguide.ui.BottomNavigationBehavior;
@@ -28,6 +28,13 @@ import com.dev.nanicki.artguide.util.PermissionUtil;
 
 import java.util.Arrays;
 import java.util.List;
+
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class WikiFragment extends PermissionFragment {
     private static final String TAG = "WikiFragment";
@@ -37,8 +44,7 @@ public class WikiFragment extends PermissionFragment {
     private WikiAdapter wikiAdapter;
     // viewModel
     private WikiFragmentViewModel viewModel;
-    // data
-    private List<Place> places;
+    // binding
     private FragmentWikiBinding binding;
 
 
@@ -59,21 +65,23 @@ public class WikiFragment extends PermissionFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        places = getPlaces();
-
         initSortingButtons(view);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) view.findViewById(R.id.wiki_bottom_navig_with_buttons);
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomNavigationView.getLayoutParams();
         layoutParams.setBehavior(new BottomNavigationBehavior());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        setupAdapter();
+        SlideInLeftAnimator animator = new SlideInLeftAnimator();
+        animator.setRemoveDuration(200);
+        animator.setAddDuration(300);
+        mRecyclerView.setItemAnimator(animator);
 
         viewModel = ViewModelProviders.of(getActivity()).get(WikiFragmentViewModel.class);
         binding.setViewmodel(viewModel);
-        viewModel.getAtractionType().observe(this, this::sortList);
+        viewModel.getPlaces().observe(this, this::setListData);
+
+        setupAdapter();
     }
 
     private void initSortingButtons(View view) {
@@ -87,8 +95,8 @@ public class WikiFragment extends PermissionFragment {
 
     private void setupAdapter() {
         if (wikiAdapter == null)
-            wikiAdapter = new WikiAdapter(places, this::onLearnMoreClicked, this::onBuildRouteClicked);
-        mRecyclerView.setAdapter(wikiAdapter);
+            wikiAdapter = new WikiAdapter(viewModel.getAllPlaces(), this::onLearnMoreClicked, this::onBuildRouteClicked);
+        mRecyclerView.setAdapter(new SlideInLeftAnimationAdapter(wikiAdapter));
     }
 
     private void onLearnMoreClicked(Context context, int adapterPosition) {
@@ -111,11 +119,7 @@ public class WikiFragment extends PermissionFragment {
             PermissionUtil.requestMapRequiredPermissions(this);
     }
 
-    private List<Place> getPlaces() {
-        return CSVreader.getData(getContext());
-    }
-
-    void sortList(AttractionType attractionType) {
-        wikiAdapter.sortList(places, attractionType);
+    void setListData(List<Place> places) {
+        wikiAdapter.setData(places);
     }
 }

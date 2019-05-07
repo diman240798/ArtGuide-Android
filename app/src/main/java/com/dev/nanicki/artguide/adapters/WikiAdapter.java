@@ -1,5 +1,6 @@
 package com.dev.nanicki.artguide.adapters;
 
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiItemViewHolder> {
     }
 
     public WikiAdapter(List<Place> places, LearnMoreListener learnMoreListener, BuildRouteListener buildRouteListener) {
-        mPlaces = places;
+        mPlaces = new ArrayList<>(places);
         this.learnMoreListener = learnMoreListener;
         this.buildRouteListener = buildRouteListener;
     }
@@ -53,14 +54,13 @@ public class WikiAdapter extends RecyclerView.Adapter<WikiItemViewHolder> {
         return mPlaces.size();
     }
 
-    public void sortList(List<Place> places, AttractionType type) {
-        //Collections.sort(mPlaces, ((place, t1) -> place.getTitle().compareTo(key)));
-        List<Place> result = new ArrayList<>();
-        for (Place place : places) {
-            if (place.getType() == type)
-                result.add(place);
-        }
-        mPlaces = result;
-        notifyDataSetChanged();
+
+    public void setData(List<Place> newData) {
+        PlaceDiffCallback postDiffCallback = new PlaceDiffCallback(mPlaces, newData);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(postDiffCallback);
+
+        mPlaces.clear();
+        mPlaces.addAll(newData);
+        diffResult.dispatchUpdatesTo(this);
     }
 }
