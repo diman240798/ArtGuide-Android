@@ -17,7 +17,7 @@
         android:layout_marginStart="-20dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/rectangle_with_bounds"
+        android:background="@drawable/corners_layout"
         android:clickable="true"
         android:focusable="true">
 
