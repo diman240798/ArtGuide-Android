@@ -7,14 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 
 import com.dev.nanicki.artguide.ApplicationActivity;
@@ -29,12 +26,8 @@ import com.dev.nanicki.artguide.util.PermissionUtil;
 import java.util.Arrays;
 import java.util.List;
 
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter;
-import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInRightAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class WikiFragment extends PermissionFragment {
     private static final String TAG = "WikiFragment";
@@ -52,7 +45,6 @@ public class WikiFragment extends PermissionFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.<FragmentWikiBinding>inflate(inflater, R.layout.fragment_wiki, container, false);
-        //View view = inflater.inflate(R.layout.fragment_wiki, container, false);
         return binding.getRoot();
     }
 
