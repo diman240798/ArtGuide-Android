@@ -152,7 +152,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/rounded_button_background_green"
                 tools:drawableStart="@drawable/listen_play"
-                android:btnLeftImage="@{viewModel.btnListenImage}"
+                android:btnLeftImage="@{viewModel.isPlayingLV}"
                 android:onClick="@{viewModel::onPlayClicked}"
                 android:gravity="center"
                 android:text="Прослушать"
