@@ -8,7 +8,7 @@
         <import type="com.dev.nanicki.artguide.enums.AttractionType" />
 
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.dev.nanicki.artguide.fragment.attraction_info.WikiFragmentViewModel" />
     </data>
 
@@ -61,8 +61,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:backgroundMuseam="@{viewmodel.obsAttrType}"
-                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Museum)}" />
+                    android:backgroundMuseam="@{viewModel.currentAttrType}"
+                    android:onClick="@{() -> viewModel.setAtractionType(AttractionType.Museum)}" />
 
                 <View
                     android:layout_width="1dp"
@@ -77,8 +77,8 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:backgroundTheatre="@{viewmodel.obsAttrType}"
-                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Theatre)}" />
+                    android:backgroundTheatre="@{viewModel.currentAttrType}"
+                    android:onClick="@{() -> viewModel.setAtractionType(AttractionType.Theatre)}" />
 
                 <View
                     android:layout_width="1dp"
@@ -94,8 +94,8 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:backgroundMemorial="@{viewmodel.obsAttrType}"
-                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Memorial)}" />
+                    android:backgroundMemorial="@{viewModel.currentAttrType}"
+                    android:onClick="@{() -> viewModel.setAtractionType(AttractionType.Memorial)}" />
 
                 <View
                     android:layout_width="1dp"
@@ -110,8 +110,8 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:backgroundStadium="@{viewmodel.obsAttrType}"
-                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Stadium)}" />
+                    android:backgroundStadium="@{viewModel.currentAttrType}"
+                    android:onClick="@{() -> viewModel.setAtractionType(AttractionType.Stadium)}" />
 
                 <View
                     android:layout_width="1dp"
@@ -126,8 +126,8 @@
                     android:layout_height="42dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:backgroundPark="@{viewmodel.obsAttrType}"
-                    android:onClick="@{() -> viewmodel.setAtractionType(AttractionType.Park)}" />
+                    android:backgroundPark="@{viewModel.currentAttrType}"
+                    android:onClick="@{() -> viewModel.setAtractionType(AttractionType.Park)}" />
             </LinearLayout>
         </android.support.design.widget.BottomNavigationView>
 

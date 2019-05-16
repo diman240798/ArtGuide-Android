@@ -2,12 +2,7 @@ package com.dev.nanicki.artguide.fragment.attraction_info;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableInt;
-import android.util.MutableBoolean;
 import android.view.View;
-
-import com.dev.nanicki.artguide.R;
 
 public class WikiAttractionViewModel extends ViewModel {
 

@@ -12,18 +12,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.dev.nanicki.artguide.ApplicationActivity;
 import com.dev.nanicki.artguide.R;
 import com.dev.nanicki.artguide.adapters.WikiAdapter;
+import com.dev.nanicki.artguide.csv.CSVreader;
 import com.dev.nanicki.artguide.databinding.FragmentWikiBinding;
+import com.dev.nanicki.artguide.enums.AttractionType;
 import com.dev.nanicki.artguide.fragment.PermissionFragment;
 import com.dev.nanicki.artguide.model.Place;
 import com.dev.nanicki.artguide.ui.BottomNavigationBehavior;
 import com.dev.nanicki.artguide.util.PermissionUtil;
+import com.dev.nanicki.artguide.util.SortingUtil;
 
-import java.util.Arrays;
 import java.util.List;
 
 import jp.wasabeef.recyclerview.adapters.SlideInLeftAnimationAdapter;
@@ -33,7 +34,6 @@ public class WikiFragment extends PermissionFragment {
     private static final String TAG = "WikiFragment";
     // ui
     private RecyclerView mRecyclerView;
-    private List<Button> bottomButtons;
     private WikiAdapter wikiAdapter;
     // viewModel
     private WikiFragmentViewModel viewModel;
@@ -45,19 +45,20 @@ public class WikiFragment extends PermissionFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.<FragmentWikiBinding>inflate(inflater, R.layout.fragment_wiki, container, false);
+        binding.setViewModel(viewModel);
+        binding.setLifecycleOwner(this);
         return binding.getRoot();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(getActivity()).get(WikiFragmentViewModel.class);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        initSortingButtons(view);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) view.findViewById(R.id.wiki_bottom_navig_with_buttons);
@@ -69,25 +70,14 @@ public class WikiFragment extends PermissionFragment {
         animator.setAddDuration(300);
         mRecyclerView.setItemAnimator(animator);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(WikiFragmentViewModel.class);
-        binding.setViewmodel(viewModel);
-        viewModel.getPlaces().observe(this, this::setListData);
+        viewModel.currentAttrType.observe(this, this::setListData);
 
         setupAdapter();
     }
 
-    private void initSortingButtons(View view) {
-        Button btMuseum = (Button) view.findViewById(R.id.wiki_bt_museum),
-                btTheatre = (Button) view.findViewById(R.id.wiki_bt_theatre),
-                btMemorial = (Button) view.findViewById(R.id.wiki_bt_memorial),
-                btStadium = (Button) view.findViewById(R.id.wiki_bt_stadium),
-                btPark = (Button) view.findViewById(R.id.wiki_bt_park);
-        bottomButtons = Arrays.asList(btMuseum, btTheatre, btMemorial, btStadium, btPark);
-    }
-
     private void setupAdapter() {
         if (wikiAdapter == null)
-            wikiAdapter = new WikiAdapter(viewModel.getAllPlaces(), this::onLearnMoreClicked, this::onBuildRouteClicked);
+            wikiAdapter = new WikiAdapter(CSVreader.getData(getContext()), this::onLearnMoreClicked, this::onBuildRouteClicked);
         mRecyclerView.setAdapter(new SlideInLeftAnimationAdapter(wikiAdapter));
     }
 
@@ -111,7 +101,8 @@ public class WikiFragment extends PermissionFragment {
             PermissionUtil.requestMapRequiredPermissions(this);
     }
 
-    void setListData(List<Place> places) {
+    private void setListData(AttractionType attractionType) {
+        List<Place> places = SortingUtil.sortList(attractionType, CSVreader.getData(getContext()));
         wikiAdapter.setData(places);
     }
 }

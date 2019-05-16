@@ -16,8 +16,8 @@ import com.dev.nanicki.artguide.csv.CSVreader;
 import com.dev.nanicki.artguide.databinding.FragmentWikiAttractionBinding;
 import com.dev.nanicki.artguide.fragment.PermissionFragment;
 import com.dev.nanicki.artguide.model.Place;
-import com.dev.nanicki.artguide.util.PermissionUtil;
 import com.dev.nanicki.artguide.util.AttractionUIutil;
+import com.dev.nanicki.artguide.util.PermissionUtil;
 
 import java.io.IOException;
 
